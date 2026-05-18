@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>My Tycoon Advisors</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#fbfbfd;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;-webkit-font-smoothing:antialiased;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
@@ -630,6 +631,205 @@ function scrollDown() { const m = document.getElementById('msgs'); m.scrollTop =
 function updateBtn() { document.getElementById('sbtn').disabled = busy || !document.getElementById('inp').value.trim(); }
 
 
+
+// ── BOARD HISTORY ──
+function saveBoardToHistory(result, conversation) {
+  try {
+    const history = JSON.parse(localStorage.getItem('board_history') || '[]');
+    const entry = {
+      date: new Date().toISOString(),
+      tycoon: current?.name || 'General',
+      tycoonEmoji: current?.emoji || '🏆',
+      result: result,
+      conversation: conversation,
+      decision: ''
+    };
+    history.unshift(entry);
+    if (history.length > 30) history.length = 30;
+    localStorage.setItem('board_history', JSON.stringify(history));
+    window.currentBoardEntry = entry;
+  } catch(e) { console.error('Save history error:', e); }
+}
+
+function openBoardHistory() {
+  document.getElementById('boardHistory').style.display = 'flex';
+  renderBoardHistory();
+}
+
+function closeBoardHistory() {
+  document.getElementById('boardHistory').style.display = 'none';
+}
+
+function renderBoardHistory() {
+  const list = document.getElementById('historyList');
+  const history = JSON.parse(localStorage.getItem('board_history') || '[]');
+  
+  if (history.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">📚</div><div style="font-size:16px;font-weight:600;color:#1d1d1f;margin-bottom:6px">No history yet</div><div style="font-size:13px;color:#86868b">Your past board meetings will appear here</div></div>';
+    return;
+  }
+
+  list.innerHTML = history.map((entry, idx) => {
+    const date = new Date(entry.date);
+    const dateStr = date.toLocaleDateString() + ' • ' + date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    const preview = (entry.result?.context || 'Board meeting').substring(0, 100);
+    return `<div style="background:#fff;border:1px solid #d2d2d7;border-radius:14px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+        <div style="font-size:11px;color:#86868b;font-weight:500">${dateStr}</div>
+        <div style="font-size:11px;color:#86868b">${entry.tycoonEmoji} ${entry.tycoon}</div>
+      </div>
+      <div style="font-size:13px;color:#1d1d1f;line-height:1.5;margin-bottom:10px">${preview}${preview.length > 99 ? '...' : ''}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button onclick="viewHistoryEntry(${idx})" style="background:#1d1d1f;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:7px 12px;cursor:pointer;font-family:inherit">View</button>
+        <button onclick="exportHistoryPDF(${idx})" style="background:#f5f5f7;border:1px solid #d2d2d7;border-radius:8px;color:#1d1d1f;font-size:12px;font-weight:600;padding:7px 12px;cursor:pointer;font-family:inherit">📄 PDF</button>
+        <button onclick="deleteHistoryEntry(${idx})" style="background:transparent;border:1px solid #d2d2d7;border-radius:8px;color:#ff3b30;font-size:12px;font-weight:600;padding:7px 12px;cursor:pointer;font-family:inherit">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function viewHistoryEntry(idx) {
+  const history = JSON.parse(localStorage.getItem('board_history') || '[]');
+  const entry = history[idx];
+  if (!entry) return;
+  window.currentBoardEntry = entry;
+  
+  // Populate Board Room with this entry
+  document.getElementById('boardEmpty').style.display = 'none';
+  document.getElementById('boardLoading').style.display = 'none';
+  document.getElementById('boardResults').style.display = 'block';
+  document.getElementById('boardRoom').style.display = 'flex';
+  document.getElementById('boardHistory').style.display = 'none';
+  
+  const result = entry.result;
+  document.getElementById('boardContext').textContent = '📋 Context: ' + result.context;
+  document.getElementById('boardConsensus').textContent = result.consensus;
+  document.getElementById('boardDisagreements').textContent = result.disagreements;
+  document.getElementById('boardInsights').textContent = result.insights;
+  
+  const viewsContainer = document.getElementById('boardViews');
+  viewsContainer.innerHTML = '';
+  result.views.forEach(v => {
+    const card = document.createElement('div');
+    card.style.cssText = 'background:#fff;border:1px solid #d2d2d7;border-radius:14px;padding:14px;display:flex;gap:10px;align-items:flex-start';
+    card.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;background:#1d1d1f;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${v.emoji}</div><div><div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:4px">${v.name}</div><div style="font-size:13px;color:#3a3a3c;line-height:1.65">${v.view}</div></div>`;
+    viewsContainer.appendChild(card);
+  });
+  
+  if (entry.decision) document.getElementById('myDecision').value = entry.decision;
+}
+
+function deleteHistoryEntry(idx) {
+  if (!confirm('Delete this board meeting?')) return;
+  const history = JSON.parse(localStorage.getItem('board_history') || '[]');
+  history.splice(idx, 1);
+  localStorage.setItem('board_history', JSON.stringify(history));
+  renderBoardHistory();
+}
+
+function clearAllHistory() {
+  if (!confirm('Delete ALL board history? This cannot be undone.')) return;
+  localStorage.removeItem('board_history');
+  renderBoardHistory();
+}
+
+// ── PDF EXPORT ──
+function buildPDFHTML(entry, userDecision) {
+  const result = entry.result || entry;
+  const date = new Date(entry.date || Date.now()).toLocaleString();
+  const decision = userDecision || entry.decision || document.getElementById('myDecision').value || '';
+  
+  let html = `<div style="font-family:Arial,sans-serif;color:#1d1d1f;line-height:1.6">
+    <div style="text-align:center;border-bottom:3px solid #1d1d1f;padding-bottom:20px;margin-bottom:30px">
+      <h1 style="margin:0;font-size:28px">🏆 Board Room Report</h1>
+      <div style="color:#666;font-size:14px;margin-top:8px">My Tycoon Advisors • ${date}</div>
+    </div>
+    
+    <div style="background:#f5f5f7;padding:16px;border-radius:8px;margin-bottom:24px">
+      <div style="font-size:11px;font-weight:bold;color:#666;text-transform:uppercase;margin-bottom:6px">QUESTION / CONTEXT</div>
+      <div style="font-size:14px">${result.context || 'Business consultation'}</div>
+    </div>
+    
+    <div style="margin-bottom:24px">
+      <div style="font-size:14px;font-weight:bold;color:#1d1d1f;text-transform:uppercase;margin-bottom:10px;border-bottom:2px solid #1d1d1f;padding-bottom:6px">📊 CONSENSUS</div>
+      <div style="font-size:13px">${result.consensus}</div>
+    </div>
+    
+    <div style="margin-bottom:24px">
+      <div style="font-size:14px;font-weight:bold;color:#1d1d1f;text-transform:uppercase;margin-bottom:12px;border-bottom:2px solid #1d1d1f;padding-bottom:6px">💬 EACH TYCOON'S TAKE</div>`;
+  
+  result.views.forEach(v => {
+    html += `<div style="margin-bottom:14px;padding:12px;background:#fafafa;border-left:3px solid #1d1d1f;border-radius:4px;page-break-inside:avoid">
+      <div style="font-weight:bold;font-size:13px;margin-bottom:4px">${v.emoji} ${v.name}</div>
+      <div style="font-size:12px;color:#333">${v.view}</div>
+    </div>`;
+  });
+  
+  html += `</div>
+    
+    <div style="margin-bottom:24px;page-break-inside:avoid">
+      <div style="font-size:14px;font-weight:bold;color:#1d1d1f;text-transform:uppercase;margin-bottom:10px;border-bottom:2px solid #1d1d1f;padding-bottom:6px">⚡ KEY DISAGREEMENTS</div>
+      <div style="font-size:13px">${result.disagreements}</div>
+    </div>
+    
+    <div style="margin-bottom:24px;page-break-inside:avoid">
+      <div style="font-size:14px;font-weight:bold;color:#1d1d1f;text-transform:uppercase;margin-bottom:10px;border-bottom:2px solid #1d1d1f;padding-bottom:6px">💡 UNIQUE INSIGHTS</div>
+      <div style="font-size:13px">${result.insights}</div>
+    </div>`;
+  
+  if (decision) {
+    html += `<div style="background:#1d1d1f;color:#fff;padding:20px;border-radius:8px;page-break-inside:avoid">
+      <div style="font-size:14px;font-weight:bold;text-transform:uppercase;margin-bottom:10px">✍️ MY DECISION</div>
+      <div style="font-size:13px;line-height:1.7">${decision}</div>
+    </div>`;
+  }
+  
+  html += `<div style="text-align:center;color:#999;font-size:11px;margin-top:30px;padding-top:20px;border-top:1px solid #ddd">Generated by My Tycoon Advisors</div>
+  </div>`;
+  
+  return html;
+}
+
+function exportBoardPDF() {
+  const entry = window.currentBoardEntry || {
+    date: new Date().toISOString(),
+    result: {
+      context: document.getElementById('boardContext').textContent.replace('📋 Context: ', ''),
+      consensus: document.getElementById('boardConsensus').textContent,
+      disagreements: document.getElementById('boardDisagreements').textContent,
+      insights: document.getElementById('boardInsights').textContent,
+      views: Array.from(document.querySelectorAll('#boardViews > div')).map(c => ({
+        emoji: c.querySelector('div').textContent,
+        name: c.querySelectorAll('div')[2].textContent,
+        view: c.querySelectorAll('div')[3].textContent
+      }))
+    }
+  };
+  const decision = document.getElementById('myDecision').value;
+  generatePDF(entry, decision);
+}
+
+function exportHistoryPDF(idx) {
+  const history = JSON.parse(localStorage.getItem('board_history') || '[]');
+  const entry = history[idx];
+  if (entry) generatePDF(entry);
+}
+
+function generatePDF(entry, decision) {
+  const template = document.getElementById('pdfTemplate');
+  template.innerHTML = buildPDFHTML(entry, decision);
+  const filename = 'Board-Room-' + new Date(entry.date || Date.now()).toISOString().split('T')[0] + '.pdf';
+  
+  html2pdf().set({
+    margin: 15,
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }).from(template).save();
+}
+
+
 // ── BOARD ROOM ──
 const BOARD_SYSTEM = `You are a facilitator for a board meeting of 12 legendary business tycoons. Given a conversation context, you must simulate how each tycoon would respond to the situation, then provide a structured analysis.
 
@@ -814,6 +1014,9 @@ async function runBoardRoom() {
 
     document.getElementById('boardLoading').style.display = 'none';
     document.getElementById('boardResults').style.display = 'block';
+    
+    // Save to history
+    saveBoardToHistory(result, convSummary);
 
   } catch(e) {
     console.error('Board Room error:', e);
@@ -832,12 +1035,13 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
 <div id="boardRoom" style="display:none;position:fixed;inset:0;background:#fbfbfd;z-index:200;flex-direction:column;overflow:hidden">
   
   <!-- Header -->
-  <div style="padding:14px 16px;background:#fff;border-bottom:1px solid #d2d2d7;display:flex;align-items:center;gap:12px;flex-shrink:0">
+  <div style="padding:14px 16px;background:#fff;border-bottom:1px solid #d2d2d7;display:flex;align-items:center;gap:8px;flex-shrink:0">
     <button onclick="closeBoardRoom()" style="background:transparent;border:none;color:#0071e3;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">← Back</button>
     <div style="flex:1;text-align:center">
       <div style="font-size:16px;font-weight:700;color:#1d1d1f">🏆 Board Room</div>
       <div style="font-size:11px;color:#86868b">All 12 tycoons review your situation</div>
     </div>
+    <button onclick="openBoardHistory()" style="background:#f5f5f7;border:1px solid #d2d2d7;border-radius:8px;color:#1d1d1f;font-size:12px;font-weight:600;padding:6px 10px;cursor:pointer;font-family:inherit">📚 History</button>
   </div>
 
   <!-- Content -->
@@ -890,6 +1094,11 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
         <div id="boardInsights" style="font-size:14px;color:#1d1d1f;line-height:1.75"></div>
       </div>
 
+      <!-- Export PDF Button -->
+      <button onclick="exportBoardPDF()" style="width:100%;background:#fff;border:1px solid #d2d2d7;border-radius:12px;color:#1d1d1f;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px">
+        📄 Export as PDF (Share with Family)
+      </button>
+
       <!-- Your Decision -->
       <div style="background:#1d1d1f;border-radius:16px;padding:16px;margin-bottom:20px">
         <div style="font-size:12px;font-weight:700;color:#f5f5f7;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">✍️ Your Decision</div>
@@ -902,6 +1111,23 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
     </div>
   </div>
 </div>
+
+
+<!-- BOARD HISTORY OVERLAY -->
+<div id="boardHistory" style="display:none;position:fixed;inset:0;background:#fbfbfd;z-index:300;flex-direction:column;overflow:hidden">
+  <div style="padding:14px 16px;background:#fff;border-bottom:1px solid #d2d2d7;display:flex;align-items:center;gap:12px;flex-shrink:0">
+    <button onclick="closeBoardHistory()" style="background:transparent;border:none;color:#0071e3;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">← Back</button>
+    <div style="flex:1;text-align:center">
+      <div style="font-size:16px;font-weight:700;color:#1d1d1f">📚 Board History</div>
+      <div style="font-size:11px;color:#86868b">Past board meetings</div>
+    </div>
+    <button onclick="clearAllHistory()" style="background:transparent;border:none;color:#ff3b30;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Clear All</button>
+  </div>
+  <div id="historyList" style="flex:1;overflow-y:auto;padding:16px"></div>
+</div>
+
+<!-- HIDDEN PDF EXPORT TEMPLATE -->
+<div id="pdfTemplate" style="position:absolute;left:-9999px;top:0;width:800px;background:#fff;padding:40px;font-family:Arial,sans-serif"></div>
 
 </body>
 </html>
