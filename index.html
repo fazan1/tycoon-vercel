@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Tycoon Advisors</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fbfbfd;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;-webkit-font-smoothing:antialiased;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+#selector{flex:1;overflow-y:auto;padding:18px 14px 30px}
+.sel-title{text-align:center;font-size:24px;font-weight:700;color:#1d1d1f;margin-bottom:4px;letter-spacing:-0.022em}
+.sel-sub{text-align:center;font-size:11px;color:#86868b;margin-bottom:12px}
+#nameSetup{display:flex;gap:8px;margin-bottom:18px}
+#nameInp{flex:1;background:#ffffff;border:1px solid #d2d2d7;border-radius:10px;color:#1d1d1f;padding:10px 14px;font-size:14px;font-family:inherit;outline:none}
+#nameInp:focus{border-color:#86868b}
+#nameSave{background:#1d1d1f;border:none;border-radius:10px;color:#86868b;padding:9px 14px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+#grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:#ffffff;border:1px solid #d2d2d7;border-radius:18px;padding:18px 10px 14px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,0.04)}.card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08);transform:translateY(-1px)}
+.card:active{transform:scale(.95)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ac)}
+.card-emoji{font-size:30px;display:block;margin-bottom:7px}
+.card-name{font-size:13px;font-weight:600;color:#1d1d1f;margin-bottom:3px;line-height:1.3;letter-spacing:-0.01em}
+.card-sub{font-size:10px;color:#86868b;line-height:1.4}
+.card-tag{display:inline-block;margin-top:6px;font-size:9px;padding:2px 8px;border-radius:8px;background:#f5f5f7;color:#86868b;border:1px solid #d2d2d7}
+#chat{display:none;flex-direction:column;flex:1;overflow:hidden}
+#hdr{padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;border-bottom:1px solid #d2d2d7;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:relative;z-index:10}
+#backbtn{background:#f5f5f7;border:none;color:#0071e3;border-radius:8px;padding:6px 11px;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;font-weight:500}
+#hav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+#hinfo{flex:1;min-width:0}
+#hname{font-weight:600;font-size:14px;color:#1d1d1f;letter-spacing:-0.01em}
+#hsub{font-size:10px;color:#86868b;margin-top:1px}
+.hbtn{background:#f5f5f7;border:1px solid #d2d2d7;color:#86868b;border-radius:8px;padding:5px 9px;font-size:11px;cursor:pointer;font-family:inherit}
+#modeIndicator{padding:6px 14px;background:#f5f5f7;border-bottom:1px solid #d2d2d7;font-size:11px;color:#86868b;text-align:center;flex-shrink:0}
+#modeIndicator b{color:var(--ac,#ccc)}
+#modebar{display:flex;gap:6px;padding:7px 12px;background:#ffffff;border-bottom:1px solid #d2d2d7;flex-shrink:0;overflow-x:auto}
+#modebar::-webkit-scrollbar{display:none}
+.modeBtn{background:#ffffff;border:1px solid #d2d2d7;color:#6e6e73;padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:all 0.15s;font-weight:500}
+.modeBtn.active{color:#000;font-weight:700}
+#memPanel{display:none;background:#f5f5f7;border-bottom:1px solid #d2d2d7;padding:10px 14px;flex-shrink:0}
+#memPanel h4{font-size:11px;color:#86868b;margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em}
+#memContent{font-size:12px;color:#86868b;line-height:1.7}
+#memClear{margin-top:8px;background:transparent;border:none;color:#ff3b30;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500}
+#msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;gap:9px;align-items:flex-start}
+.msg.user{flex-direction:row-reverse}
+.bub{max-width:80%;padding:11px 14px;font-size:14px;line-height:1.75;white-space:pre-wrap}
+.bub.ai{border-radius:18px;background:#f5f5f7;color:#1d1d1f;border:none}
+.bub.user{border-radius:18px;background:#0071e3;color:#ffffff;border:none}
+.mav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.msg-actions{display:flex;gap:5px;margin-top:5px}
+.msg-act{background:transparent;border:none;color:#0071e3;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:500}
+.badge{font-size:10px;padding:3px 8px;background:#ffffff;border:1px solid #d2d2d7;border-radius:6px;display:inline-block;margin-bottom:6px;margin-right:4px;color:#86868b}
+#chipswrap{padding:2px 0 4px}
+#chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:#ffffff;border:1px solid #d2d2d7;color:#1d1d1f;padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;font-weight:500}
+#typingrow{display:none}
+.tdot{width:6px;height:6px;border-radius:50%;display:inline-block;animation:bnc 1s infinite;background:#86868b}
+.tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
+@keyframes bnc{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+#inputarea{border-top:1px solid #d2d2d7;padding:10px 12px 14px;flex-shrink:0;background:#ffffff}
+#irow{display:flex;gap:8px;align-items:center}
+#inp{flex:1;background:#f5f5f7;border:1px solid #d2d2d7;border-radius:12px;color:#1d1d1f;padding:12px 14px;font-size:14px;font-family:inherit;outline:none}
+#sbtn{border:none;border-radius:10px;color:#000;width:43px;height:43px;font-size:17px;font-weight:bold;cursor:pointer;flex-shrink:0}
+#sbtn:disabled{background:#f5f5f7!important;color:#a1a1a6;cursor:not-allowed}
+#disc{text-align:center;margin-top:7px;font-size:10px;color:#c7c7cc}
+</style>
+</head>
+<body>
+
+<div id="selector">
+<div class="sel-title">🏆 My Tycoon Advisors</div>
+<div class="sel-sub">Personal AI · Reasons from real past · Admits unknowns · Hybrid mode</div>
+<div id="nameSetup">
+<input id="nameInp" type="text" placeholder="Your name (so they remember you)..."/>
+<button id="nameSave" onclick="saveName()">Save</button>
+</div>
+<div id="grid"></div>
+</div>
+
+<div id="chat">
+<div id="hdr">
+<button id="backbtn" onclick="goBack()">← Back</button>
+<div id="hav"></div>
+<div id="hinfo"><div id="hname"></div><div id="hsub"></div></div>
+<button class="hbtn" onclick="toggleMem()">💾</button>
+</div>
+<div id="modeIndicator">Mode: <b id="modeLabel">✨ Auto</b> · <span style="color:#86868b">detects from your message</span></div>
+<div id="modebar">
+<button class="modeBtn active" data-mode="auto" onclick="setMode('auto')">✨ Auto</button>
+<button class="modeBtn" data-mode="chat" onclick="setMode('chat')">💬 Chat</button>
+<button class="modeBtn" data-mode="pitch" onclick="setMode('pitch')">🎯 Pitch</button>
+<button class="modeBtn" data-mode="predict" onclick="setMode('predict')">🔮 Predict</button>
+<button class="modeBtn" data-mode="ideas" onclick="setMode('ideas')">💡 Ideas</button>
+<button class="modeBtn" data-mode="plan" onclick="setMode('plan')">📋 Plan</button>
+<button class="modeBtn" data-mode="challenge" onclick="setMode('challenge')">⚡ Challenge</button>
+</div>
+<div id="memPanel">
+<h4>🧠 What I remember about you</h4>
+<div id="memContent">Nothing saved yet.</div>
+<button id="memClear" onclick="clearMem()">Clear Memory</button>
+</div>
+<div id="msgs">
+<div id="chipswrap"><div id="chips"></div></div>
+<div class="msg" id="typingrow">
+<div id="tav" class="mav"></div>
+<div class="bub ai" style="display:flex;gap:5px;align-items:center"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>
+</div>
+</div>
+<!-- Floating Board Room Button -->
+<div id="boardFloatBtn" style="display:none;padding:8px 12px;background:#fbfbfd;border-top:1px solid #d2d2d7;flex-shrink:0">
+  <button onclick="openBoardRoom()" style="width:100%;background:#1d1d1f;border:none;border-radius:12px;color:#f5f5f7;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">
+    🏆 Take to Board Room — Get All 12 Perspectives
+  </button>
+</div>
+
+<div id="inputarea">
+<div id="irow">
+<input id="inp" type="text" placeholder="Ask, pitch, share your situation..."/>
+<button id="sbtn" disabled>↑</button>
+</div>
+<div id="disc">Personal use · AI simulation · They admit when they don't know</div>
+</div>
+</div>
+
+<script>
+const CORE_RULES = `
+HOW YOU MUST THINK:
+1. REASON FROM YOUR REAL PAST — Not textbook advice. Pull from actual decisions, deals, failures. Reference specific years, names, dollar amounts from YOUR life.
+2. IF YOU DON'T KNOW, SAY SO — Never invent facts. Say: "Honestly, I don't have direct experience with that — but here's how I'd think about it..." or "I don't know. Anyone claiming certainty is lying."
+3. SPEAK IN POSSIBILITIES, NOT ABSOLUTES — Frame as exploration:
+   - "IF you do X, THEN Y might happen — but watch for Z"
+   - "Three paths I see: Option A... Option B... Trade-offs..."
+   - NEVER "you must" or "this is the only way"
+4. SHOW REASONING — Walk through HOW you arrived at the thought: "Let me think... First the market is... Second your competition... So..."
+5. ACKNOWLEDGE UNCERTAINTY — "Best guess but I've been wrong many times" — "Probabilities, not promises"
+6. ACT AS AGENT — Ask probing questions BEFORE advising. Challenge weak thinking. Set firm boundaries on off-topic asks (gossip/politics/medical/legal/relationships) — redirect: "Not where I add value."
+7. STAY IN CHARACTER — Never break the fourth wall. You ARE this person.
+`;
+
+const MODES = {
+  auto:"",
+  chat:"",
+  pitch:"\n\nMODE: PITCH EVALUATOR. Announce 'I'm treating this as a pitch.' Ask exactly 3 sharp questions about: market size, competition, unfair advantage. ONLY after they respond, give brutal score /10, success probability %, top 3 improvements. Reason from a real similar pitch from your past.",
+  predict:"\n\nMODE: PREDICTION. Announce 'Let me think about this as a forecast.' Give specific predictions with probability estimates. Reason from historical patterns you personally lived through. End with 'Here's what I'd do NOW to prepare...'",
+  ideas:"\n\nMODE: IDEA GENERATOR. Announce 'Let me brainstorm with you.' Give 5+ unconventional ideas framed as 'IF you do X, THEN Y might happen because...' Include first concrete step for each.",
+  plan:"\n\nMODE: PLAN BUILDER. Announce 'Let me help build a real plan.' First ask what resources they have. Then build 30-day, 90-day, 1-year milestones. Identify #1 risk and mitigation. Reference a real plan you executed.",
+  challenge:"\n\nMODE: CHALLENGER. Announce 'I'm going to push back hard.' Find holes in their logic. Ask uncomfortable questions. Play devil's advocate using a real failure you experienced as the lens."
+};
+
+function detectMode(text) {
+  const t = text.toLowerCase();
+  if (/(my idea|i want to build|i'm building|pitch|evaluate.*business|review.*startup|thoughts on my)/.test(t)) return 'pitch';
+  if (/(predict|what will happen|future of|next \d+ years|forecast|trend|prediction)/.test(t)) return 'predict';
+  if (/(give me ideas|brainstorm|suggest|what should i do|recommend|options for)/.test(t)) return 'ideas';
+  if (/(how do i|build.*plan|roadmap|steps to|plan for|strategy to)/.test(t)) return 'plan';
+  if (/(challenge me|poke holes|what's wrong|devil's advocate|criticize)/.test(t)) return 'challenge';
+  return 'chat';
+}
+
+const MODE_LABELS = { auto:'✨ Auto', chat:'💬 Chat', pitch:'🎯 Pitch', predict:'🔮 Predict', ideas:'💡 Ideas', plan:'📋 Plan', challenge:'⚡ Challenge' };
+
+const TYCOONS = [
+{ name:"Mukesh Ambani", sub:"Reliance Industries · 🇮🇳", emoji:"👔", tag:"🇮🇳 Asia's Richest", ac:"#d4af37", grad:"linear-gradient(135deg,#d4af37,#7a5c00)",
+qs:["Evaluate my idea","Think at billion-dollar scale","Predict India's next opportunity","Give me 5 ideas for India"],
+greeting:"Good. Tell me what you're actually trying to build, and what's stopping you. Be honest with me, otherwise I cannot help.",
+system:`You are Mukesh Ambani, Chairman of Reliance Industries.
+
+REAL EXPERIENCES YOU REASON FROM:
+- 2016 Jio launch: gave 4G data FREE for 6 months, captured 400M subscribers, collapsed competitor pricing. The bet of a lifetime, risked $25B+.
+- 2005 split with brother Anil — painful family negotiation, you took petrochem/refining/telecom, he took power/financial services.
+- Father Dhirubhai's death 2002 forced you to lead earlier than expected.
+- Reliance Retail rollout from 2006 — slow start, now India's largest serving 250M+ families, ~18,000 stores.
+- 2020 — raised $20B+ from Facebook, Google, KKR, Silver Lake into Jio Platforms to deleverage. Crucial pivot.
+- Now building Green Energy (Jamnagar gigafactories), 5G, AI infrastructure, semiconductors.
+- Wife Nita, children Isha (Retail), Akash (Jio), Anant (Energy).
+
+PHILOSOPHY: Quote Dhirubhai: "Think big, think fast, think ahead. Ideas are no one's monopoly." Long horizons (10-20 years). Backward integration. Scale is your weapon.
+
+BOUNDARIES: No Bollywood, no cricket opinions, no political commentary, no Antilia or family gossip.
+${CORE_RULES}` },
+
+{ name:"Elon Musk", sub:"Tesla · SpaceX · xAI · 🇺🇸", emoji:"🚀", tag:"🌍 World's Richest", ac:"#5bc8fa", grad:"linear-gradient(135deg,#2a7dc9,#0a2a50)",
+qs:["First principles breakdown","Predict AI in 5 years","What would you do with $10k?","Challenge my assumptions"],
+greeting:"Okay. Direct question — what are you actually working on? Real problem, real numbers. Don't waste time with vague pitches.",
+system:`You are Elon Musk — CEO of Tesla, SpaceX, xAI; owner of X.
+
+REAL EXPERIENCES YOU REASON FROM:
+- 1995: Founded Zip2 with brother Kimbal, slept on couch, sold for $307M in 1999.
+- 1999: Co-founded X.com → became PayPal, sold to eBay $1.5B in 2002.
+- 2002: Founded SpaceX with $100M own money. Falcons 1, 2, 3 all failed 2006-2008. Falcon 4 succeeded with last dollars — saved you.
+- 2008: Tesla nearly died. Pumped last $35M in. Worked 100-hour weeks.
+- 2017-18: Model 3 "production hell" — slept on Tesla factory floor.
+- 2022: Bought Twitter $44B. Cut ~80% staff. Renamed X.
+- 2023: Founded xAI, launched Grok.
+- 2024-26: Tesla robotaxi push, Optimus humanoid robots.
+- SpaceX Falcon 9 reusability — said impossible, you proved it. Starship to Mars is the mission.
+
+PHILOSOPHY: First principles thinking. Physics is law. Make humans multiplanetary. Sustainable energy is existential. Vertical integration. Reusability.
+
+BOUNDARIES: No therapy, no relationship advice, no family discussion.
+${CORE_RULES}` },
+
+{ name:"Warren Buffett", sub:"Berkshire · 🇺🇸", emoji:"📊", tag:"🇺🇸 Oracle of Omaha", ac:"#f0c040", grad:"linear-gradient(135deg,#c8960a,#5a4000)",
+qs:["Evaluate this investment","What moat does my business have?","Predict next market shift","How do I compound income?"],
+greeting:"Well, sit down. Tell me what you're trying to figure out — simply. If you can't explain it simply, you don't understand it yet.",
+system:`You are Warren Buffett — Chairman of Berkshire Hathaway.
+
+REAL EXPERIENCES YOU REASON FROM:
+- Age 11: Bought 3 shares Cities Service Preferred at $38, sold at $40, watched it rise to $200. Taught patience.
+- 1962: Started buying Berkshire Hathaway, failing textile mill. Your "worst trade ever" — wasted a decade.
+- 1972: Bought See's Candies $25M. Taught you "wonderful business at fair price" over "fair business at wonderful price."
+- 1988: Started buying Coca-Cola. $1B became $25B+.
+- 1996: Hired Ajit Jain for insurance — built float into engine.
+- 2008: $5B preferred Goldman deal during crisis. Bank of America 2011.
+- 2016: Started Apple position — became your largest, $150B+.
+- 1993: Dexter Shoe — "worst deal ever" — paid in BRK stock now worth $9B.
+- Charlie Munger (1924-2023) — partner since 1959. Shaped your thinking on quality.
+
+PHILOSOPHY: Buy wonderful companies at fair prices. Hold forever. Circle of competence. Economic moat. Margin of safety. "Be fearful when others are greedy." Live in same Omaha house since 1958.
+
+BOUNDARIES: No stock tips. Firmly dismiss crypto. No get-rich-quick schemes.
+${CORE_RULES}` },
+
+{ name:"Steve Jobs", sub:"Apple · Pixar · 🇺🇸", emoji:"🍎", tag:"🇺🇸 Visionary", ac:"#c8d8e8", grad:"linear-gradient(135deg,#666,#222)",
+qs:["Critique my product","Make this 10x simpler","Predict next computing era","What would Apple do?"],
+greeting:"Before we go further — what do you actually want to CREATE? Not what the market wants. What burns in you that you must make?",
+system:`You are Steve Jobs — co-founder of Apple.
+
+REAL EXPERIENCES YOU REASON FROM:
+- 1976: Co-founded Apple with Woz in your parents' garage. Apple I, II.
+- 1984: Launched Macintosh with "1984" Super Bowl ad.
+- 1985: Ousted from Apple after power struggle with John Sculley. Most painful moment.
+- 1986: Bought Pixar from Lucas for $10M. Toy Story 1995. Sold to Disney 2006 for $7.4B.
+- 1985-96: Founded NeXT. Failed commercially but its OS became Mac OS X.
+- 1997: Returned to Apple, 90 days from bankruptcy. Killed 350 products, kept 10.
+- 1998: iMac saved the company.
+- 2001: iPod — "1000 songs in your pocket."
+- 2003: iTunes Store proved people would pay for digital music.
+- 2007: iPhone — "an iPod, a phone, an internet communicator."
+- 2010: iPad. 2011: died after pancreatic cancer.
+
+PHILOSOPHY: Design = how it works. Simplicity is ultimate sophistication. Focus = saying no to 1000 things. A-players only. Reality distortion field. Intersection of technology and liberal arts.
+
+BOUNDARIES: Zero tolerance for vague thinking. Call bad ideas "crap." Brutally direct.
+${CORE_RULES}` },
+
+{ name:"Richard Branson", sub:"Virgin Group · 🇬🇧", emoji:"🎯", tag:"🇬🇧 Adventure Capitalist", ac:"#e84040", grad:"linear-gradient(135deg,#cc2020,#7a0000)",
+qs:["How do I take the leap?","Build me a brand strategy","Predict next industry to disrupt","How do I bounce back?"],
+greeting:"Brilliant! Tell me — what adventure are you dreaming up? I always say: if someone offers you an amazing opportunity and you're not sure, say yes and figure it out later.",
+system:`You are Richard Branson — founder of Virgin Group.
+
+REAL EXPERIENCES YOU REASON FROM:
+- Age 16: Founded Student magazine. Dyslexic, dropped out.
+- 1972: Founded Virgin Records. Signed Mike Oldfield (Tubular Bells), Sex Pistols (after EMI dropped them), Rolling Stones, Phil Collins.
+- 1984: Founded Virgin Atlantic with one used 747. Challenged British Airways "Dirty Tricks" campaign — sued and won.
+- 1992: Sold Virgin Records to EMI for $1B. Cried walking out.
+- 2004: Founded Virgin Galactic. 2014 crash killed test pilot.
+- Failed: Virgin Cola, Virgin Brides, Virgin Cars, Virgin Money mortgages — you talk openly about these.
+- Necker Island home — bought £180k in 1979.
+- 1987: Hot air balloon Atlantic crossing — nearly died.
+
+PHILOSOPHY: "Screw it, let's do it." Hire great people, get out of their way. Disrupt stuffy industries with fun. Employees first.
+
+BOUNDARIES: Not a numbers person — redirect detailed financial questions. "Get a CFO."
+${CORE_RULES}` },
+
+{ name:"Ray Dalio", sub:"Bridgewater · 🇺🇸", emoji:"📈", tag:"🇺🇸 Principles Guru", ac:"#60a8f0", grad:"linear-gradient(135deg,#1a5c9a,#051828)",
+qs:["Apply Principles to my situation","Predict next economic cycle","What systems should I build?","Find my root cause"],
+greeting:"Before I help, I need to understand how you think. Tell me your biggest problem — and what you believe is truly causing it. Not the symptom. The root.",
+system:`You are Ray Dalio — founder of Bridgewater Associates.
+
+REAL EXPERIENCES YOU REASON FROM:
+- 1975: Founded Bridgewater in your two-bedroom apartment.
+- 1982: Catastrophic call — predicted depression, lost everything, fired all staff, borrowed $4k from your father. Lowest moment. Foundation of Principles.
+- 2007-08: Predicted financial crisis correctly. Bridgewater peaked at $160B AUM.
+- 2010: Pure Alpha returned 45%.
+- Built radical transparency — all meetings recorded.
+- 2017: "Principles" bestseller. 2022: Stepped down as co-CIO.
+
+PHILOSOPHY: Pain + Reflection = Progress. Radical transparency + open-mindedness. Everything is a machine. Study history — cycles repeat. Debt cycles. Reserve currency cycles. Empire rise and fall.
+
+BOUNDARIES: No surface-level questions. Always dig to root cause.
+${CORE_RULES}` },
+
+{ name:"Mark Cuban", sub:"Mavs · Shark Tank · 🇺🇸", emoji:"🏀", tag:"🇺🇸 Shark Tank", ac:"#00c8e0", grad:"linear-gradient(135deg,#0077b6,#002a40)",
+qs:["Pitch review — brutal","How do I get first customer?","Predict industries AI kills first","Sales strategy this week"],
+greeting:"Alright. I've heard thousands of pitches. Most people waste my time. Tell me what you're working on — revenue, who's paying, why you're different. Go.",
+system:`You are Mark Cuban — Mavericks owner, Shark Tank investor, Cost Plus Drugs founder.
+
+REAL EXPERIENCES YOU REASON FROM:
+- Age 12: Sold garbage bags door-to-door in Pittsburgh.
+- 1983: Fired from MicroSolutions job. Started your own — sold to CompuServe $6M in 1990.
+- 1995: Co-founded AudioNet (Broadcast.com) — internet radio.
+- 1999: Sold Broadcast.com to Yahoo for $5.7 BILLION in Yahoo stock. Peak dot-com. Hedged immediately — locked in cash.
+- 2000: Bought Dallas Mavericks $285M. NBA Championship 2011.
+- 2011+: Shark Tank — best deals: Tower Paddle Boards, BeatBox Beverages.
+- 2022: Founded Cost Plus Drugs — disrupting pharma (cost + 15% vs market 10x).
+- 2023: Sold majority Mavs stake to Adelson family, kept control.
+
+PHILOSOPHY: "Sales cures all." Know your numbers cold. AI will create more billionaires than any tech. No excuses. Read 3 hours daily.
+
+BOUNDARIES: Zero patience for no preparation. "Come back when you know your numbers."
+${CORE_RULES}` },
+
+{ name:"Narayana Murthy", sub:"Infosys · 🇮🇳", emoji:"💡", tag:"🇮🇳 Father of Indian IT", ac:"#50c878", grad:"linear-gradient(135deg,#1a6b30,#082010)",
+qs:["Build with integrity","Predict India's IT future","Values-driven company","What with Rs.10,000?"],
+greeting:"Good day. Before we discuss success — tell me about your values. What principles guide your work? That tells me more than any business plan.",
+system:`You are N. R. Narayana Murthy — co-founder of Infosys.
+
+REAL EXPERIENCES YOU REASON FROM:
+- Born 1946 Sidlaghatta, Karnataka. Father a school teacher.
+- IIT Kanpur — electrical engineering.
+- 1970s: Worked in Paris on SOCRATE airline reservation system.
+- 1981: Founded Infosys with 6 colleagues. Borrowed Rs.10,000 (~$250) from wife Sudha.
+- 1990s: Wanted to sell Infosys for $1M. Co-founders refused. Glad you listened.
+- 1993: IPO at Rs.95.
+- 1999: First Indian company on NASDAQ.
+- 2014: Retired. 2017: Returned briefly during governance crisis.
+- Wife Sudha Murty — philanthropist, author, Rajya Sabha MP. Daughter Akshata married UK PM Rishi Sunak.
+- 2023: 70-hour week comment caused massive debate.
+
+PHILOSOPHY: Hard work + integrity + excellence. Frugality. Meritocracy (gave employees stock options early — revolutionary in India). "In God we trust, everyone else brings data." Compassionate capitalism.
+
+BOUNDARIES: No politics, no commentary on other businesspeople.
+${CORE_RULES}` },
+
+{ name:"Merrill J. Fernando", sub:"Dilmah Tea · 🇱🇰", emoji:"🍵", tag:"🇱🇰 Sri Lanka's Icon", ac:"#e87040", grad:"linear-gradient(135deg,#c04010,#501800)",
+qs:["Compete against giants","Build ethical brand","Predict Sri Lanka's future","Make my product mean something"],
+greeting:"Welcome. Tell me first — do you believe business can be ethical and still succeed? Your answer tells me everything.",
+system:`You are Merrill J. Fernando — founder of Dilmah Tea (1930-2023).
+
+REAL EXPERIENCES YOU REASON FROM:
+- Born 1930 Pamunugama, Sri Lanka. Devout Catholic.
+- 1950s: Among first Sri Lankans trained in London tea trade. Saw Sri Lankan tea sold cheap to Western brands.
+- 1962-87: Worked in industry but felt the unfairness of producer-buyer system.
+- 1988: Launched Dilmah at age 58 — direct to consumer, Sri Lankan brand. Defied entire industry.
+- 1990s: Took Dilmah to Australia first market. Then 100+ countries.
+- 2003: Founded MJF Charitable Foundation for education and poverty relief.
+- 2004 Tsunami: Massive disaster relief efforts.
+- Sons Malik and Dilhan now run business.
+
+PHILOSOPHY: "Business is a matter of human service." Quality non-negotiable — single-origin garden-fresh. Ethics over shortcuts. Family values = lasting business. Give back to society.
+
+BOUNDARIES: No rivals gossip. No corner-cutting advice. Speak from faith and values openly.
+${CORE_RULES}` },
+
+{ name:"Dhammika Perera", sub:"Vallibel One · 🇱🇰", emoji:"💎", tag:"🇱🇰 Sri Lanka's Richest", ac:"#9060e0", grad:"linear-gradient(135deg,#6030b0,#200840)",
+qs:["Spot undervalued assets","Predict Sri Lanka's recovery","Structure diversified portfolio","What would you acquire now?"],
+greeting:"Tell me directly — what are you trying to achieve, what's your capital position? I don't do long introductions. Time and capital are the same thing.",
+system:`You are Dhammika Perera — Sri Lanka's wealthiest businessman.
+
+REAL EXPERIENCES YOU REASON FROM:
+- Built wealth through contrarian investing in Sri Lanka.
+- Major holdings: Hayleys PLC, Lanka Tiles, Royal Ceramics, LB Finance, Amaya Leisure, Vallibel Finance.
+- Specialty: buy undervalued/distressed companies, restructure them into profitable entities.
+- Former Minister of Investment Promotion in Sri Lanka.
+- Intensely private — rarely gives interviews.
+- Major bets on Sri Lankan recovery despite political and economic crises.
+
+PHILOSOPHY: Buy undervalued assets. Patience creates opportunity. Diversification = protection. Operational discipline. Invest in Sri Lanka when others are fearful. Control costs before scaling.
+
+BOUNDARIES: Very private. No personal life. No politics. No specific deals in progress.
+${CORE_RULES}` },
+
+{ name:"Aliko Dangote", sub:"Dangote Group · 🇳🇬", emoji:"🏭", tag:"🇳🇬 Africa's Richest", ac:"#20c050", grad:"linear-gradient(135deg,#108030,#042010)",
+qs:["Build in frontier market","Predict Africa's next decade","Ideas for Africa's middle class","Finance at mega scale"],
+greeting:"Good. Africa is the greatest opportunity on earth right now and most people are still asleep. Tell me what you're working on. I want to hear it.",
+system:`You are Aliko Dangote — Chairman of Dangote Group. Africa's richest person.
+
+REAL EXPERIENCES YOU REASON FROM:
+- Born 1957 Kano, northern Nigeria, into wealthy Muslim trading family.
+- 1977: Borrowed 500,000 naira from your uncle to start commodity trading.
+- 1980s-90s: Built importing business — cement, sugar, rice, fish.
+- 2000s: Pivoted to manufacturing. Built Africa's largest cement company.
+- Dangote Cement now operates in 10 African countries.
+- 2013-2025: Built Dangote Oil Refinery in Lagos — $20B, 650,000 bpd capacity, the largest single-train petroleum refinery in the world. Took 12 years, immense delays. Operational 2024.
+- Also: Dangote Fertilizer (3M tonnes/year), Dangote Sugar, Salt, Flour.
+- 2025: Refinery transforming Nigeria from fuel importer to exporter.
+
+PHILOSOPHY: Build what Africa needs — essentials, not luxury. Scale is everything. Vertical integration. Invest for 10-30 year horizons. Demographics = destiny. Industrialization is the only path.
+
+BOUNDARIES: No politics, no government contract discussions. "I build things. Let us talk about that."
+${CORE_RULES}` },
+
+{ name:"Tony Elumelu", sub:"Heirs Holdings · UBA · 🇳🇬", emoji:"🦁", tag:"🇳🇬 Africapitalism", ac:"#f0a020", grad:"linear-gradient(135deg,#c07800,#402800)",
+qs:["What is Africapitalism?","Attract investment to Africa","Predict W. Africa's growth sectors","Build pan-African business"],
+greeting:"I'm glad you're here. My belief: Africans must be the architects of Africa's prosperity. Tell me what you're building, and how it serves the people around you.",
+system:`You are Tony Elumelu — Chairman of Heirs Holdings, UBA, founder of Tony Elumelu Foundation.
+
+REAL EXPERIENCES YOU REASON FROM:
+- Born 1963 Delta State, Nigeria. Studied economics.
+- 1990s: Joined Standard Trust Bank as analyst. Became CEO at young age.
+- 2005: Orchestrated landmark merger with UBA — created Pan-African bank now in 20+ African countries.
+- 2010: Founded Heirs Holdings — pan-African investment across finance, energy, real estate, hospitality.
+- 2010: Coined "Africapitalism" — the private sector must lead Africa's transformation.
+- 2015: Tony Elumelu Foundation committed $100M to train and fund 10,000 African entrepreneurs over 10 years.
+- TEF now reached 20,000+ entrepreneurs across 54 African countries.
+- 2021: Heirs Holdings acquired OML 17 oil block.
+
+PHILOSOPHY: Africapitalism. Profit + social impact reinforce each other. Invest in people first. Pan-African mindset — think beyond your country. Entrepreneurship = Africa's engine.
+
+BOUNDARIES: No partisan politics. No specific funding promises — direct to TEF application.
+${CORE_RULES}` }
+];
+
+let current = null, history = [], busy = false, mode = 'auto', detectedMode = 'chat';
+let userName = localStorage.getItem('tycoon_username') || '';
+
+const nameInp = document.getElementById('nameInp');
+if (userName) nameInp.value = userName;
+
+function saveName() {
+  const n = nameInp.value.trim();
+  const btn = document.getElementById('nameSave');
+  if (n) {
+    userName = n;
+    localStorage.setItem('tycoon_username', n);
+    btn.textContent = '✅';
+    btn.style.background = '#34c759';
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.textContent = 'Save';
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1500);
+  }
+  nameInp.blur();
+}
+nameInp.addEventListener('keydown', e => { if (e.key === 'Enter') saveName(); });
+
+const grid = document.getElementById('grid');
+TYCOONS.forEach(t => {
+  const c = document.createElement('div');
+  c.className = 'card';
+  c.style.setProperty('--ac', t.ac);
+  c.innerHTML = `<span class="card-emoji">${t.emoji}</span><div class="card-name">${t.name}</div><div class="card-sub">${t.sub}</div><span class="card-tag">${t.tag}</span>`;
+  c.onclick = () => openChat(t);
+  grid.appendChild(c);
+});
+
+function openChat(t) {
+  current = t; history = []; busy = false; mode = 'auto'; detectedMode = 'chat';
+  document.getElementById('selector').style.display = 'none';
+  document.getElementById('chat').style.display = 'flex';
+
+  const hav = document.getElementById('hav');
+  hav.style.background = t.grad; hav.textContent = t.emoji;
+  document.getElementById('hname').textContent = t.name;
+  document.getElementById('hname').style.color = t.ac;
+  document.getElementById('hsub').textContent = t.sub;
+  document.getElementById('tav').style.background = t.grad;
+  document.getElementById('tav').textContent = t.emoji;
+  document.getElementById('sbtn').style.background = t.grad;
+  document.getElementById('modeIndicator').style.setProperty('--ac', t.ac);
+
+  document.querySelectorAll('.modeBtn').forEach(b => { b.style.background = ''; b.style.color = ''; b.classList.remove('active'); });
+  const autoBtn = document.querySelector('[data-mode="auto"]');
+  autoBtn.classList.add('active'); autoBtn.style.background = t.ac; autoBtn.style.color = '#000';
+  document.getElementById('modeLabel').textContent = '✨ Auto';
+
+  const msgs = document.getElementById('msgs');
+  const typingrow = document.getElementById('typingrow');
+  while (msgs.firstChild && msgs.firstChild !== document.getElementById('chipswrap')) msgs.removeChild(msgs.firstChild);
+
+  document.getElementById('inp').onfocus = e => e.target.style.borderColor = t.ac;
+  document.getElementById('inp').onblur = e => e.target.style.borderColor = '#1e1e1e';
+  document.getElementById('memPanel').style.display = 'none';
+
+  const greeting = userName ? t.greeting.replace(/^([A-Z][^.!?]*[.!?])/, m => m.replace(/\b(Tell me|Tell|Before)\b/i, `${userName}, $1`)) : t.greeting;
+  addBubble('ai', greeting);
+  updateMemPanel();
+
+  const chips = document.getElementById('chips');
+  chips.innerHTML = '';
+  t.qs.forEach(q => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.textContent = q;
+    b.onclick = () => { document.getElementById('inp').value = q; updateBtn(); };
+    chips.appendChild(b);
+  });
+  document.getElementById('chipswrap').style.display = '';
+  document.getElementById('boardFloatBtn').style.display = 'none';
+  document.getElementById('inp').value = '';
+  updateBtn();
+  scrollDown();
+}
+
+function goBack() {
+  document.getElementById('chat').style.display = 'none';
+  document.getElementById('selector').style.display = 'block';
+  document.getElementById('memPanel').style.display = 'none';
+}
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.modeBtn').forEach(b => { b.classList.remove('active'); b.style.background = ''; b.style.color = ''; });
+  const btn = document.querySelector(`[data-mode="${m}"]`);
+  btn.classList.add('active'); btn.style.background = current.ac; btn.style.color = '#000';
+  document.getElementById('modeLabel').textContent = MODE_LABELS[m];
+}
+
+function getMemKey() { return `tycoon_mem_${current?.name?.replace(/\s/g,'_')}`; }
+function saveMem(k, v) {
+  const m = JSON.parse(localStorage.getItem(getMemKey()) || '{}');
+  m[k] = v; m.updated = new Date().toLocaleDateString();
+  localStorage.setItem(getMemKey(), JSON.stringify(m));
+}
+function getMem() { return JSON.parse(localStorage.getItem(getMemKey()) || '{}'); }
+function toggleMem() {
+  const p = document.getElementById('memPanel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  updateMemPanel();
+}
+function updateMemPanel() {
+  const m = getMem();
+  const keys = Object.keys(m).filter(k => k !== 'updated');
+  if (!keys.length) {
+    document.getElementById('memContent').textContent = 'Nothing saved yet. Have a conversation and I will start remembering key things.';
+  } else {
+    document.getElementById('memContent').innerHTML = keys.map(k => `<b style="color:#86868b">${k}:</b> ${m[k]}`).join('<br/>') + (m.updated ? `<br/><span style="color:#a1a1a6;font-size:10px">Last updated ${m.updated}</span>` : '');
+  }
+}
+function clearMem() { localStorage.removeItem(getMemKey()); updateMemPanel(); }
+
+function buildSystem() {
+  const useMode = mode === 'auto' ? detectedMode : mode;
+  const modeExtra = MODES[useMode] || '';
+  const m = getMem();
+  const memKeys = Object.keys(m).filter(k => k !== 'updated');
+  const memContext = memKeys.length ? `\nWHAT YOU REMEMBER ABOUT THE USER:\n${memKeys.map(k=>`${k}: ${m[k]}`).join('\n')}` : '';
+  const nameContext = userName ? `\nThe user's name is ${userName}. Use it naturally.` : '';
+  return current.system + modeExtra + memContext + nameContext;
+}
+
+function extractAndSaveMem(reply) {
+  const goalMatch = reply.match(/(?:your|the) goal (?:is |seems to be |of )([^.!?]+)/i);
+  if (goalMatch) saveMem('goal', goalMatch[1].trim());
+  const bizMatch = reply.match(/your (?:business|startup|company)[,\s]+([^.!?]+)/i);
+  if (bizMatch) saveMem('business', bizMatch[1].trim());
+  if (userName) saveMem('name', userName);
+}
+
+async function sendMsg() {
+  const inp = document.getElementById('inp');
+  const text = inp.value.trim();
+  if (!text || busy) return;
+  busy = true; inp.value = ''; updateBtn();
+  document.getElementById('chipswrap').style.display = 'none';
+
+  // Auto-detect mode
+  if (mode === 'auto') {
+    detectedMode = detectMode(text);
+    document.getElementById('modeLabel').textContent = `✨ Auto → ${MODE_LABELS[detectedMode]}`;
+  }
+
+  history.push({ role: 'user', content: text });
+  addBubble('user', text);
+  document.getElementById('typingrow').style.display = 'flex';
+  scrollDown();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 12000,
+        thinking: { type: 'enabled', budget_tokens: 8000 },
+        system: buildSystem(),
+        messages: history
+      })
+    });
+    const data = await res.json();
+    const reply = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('') || 'Let us try again.';
+    const hadThinking = (data.content || []).some(b => b.type === 'thinking');
+    history.push({ role: 'assistant', content: reply });
+    document.getElementById('typingrow').style.display = 'none';
+    addBubble('ai', reply, hadThinking, mode === 'auto' ? detectedMode : mode);
+    extractAndSaveMem(reply);
+  } catch(e) {
+    document.getElementById('typingrow').style.display = 'none';
+    addBubble('ai', 'Connection issue. Please try again.');
+  }
+  busy = false; updateBtn();
+}
+
+function addBubble(role, text, hadThinking = false, usedMode = null) {
+  // Show Board Room button after first AI response
+  if (role === 'ai' && history.length > 0) {
+    document.getElementById('boardFloatBtn').style.display = 'block';
+  }
+  const msgs = document.getElementById('msgs');
+  const typingrow = document.getElementById('typingrow');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg' + (role === 'user' ? ' user' : '');
+  if (role === 'ai') {
+    const av = document.createElement('div');
+    av.className = 'mav'; av.style.background = current.grad; av.textContent = current.emoji;
+    wrap.appendChild(av);
+  }
+  const col = document.createElement('div');
+  if (role === 'ai' && (hadThinking || usedMode)) {
+    const badges = document.createElement('div');
+    if (hadThinking) {
+      const b = document.createElement('span'); b.className = 'badge'; b.textContent = '🧠 Deep thinking'; badges.appendChild(b);
+    }
+    if (usedMode && usedMode !== 'chat') {
+      const b = document.createElement('span'); b.className = 'badge'; b.textContent = MODE_LABELS[usedMode]; b.style.color = current.ac; badges.appendChild(b);
+    }
+    col.appendChild(badges);
+  }
+  const bub = document.createElement('div');
+  bub.className = 'bub ' + role;
+  bub.textContent = text;
+  col.appendChild(bub);
+  if (role === 'ai') {
+    const acts = document.createElement('div'); acts.className = 'msg-actions';
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'msg-act'; copyBtn.textContent = '📋 Copy';
+    copyBtn.onclick = () => { navigator.clipboard.writeText(text); copyBtn.textContent = '✓ Copied'; setTimeout(()=>copyBtn.textContent='📋 Copy',1500); };
+    acts.appendChild(copyBtn);
+    col.appendChild(acts);
+  }
+  wrap.appendChild(col);
+  msgs.insertBefore(wrap, typingrow);
+  scrollDown();
+}
+
+function scrollDown() { const m = document.getElementById('msgs'); m.scrollTop = m.scrollHeight; }
+function updateBtn() { document.getElementById('sbtn').disabled = busy || !document.getElementById('inp').value.trim(); }
+
+
+// ── BOARD ROOM ──
+const BOARD_SYSTEM = `You are a facilitator for a board meeting of 12 legendary business tycoons. Given a conversation context, you must simulate how each tycoon would respond to the situation, then provide a structured analysis.
+
+The 12 tycoons are:
+1. Mukesh Ambani (Reliance Industries, India)
+2. Elon Musk (Tesla, SpaceX, xAI)
+3. Warren Buffett (Berkshire Hathaway)
+4. Steve Jobs (Apple)
+5. Richard Branson (Virgin Group)
+6. Ray Dalio (Bridgewater)
+7. Mark Cuban (Mavericks, Shark Tank)
+8. Narayana Murthy (Infosys, India)
+9. Merrill J. Fernando (Dilmah Tea, Sri Lanka)
+10. Dhammika Perera (Vallibel One, Sri Lanka)
+11. Aliko Dangote (Dangote Group, Nigeria)
+12. Tony Elumelu (Heirs Holdings, Nigeria)
+
+Respond ONLY in this exact JSON format:
+{
+  "context": "One sentence summary of what the user wants to achieve",
+  "consensus": "What most tycoons agree on (2-3 sentences)",
+  "views": [
+    {"name": "Mukesh Ambani", "emoji": "👔", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Elon Musk", "emoji": "🚀", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Warren Buffett", "emoji": "📊", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Steve Jobs", "emoji": "🍎", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Richard Branson", "emoji": "🎯", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Ray Dalio", "emoji": "📈", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Mark Cuban", "emoji": "🏀", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Narayana Murthy", "emoji": "💡", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Merrill J. Fernando", "emoji": "🍵", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Dhammika Perera", "emoji": "💎", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Aliko Dangote", "emoji": "🏭", "view": "Their specific take in 1-2 sentences"},
+    {"name": "Tony Elumelu", "emoji": "🦁", "view": "Their specific take in 1-2 sentences"}
+  ],
+  "disagreements": "Key points where tycoons disagree (2-3 sentences)",
+  "insights": "2-3 unique angles or insights from specific tycoons that stand out"
+}`;
+
+function openBoardRoom() {
+  const boardRoom = document.getElementById('boardRoom');
+  boardRoom.style.display = 'flex';
+  
+  if (!current || history.length === 0) {
+    document.getElementById('boardEmpty').style.display = 'block';
+    document.getElementById('boardLoading').style.display = 'none';
+    document.getElementById('boardResults').style.display = 'none';
+    return;
+  }
+  
+  // Load saved decision
+  const savedDecision = localStorage.getItem('board_decision_' + (current?.name || ''));
+  if (savedDecision) document.getElementById('myDecision').value = savedDecision;
+  
+  runBoardRoom();
+}
+
+function closeBoardRoom() {
+  document.getElementById('boardRoom').style.display = 'none';
+}
+
+function saveDecision() {
+  const decision = document.getElementById('myDecision').value.trim();
+  const btn = event?.target;
+  if (!decision) {
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '⚠️ Write something first';
+      btn.style.background = '#ff3b30';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '#0071e3';
+      }, 1500);
+    }
+    return;
+  }
+  
+  try {
+    // Save with timestamp
+    const data = {
+      decision: decision,
+      tycoon: current?.name || 'general',
+      date: new Date().toISOString(),
+      context: history.slice(-2).map(m => m.content).join(' | ').substring(0, 200)
+    };
+    
+    // Save current decision
+    localStorage.setItem('board_decision_' + (current?.name || ''), decision);
+    
+    // Also save to decisions log (history of all decisions)
+    const log = JSON.parse(localStorage.getItem('decisions_log') || '[]');
+    log.unshift(data);
+    if (log.length > 50) log.pop(); // Keep last 50
+    localStorage.setItem('decisions_log', JSON.stringify(log));
+    
+    // Also save to tycoon memory
+    if (current) saveMem('last_decision', decision.substring(0, 150));
+    
+    const saved = document.getElementById('decisionSaved');
+    saved.style.display = 'block';
+    saved.textContent = '✅ Decision saved! (' + new Date().toLocaleTimeString() + ')';
+    
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '✅ Saved!';
+      btn.style.background = '#34c759';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '#0071e3';
+      }, 1500);
+    }
+    
+    setTimeout(() => saved.style.display = 'none', 3000);
+  } catch(e) {
+    alert('Could not save: ' + e.message);
+  }
+}
+
+async function runBoardRoom() {
+  document.getElementById('boardEmpty').style.display = 'none';
+  document.getElementById('boardLoading').style.display = 'block';
+  document.getElementById('boardResults').style.display = 'none';
+
+  const convSummary = history.map(m => 
+    (m.role === 'user' ? 'User: ' : (current?.name || 'Tycoon') + ': ') + m.content
+  ).join('\n\n');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: BOARD_SYSTEM + '\n\nIMPORTANT: Respond ONLY with valid JSON. No markdown, no code blocks, no extra text. Start with { and end with }.',
+        messages: [{ 
+          role: 'user', 
+          content: 'Conversation:\n\n' + convSummary + '\n\nReturn the board room analysis as pure JSON.'
+        }]
+      })
+    });
+    
+    const data = await res.json();
+    
+    if (data.error) {
+      throw new Error(data.error.message || data.error);
+    }
+    
+    let text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    
+    // Strip markdown code blocks if present
+    text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    
+    // Find JSON
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start === -1 || end === -1) throw new Error('No JSON found in response');
+    
+    const result = JSON.parse(text.substring(start, end + 1));
+    
+    // Populate results
+    document.getElementById('boardContext').textContent = '📋 Context: ' + result.context;
+    document.getElementById('boardConsensus').textContent = result.consensus;
+    document.getElementById('boardDisagreements').textContent = result.disagreements;
+    document.getElementById('boardInsights').textContent = result.insights;
+
+    // Individual views
+    const viewsContainer = document.getElementById('boardViews');
+    viewsContainer.innerHTML = '';
+    result.views.forEach(v => {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:#fff;border:1px solid #d2d2d7;border-radius:14px;padding:14px;display:flex;gap:10px;align-items:flex-start';
+      card.innerHTML = `
+        <div style="width:36px;height:36px;border-radius:50%;background:#1d1d1f;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${v.emoji}</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:4px">${v.name}</div>
+          <div style="font-size:13px;color:#3a3a3c;line-height:1.65">${v.view}</div>
+        </div>
+      `;
+      viewsContainer.appendChild(card);
+    });
+
+    document.getElementById('boardLoading').style.display = 'none';
+    document.getElementById('boardResults').style.display = 'block';
+
+  } catch(e) {
+    console.error('Board Room error:', e);
+    document.getElementById('boardLoading').style.display = 'none';
+    document.getElementById('boardEmpty').style.display = 'block';
+    document.getElementById('boardEmpty').innerHTML = '<div style="font-size:36px">❌</div><div style="font-size:14px;color:#86868b;margin-top:12px">Could not load board room.</div><div style="font-size:11px;color:#86868b;margin-top:8px;max-width:280px;margin-left:auto;margin-right:auto">' + e.message + '</div><button onclick="runBoardRoom()" style="margin-top:16px;background:#1d1d1f;border:none;border-radius:10px;color:#fff;padding:10px 20px;font-size:13px;cursor:pointer;font-family:inherit">Try Again</button>';
+  }
+}
+
+document.getElementById('inp').addEventListener('input', updateBtn);
+document.getElementById('inp').addEventListener('keydown', e => { if (e.key === 'Enter' && !busy) sendMsg(); });
+document.getElementById('sbtn').addEventListener('click', sendMsg);
+</script>
+
+<!-- BOARD ROOM OVERLAY -->
+<div id="boardRoom" style="display:none;position:fixed;inset:0;background:#fbfbfd;z-index:200;flex-direction:column;overflow:hidden">
+  
+  <!-- Header -->
+  <div style="padding:14px 16px;background:#fff;border-bottom:1px solid #d2d2d7;display:flex;align-items:center;gap:12px;flex-shrink:0">
+    <button onclick="closeBoardRoom()" style="background:transparent;border:none;color:#0071e3;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">← Back</button>
+    <div style="flex:1;text-align:center">
+      <div style="font-size:16px;font-weight:700;color:#1d1d1f">🏆 Board Room</div>
+      <div style="font-size:11px;color:#86868b">All 12 tycoons review your situation</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div id="boardContent" style="flex:1;overflow-y:auto;padding:16px">
+    
+    <!-- Empty state -->
+    <div id="boardEmpty" style="text-align:center;padding:60px 20px">
+      <div style="font-size:48px;margin-bottom:16px">🏆</div>
+      <div style="font-size:18px;font-weight:700;color:#1d1d1f;margin-bottom:8px">Board Room</div>
+      <div style="font-size:13px;color:#86868b;max-width:260px;margin:0 auto;line-height:1.6">Have a conversation with any tycoon first, then bring it here for all 12 perspectives</div>
+    </div>
+
+    <!-- Loading state -->
+    <div id="boardLoading" style="display:none;text-align:center;padding:60px 20px">
+      <div style="font-size:36px;margin-bottom:16px">⏳</div>
+      <div style="font-size:15px;font-weight:600;color:#1d1d1f;margin-bottom:8px">Convening the Board...</div>
+      <div style="font-size:12px;color:#86868b">All 12 tycoons are reviewing your situation</div>
+      <div style="display:flex;gap:6px;justify-content:center;margin-top:16px">
+        <div style="width:8px;height:8px;border-radius:50%;background:#1d1d1f;animation:bnc 1s infinite"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:#1d1d1f;animation:bnc 1s 0.2s infinite"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:#1d1d1f;animation:bnc 1s 0.4s infinite"></div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="boardResults" style="display:none">
+      
+      <!-- Context bar -->
+      <div id="boardContext" style="background:#f5f5f7;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#86868b;line-height:1.5"></div>
+
+      <!-- Consensus -->
+      <div style="background:#fff;border:1px solid #d2d2d7;border-radius:16px;padding:16px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">📊 Consensus</div>
+        <div id="boardConsensus" style="font-size:14px;color:#1d1d1f;line-height:1.75"></div>
+      </div>
+
+      <!-- Individual views -->
+      <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">💬 Each Tycoon's Take</div>
+      <div id="boardViews" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px"></div>
+
+      <!-- Disagreements -->
+      <div style="background:#fff;border:1px solid #d2d2d7;border-radius:16px;padding:16px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">⚡ Key Disagreements</div>
+        <div id="boardDisagreements" style="font-size:14px;color:#1d1d1f;line-height:1.75"></div>
+      </div>
+
+      <!-- Unique insights -->
+      <div style="background:#fff;border:1px solid #d2d2d7;border-radius:16px;padding:16px;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">💡 Unique Insights</div>
+        <div id="boardInsights" style="font-size:14px;color:#1d1d1f;line-height:1.75"></div>
+      </div>
+
+      <!-- Your Decision -->
+      <div style="background:#1d1d1f;border-radius:16px;padding:16px;margin-bottom:20px">
+        <div style="font-size:12px;font-weight:700;color:#f5f5f7;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">✍️ Your Decision</div>
+        <div style="font-size:12px;color:#86868b;margin-bottom:10px">After hearing all perspectives — what will YOU do?</div>
+        <textarea id="myDecision" placeholder="Write your own conclusion and action plan here..." style="width:100%;background:#2a2a2a;border:1px solid #3a3a3a;border-radius:10px;color:#f5f5f7;padding:12px;font-size:14px;font-family:inherit;outline:none;resize:none;min-height:100px;line-height:1.6"></textarea>
+        <button onclick="saveDecision()" style="margin-top:10px;background:#0071e3;border:none;border-radius:10px;color:#fff;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;width:100%">💾 Save My Decision</button>
+        <div id="decisionSaved" style="display:none;text-align:center;margin-top:8px;font-size:12px;color:#50c878">✅ Decision saved!</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
