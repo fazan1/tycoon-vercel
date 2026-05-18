@@ -4,66 +4,89 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>My Tycoon Advisors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#EFE4D2;min-height:100vh;margin:0;padding:0}
+#wrap{background:#EFE4D2}
 body{background:#fbfbfd;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;-webkit-font-smoothing:antialiased;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-#selector{flex:1;overflow-y:auto;padding:18px 14px 30px}
-.sel-title{text-align:center;font-size:24px;font-weight:700;color:#1d1d1f;margin-bottom:4px;letter-spacing:-0.022em}
-.sel-sub{text-align:center;font-size:11px;color:#86868b;margin-bottom:12px}
-#nameSetup{display:flex;gap:8px;margin-bottom:18px}
-#nameInp{flex:1;background:#ffffff;border:1px solid #d2d2d7;border-radius:10px;color:#1d1d1f;padding:10px 14px;font-size:14px;font-family:inherit;outline:none}
-#nameInp:focus{border-color:#86868b}
-#nameSave{background:#1d1d1f;border:none;border-radius:10px;color:#86868b;padding:9px 14px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+#selector{flex:1;overflow-y:auto;padding:18px 14px 30px;background:#EFE4D2}
+.sel-title{text-align:center;font-size:38px;font-weight:900;color:#2B1810;margin-bottom:4px;letter-spacing:0.01em;font-family:"Playfair Display",Georgia,serif;text-shadow:2px 2px 0 rgba(184,115,51,0.2);line-height:1.1}
+.sel-title::before{content:"❦ ";color:#B87333;font-size:24px;vertical-align:middle}
+.sel-title::after{content:" ❦";color:#B87333;font-size:24px;vertical-align:middle}
+.sel-sub{text-align:center;font-size:13px;color:#8B6F47;margin-bottom:20px;font-style:italic;font-family:"Crimson Text",serif;position:relative}
+.sel-sub::after{content:"";display:block;width:80px;height:1px;background:linear-gradient(to right,transparent,#B87333,transparent);margin:12px auto 0}
+#nameSetup{display:flex;gap:8px;margin-bottom:18px;background:transparent}
+#nameInp{flex:1;background:#FAF3E3;border:1px solid #d2d2d7;border-radius:10px;color:#1d1d1f;padding:10px 14px;font-size:14px;font-family:inherit;outline:none}
+#nameInp:focus{border-color:#2B1810;background:#FAF3E3}
+#nameSave{background:#2B1810;border:none;border-radius:10px;color:#86868b;padding:9px 14px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
 #grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{background:#ffffff;border:1px solid #d2d2d7;border-radius:18px;padding:18px 10px 14px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,0.04)}.card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08);transform:translateY(-1px)}
+.card{background:#FAF3E3;border:1px solid #d2d2d7;border-radius:18px;padding:18px 10px 14px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,0.04)}.card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08);transform:translateY(-1px)}
 .card:active{transform:scale(.95)}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ac)}
 .card-emoji{font-size:30px;display:block;margin-bottom:7px}
-.card-name{font-size:13px;font-weight:600;color:#1d1d1f;margin-bottom:3px;line-height:1.3;letter-spacing:-0.01em}
-.card-sub{font-size:10px;color:#86868b;line-height:1.4}
+.card-name{font-size:16px;font-weight:700;color:#2B1810;margin-bottom:4px;line-height:1.2;letter-spacing:0.01em;font-family:"Playfair Display",Georgia,serif}
+.card-sub{font-size:11px;color:#8B6F47;line-height:1.4;font-style:italic;font-family:"Crimson Text",serif}
 .card-tag{display:inline-block;margin-top:6px;font-size:9px;padding:2px 8px;border-radius:8px;background:#f5f5f7;color:#86868b;border:1px solid #d2d2d7}
-#chat{display:none;flex-direction:column;flex:1;overflow:hidden}
+#chat{display:none;flex-direction:column;flex:1;overflow:hidden;background:#EFE4D2}
 #hdr{padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;border-bottom:1px solid #d2d2d7;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:relative;z-index:10}
 #backbtn{background:#f5f5f7;border:none;color:#0071e3;border-radius:8px;padding:6px 11px;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;font-weight:500}
-#hav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+#hav{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:2px solid #8B4513;background:#FAF3E3;box-shadow:2px 2px 0 rgba(43,24,16,0.25)}
 #hinfo{flex:1;min-width:0}
-#hname{font-weight:600;font-size:14px;color:#1d1d1f;letter-spacing:-0.01em}
-#hsub{font-size:10px;color:#86868b;margin-top:1px}
+#hname{font-weight:700;font-size:16px;color:#2B1810;letter-spacing:0.01em;font-family:"Playfair Display",Georgia,serif}
+#hsub{font-size:11px;color:#8B6F47;margin-top:2px;font-style:italic}
 .hbtn{background:#f5f5f7;border:1px solid #d2d2d7;color:#86868b;border-radius:8px;padding:5px 9px;font-size:11px;cursor:pointer;font-family:inherit}
 #modeIndicator{padding:6px 14px;background:#f5f5f7;border-bottom:1px solid #d2d2d7;font-size:11px;color:#86868b;text-align:center;flex-shrink:0}
-#modeIndicator b{color:var(--ac,#ccc)}
-#modebar{display:flex;gap:6px;padding:7px 12px;background:#ffffff;border-bottom:1px solid #d2d2d7;flex-shrink:0;overflow-x:auto}
+#modeIndicator b{color:#8B4513;font-weight:700}
+#modebar{display:flex;gap:6px;padding:7px 12px;background:#FAF3E3;border-bottom:1px solid #d2d2d7;flex-shrink:0;overflow-x:auto}
 #modebar::-webkit-scrollbar{display:none}
-.modeBtn{background:#ffffff;border:1px solid #d2d2d7;color:#6e6e73;padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:all 0.15s;font-weight:500}
-.modeBtn.active{color:#000;font-weight:700}
-#memPanel{display:none;background:#f5f5f7;border-bottom:1px solid #d2d2d7;padding:10px 14px;flex-shrink:0}
-#memPanel h4{font-size:11px;color:#86868b;margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em}
-#memContent{font-size:12px;color:#86868b;line-height:1.7}
+.modeBtn{background:#FAF3E3;border:1px solid #d2d2d7;color:#6e6e73;padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;transition:all 0.15s;font-weight:500}
+.modeBtn.active{color:#EFE4D2;background:#2B1810;border-color:#2B1810}
+#memPanel{display:none;background:#D4B896;border-bottom:1px solid #8B4513;padding:12px 16px;flex-shrink:0}
+#memPanel h4{font-size:11px;color:#8B4513;margin-bottom:8px;text-transform:uppercase;letter-spacing:.12em;font-family:"Playfair Display",serif;font-weight:700}
+#memContent{font-size:13px;color:#5C4033;line-height:1.7;font-family:'Crimson Text',serif;font-style:italic}
 #memClear{margin-top:8px;background:transparent;border:none;color:#ff3b30;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:500}
-#msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+#msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;background:#EFE4D2}
 .msg{display:flex;gap:9px;align-items:flex-start}
 .msg.user{flex-direction:row-reverse}
-.bub{max-width:80%;padding:11px 14px;font-size:14px;line-height:1.75;white-space:pre-wrap}
-.bub.ai{border-radius:18px;background:#f5f5f7;color:#1d1d1f;border:none}
-.bub.user{border-radius:18px;background:#0071e3;color:#ffffff;border:none}
+.bub{max-width:80%;padding:12px 16px;font-size:15px;line-height:1.75;white-space:pre-wrap;font-family:"Crimson Text",Georgia,serif}
+.bub.ai{border-radius:4px;background:#E8D5B7;color:#2B1810;border:1px solid #8B4513;box-shadow:2px 2px 0 rgba(43,24,16,0.15)}
+.bub.user{border-radius:4px;background:#2B1810;color:#EFE4D2;border:1px solid #2B1810;box-shadow:1px 1px 0 rgba(184,115,51,0.3)}
 .mav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 .msg-actions{display:flex;gap:5px;margin-top:5px}
 .msg-act{background:transparent;border:none;color:#0071e3;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:500}
-.badge{font-size:10px;padding:3px 8px;background:#ffffff;border:1px solid #d2d2d7;border-radius:6px;display:inline-block;margin-bottom:6px;margin-right:4px;color:#86868b}
-#chipswrap{padding:2px 0 4px}
+.badge{font-size:10px;padding:3px 8px;background:#FAF3E3;border:1px solid #d2d2d7;border-radius:6px;display:inline-block;margin-bottom:6px;margin-right:4px;color:#86868b}
+#chipswrap{padding:2px 14px 4px;background:#EFE4D2}
 #chips{display:flex;flex-wrap:wrap;gap:7px}
-.chip{background:#ffffff;border:1px solid #d2d2d7;color:#1d1d1f;padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;font-weight:500}
+.chip{background:#FAF3E3;border:1px solid #d2d2d7;color:#1d1d1f;padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;font-weight:500}
 #typingrow{display:none}
 .tdot{width:6px;height:6px;border-radius:50%;display:inline-block;animation:bnc 1s infinite;background:#86868b}
 .tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
 @keyframes bnc{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-#inputarea{border-top:1px solid #d2d2d7;padding:10px 12px 14px;flex-shrink:0;background:#ffffff}
+#inputarea{border-top:2px solid #8B4513;padding:12px 14px 16px;flex-shrink:0;background:#E8D5B7}
 #irow{display:flex;gap:8px;align-items:center}
 #inp{flex:1;background:#f5f5f7;border:1px solid #d2d2d7;border-radius:12px;color:#1d1d1f;padding:12px 14px;font-size:14px;font-family:inherit;outline:none}
 #sbtn{border:none;border-radius:10px;color:#000;width:43px;height:43px;font-size:17px;font-weight:bold;cursor:pointer;flex-shrink:0}
-#sbtn:disabled{background:#f5f5f7!important;color:#a1a1a6;cursor:not-allowed}
-#disc{text-align:center;margin-top:7px;font-size:10px;color:#c7c7cc}
+#sbtn:disabled{background:#8B6F47!important;color:#EFE4D2;cursor:not-allowed;border-color:#8B6F47}
+#disc{text-align:center;margin-top:8px;font-size:10px;color:#8B6F47;font-style:italic}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fadeIn .4s ease both}
+.card:nth-child(1){animation-delay:.05s}
+.card:nth-child(2){animation-delay:.1s}
+.card:nth-child(3){animation-delay:.15s}
+.card:nth-child(4){animation-delay:.2s}
+.card:nth-child(5){animation-delay:.25s}
+.card:nth-child(6){animation-delay:.3s}
+.card:nth-child(7){animation-delay:.35s}
+.card:nth-child(8){animation-delay:.4s}
+.card:nth-child(9){animation-delay:.45s}
+.card:nth-child(10){animation-delay:.5s}
+.card:nth-child(11){animation-delay:.55s}
+.card:nth-child(12){animation-delay:.6s}
+.card:hover{transform:translateY(-2px);box-shadow:3px 3px 0 rgba(43,24,16,0.2),inset 0 0 20px rgba(184,115,51,0.08)}
 </style>
 </head>
 <body>
@@ -71,6 +94,25 @@ body{background:#fbfbfd;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
 <div id="selector">
 <div class="sel-title">🏆 My Tycoon Advisors</div>
 <div class="sel-sub">Personal AI · Reasons from real past · Admits unknowns · Hybrid mode</div>
+<!-- Daily Wisdom -->
+<div id="dailyQuote" style="background:#E8D5B7;border:2px solid #8B4513;border-radius:4px;padding:20px 22px;margin-bottom:16px;text-align:center;box-shadow:3px 3px 0 rgba(43,24,16,0.2);position:relative"><div style="position:absolute;top:4px;left:4px;right:4px;bottom:4px;border:1px solid rgba(184,115,51,0.25);border-radius:2px;pointer-events:none"></div></div>
+
+<!-- Quick Actions Bar -->
+<div id="quickActions" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+  <button onclick="openHomeBoardRoom()" style="background:#2B1810;border:2px solid #B87333;border-radius:4px;color:#EFE4D2;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;letter-spacing:0.06em;text-transform:uppercase;box-shadow:2px 2px 0 rgba(184,115,51,0.4)">🏆 Ask Board</button>
+  <button onclick="openGoals()" style="background:#D4B896;border:2px solid #8B4513;border-radius:4px;color:#2B1810;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;letter-spacing:0.06em;text-transform:uppercase;box-shadow:2px 2px 0 rgba(43,24,16,0.25)">🎯 Goals</button>
+</div>
+<div id="quickActions2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+  <button onclick="openBoardHistory()" style="background:#D4B896;border:2px solid #8B4513;border-radius:4px;color:#2B1810;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;text-transform:uppercase;box-shadow:2px 2px 0 rgba(43,24,16,0.2)">📚 Board</button>
+  <button onclick="openDecisionLog()" style="background:#D4B896;border:2px solid #8B4513;border-radius:4px;color:#2B1810;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;text-transform:uppercase;box-shadow:2px 2px 0 rgba(43,24,16,0.2)">📜 Log</button>
+  <button onclick="openSettings()" style="background:#D4B896;border:2px solid #8B4513;border-radius:4px;color:#2B1810;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;text-transform:uppercase;box-shadow:2px 2px 0 rgba(43,24,16,0.2)">⚙️ More</button>
+</div>
+
+<!-- Search bar -->
+<div style="margin-bottom:14px">
+  <input id="searchInp" placeholder="🔍 Search tycoons by name, country, industry..." oninput="filterTycoons()" style="width:100%;background:#E8D5B7;border:2px solid #8B4513;border-radius:4px;color:#2B1810;padding:12px 16px;font-size:14px;font-family:"Crimson Text",serif;outline:none;font-style:italic">
+</div>
+
 <div id="nameSetup">
 <input id="nameInp" type="text" placeholder="Your name (so they remember you)..."/>
 <button id="nameSave" onclick="saveName()">Save</button>
@@ -83,7 +125,9 @@ body{background:#fbfbfd;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
 <button id="backbtn" onclick="goBack()">← Back</button>
 <div id="hav"></div>
 <div id="hinfo"><div id="hname"></div><div id="hsub"></div></div>
-<button class="hbtn" onclick="toggleMem()">💾</button>
+<button class="hbtn" onclick="toggleMem()" title="Memory">💾</button>
+    <button class="hbtn" onclick="exportChatPDF()" title="Export chat as PDF" style="margin-left:4px">📄</button>
+    <button class="hbtn" onclick="clearChat()" title="Clear chat" style="margin-left:4px;color:#ff3b30">🗑️</button>
 </div>
 <div id="modeIndicator">Mode: <b id="modeLabel">✨ Auto</b> · <span style="color:#86868b">detects from your message</span></div>
 <div id="modebar">
@@ -109,7 +153,7 @@ body{background:#fbfbfd;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
 </div>
 <!-- Floating Board Room Button -->
 <div id="boardFloatBtn" style="display:none;padding:8px 12px;background:#fbfbfd;border-top:1px solid #d2d2d7;flex-shrink:0">
-  <button onclick="openBoardRoom()" style="width:100%;background:#1d1d1f;border:none;border-radius:12px;color:#f5f5f7;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">
+  <button onclick="openBoardRoom()" style="width:100%;background:#2B1810;border:2px solid #B87333;border-radius:4px;color:#EFE4D2;padding:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.08em;text-transform:uppercase;box-shadow:2px 2px 0 rgba(184,115,51,0.4)">
     🏆 Take to Board Room — Get All 12 Perspectives
   </button>
 </div>
@@ -481,6 +525,7 @@ function openChat(t) {
   });
   document.getElementById('chipswrap').style.display = '';
   document.getElementById('boardFloatBtn').style.display = 'none';
+  setTimeout(() => loadChatHistory(), 50);
   document.getElementById('inp').value = '';
   updateBtn();
   scrollDown();
@@ -589,6 +634,7 @@ function addBubble(role, text, hadThinking = false, usedMode = null) {
   // Show Board Room button after first AI response
   if (role === 'ai' && history.length > 0) {
     document.getElementById('boardFloatBtn').style.display = 'block';
+    saveChatHistory();
   }
   const msgs = document.getElementById('msgs');
   const typingrow = document.getElementById('typingrow');
@@ -632,6 +678,290 @@ function updateBtn() { document.getElementById('sbtn').disabled = busy || !docum
 
 
 
+
+
+// ── DAILY WISDOM ──
+const DAILY_QUOTES = [
+  {tycoon:"Mukesh Ambani",emoji:"👔",quote:"Don't be afraid of fluctuations. Without volatility, there is no opportunity."},
+  {tycoon:"Elon Musk",emoji:"🚀",quote:"When something is important enough, you do it even if the odds are not in your favor."},
+  {tycoon:"Warren Buffett",emoji:"📊",quote:"Risk comes from not knowing what you are doing."},
+  {tycoon:"Steve Jobs",emoji:"🍎",quote:"Innovation distinguishes between a leader and a follower."},
+  {tycoon:"Richard Branson",emoji:"🎯",quote:"You don't learn to walk by following rules. You learn by doing, and by falling over."},
+  {tycoon:"Ray Dalio",emoji:"📈",quote:"He who lives by the crystal ball will eat shattered glass."},
+  {tycoon:"Mark Cuban",emoji:"🏀",quote:"It doesn't matter how many times you fail. You only have to be right once."},
+  {tycoon:"Narayana Murthy",emoji:"💡",quote:"Progress is often equal to the difference between mind and mindset."},
+  {tycoon:"Merrill J. Fernando",emoji:"🍵",quote:"Business is much more than profits — it is service to humanity."},
+  {tycoon:"Dhammika Perera",emoji:"💎",quote:"Diversification with discipline is the foundation of lasting wealth."},
+  {tycoon:"Aliko Dangote",emoji:"🏭",quote:"To build a successful business, you must start small and dream big."},
+  {tycoon:"Tony Elumelu",emoji:"🦁",quote:"Africapitalism means investing in Africa to create economic and social wealth."}
+];
+
+function showDailyQuote() {
+  const day = new Date().getDate();
+  const q = DAILY_QUOTES[day % DAILY_QUOTES.length];
+  const el = document.getElementById('dailyQuote');
+  if (el) {
+    el.innerHTML = `<div style="font-size:11px;color:#8B4513;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;margin-bottom:10px;font-family:'Playfair Display',serif">✦ ❦ Today's Wisdom ❦ ✦</div>
+    <div style="font-size:16px;color:#2B1810;font-style:italic;line-height:1.7;font-family:'Crimson Text',serif"><span style="font-size:32px;color:#B87333;vertical-align:-8px;font-family:'Playfair Display',serif">“</span>${q.quote}<span style="font-size:32px;color:#B87333;vertical-align:-8px;font-family:'Playfair Display',serif">”</span></div>
+    <div style="font-size:11px;color:#8B6F47;margin-top:8px;font-family:'Playfair Display',serif;text-transform:uppercase;letter-spacing:0.08em">— ${q.emoji} ${q.tycoon}</div>`;
+  }
+}
+
+// ── DECISION LOG ──
+function openDecisionLog() {
+  document.getElementById('decisionLog').style.display = 'flex';
+  renderDecisionLog();
+}
+
+function closeDecisionLog() {
+  document.getElementById('decisionLog').style.display = 'none';
+}
+
+function renderDecisionLog() {
+  const list = document.getElementById('decisionLogList');
+  const log = JSON.parse(localStorage.getItem('decisions_log') || '[]');
+  
+  if (log.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#8B6F47;font-family:\'Crimson Text\',serif;font-style:italic"><div style="font-size:48px;margin-bottom:16px">📜</div><div style="font-size:14px">No decisions saved yet</div></div>';
+    return;
+  }
+  
+  list.innerHTML = log.map((d, idx) => {
+    const date = new Date(d.date).toLocaleDateString() + ' • ' + new Date(d.date).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    return `<div style="background:#E8D5B7;border:1px solid #8B4513;border-radius:4px;padding:14px;margin-bottom:10px;box-shadow:2px 2px 0 rgba(43,24,16,0.15)">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#8B6F47;margin-bottom:8px;font-family:'Playfair Display',serif;letter-spacing:0.06em;text-transform:uppercase">
+        <span>${date}</span><span>${d.tycoon}</span>
+      </div>
+      <div style="font-size:14px;color:#2B1810;line-height:1.6;font-family:'Crimson Text',serif">${d.decision}</div>
+      ${d.context ? `<div style="font-size:11px;color:#8B6F47;margin-top:8px;font-style:italic">Context: ${d.context}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── GOAL TRACKER ──
+function openGoals() {
+  document.getElementById('goalsOverlay').style.display = 'flex';
+  renderGoals();
+}
+
+function closeGoals() {
+  document.getElementById('goalsOverlay').style.display = 'none';
+}
+
+function renderGoals() {
+  const list = document.getElementById('goalsList');
+  const goals = JSON.parse(localStorage.getItem('biz_goals') || '[]');
+  
+  if (goals.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#8B6F47;font-style:italic">No goals yet. Add your first below ↓</div>';
+    return;
+  }
+  
+  list.innerHTML = goals.map((g, idx) => `
+    <div style="background:#E8D5B7;border:1px solid #8B4513;border-radius:4px;padding:12px;margin-bottom:10px;display:flex;gap:10px;align-items:center">
+      <input type="checkbox" ${g.done ? 'checked' : ''} onchange="toggleGoal(${idx})" style="width:18px;height:18px;accent-color:#2B1810;cursor:pointer">
+      <div style="flex:1;font-size:14px;color:#2B1810;font-family:'Crimson Text',serif;${g.done ? 'text-decoration:line-through;opacity:0.6' : ''}">${g.text}</div>
+      <button onclick="deleteGoal(${idx})" style="background:transparent;border:none;color:#8B4513;cursor:pointer;font-size:16px">×</button>
+    </div>`).join('');
+}
+
+function addGoal() {
+  const inp = document.getElementById('goalInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  const goals = JSON.parse(localStorage.getItem('biz_goals') || '[]');
+  goals.unshift({ text, done: false, date: new Date().toISOString() });
+  localStorage.setItem('biz_goals', JSON.stringify(goals));
+  inp.value = '';
+  renderGoals();
+}
+
+function toggleGoal(idx) {
+  const goals = JSON.parse(localStorage.getItem('biz_goals') || '[]');
+  goals[idx].done = !goals[idx].done;
+  localStorage.setItem('biz_goals', JSON.stringify(goals));
+  renderGoals();
+}
+
+function deleteGoal(idx) {
+  const goals = JSON.parse(localStorage.getItem('biz_goals') || '[]');
+  goals.splice(idx, 1);
+  localStorage.setItem('biz_goals', JSON.stringify(goals));
+  renderGoals();
+}
+
+// ── BACKUP / RESTORE ──
+function backupData() {
+  const data = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    data[key] = localStorage.getItem(key);
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tycoon-backup-' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+}
+
+function restoreData() {
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.json';
+  inp.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!confirm('Restore will REPLACE all current data. Continue?')) return;
+        Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
+        alert('✅ Data restored! Refreshing...');
+        location.reload();
+      } catch(err) { alert('Invalid backup file'); }
+    };
+    reader.readAsText(file);
+  };
+  inp.click();
+}
+
+// ── SETTINGS PANEL ──
+function openSettings() {
+  document.getElementById('settingsOverlay').style.display = 'flex';
+}
+
+function closeSettings() {
+  document.getElementById('settingsOverlay').style.display = 'none';
+}
+
+
+// ── HOME BOARD ROOM ──
+function openHomeBoardRoom() {
+  document.getElementById('homeBoardRoom').style.display = 'flex';
+  document.getElementById('homeBoardQuestion').value = '';
+  setTimeout(() => document.getElementById('homeBoardQuestion').focus(), 100);
+}
+
+function closeHomeBoardRoom() {
+  document.getElementById('homeBoardRoom').style.display = 'none';
+}
+
+async function askHomeBoardRoom() {
+  const q = document.getElementById('homeBoardQuestion').value.trim();
+  if (!q) { alert('Please enter your question'); return; }
+  
+  // Set up Board Room without tycoon context
+  current = null;
+  history = [{ role: 'user', content: q }];
+  
+  closeHomeBoardRoom();
+  document.getElementById('boardRoom').style.display = 'flex';
+  document.getElementById('boardEmpty').style.display = 'none';
+  document.getElementById('boardResults').style.display = 'none';
+  document.getElementById('myDecision').value = '';
+  
+  await runBoardRoom();
+}
+
+// ── TYCOON SEARCH ──
+function filterTycoons() {
+  const q = (document.getElementById('searchInp').value || '').toLowerCase().trim();
+  document.querySelectorAll('#grid .card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+// ── CHAT HISTORY PERSISTENCE ──
+function saveChatHistory() {
+  if (!current || !history || history.length === 0) return;
+  try {
+    localStorage.setItem('chat_' + current.name, JSON.stringify(history));
+  } catch(e) {}
+}
+
+function loadChatHistory() {
+  if (!current) return;
+  try {
+    const saved = localStorage.getItem('chat_' + current.name);
+    if (saved) {
+      const oldHistory = JSON.parse(saved);
+      if (Array.isArray(oldHistory) && oldHistory.length > 0) {
+        history = oldHistory;
+        // Render saved messages
+        document.getElementById('msgs').innerHTML = '';
+        history.forEach(m => {
+          if (m.role === 'user') addBubble('user', m.content);
+          else addBubble('ai', m.content);
+        });
+        document.getElementById('boardFloatBtn').style.display = 'block';
+      }
+    }
+  } catch(e) {}
+}
+
+function clearChat() {
+  if (!confirm('Clear this chat with ' + (current?.name || 'tycoon') + '? Your memory will be kept.')) return;
+  history = [];
+  document.getElementById('msgs').innerHTML = '';
+  if (current) localStorage.removeItem('chat_' + current.name);
+  document.getElementById('boardFloatBtn').style.display = 'none';
+}
+
+// ── CHAT PDF EXPORT ──
+function exportChatPDF() {
+  if (!current || history.length === 0) {
+    alert('No chat to export yet. Send a message first.');
+    return;
+  }
+  
+  const filename = 'Chat-' + current.name.replace(/\s+/g, '-') + '-' + new Date().toISOString().split('T')[0] + '.pdf';
+  
+  let html = `<div style="font-family:Arial,sans-serif;color:#1d1d1f;line-height:1.6">
+    <div style="text-align:center;border-bottom:3px solid #1d1d1f;padding-bottom:20px;margin-bottom:30px">
+      <h1 style="margin:0;font-size:26px">${current.emoji} Chat with ${current.name}</h1>
+      <div style="color:#666;font-size:14px;margin-top:8px">${current.tagline || ''} • ${new Date().toLocaleString()}</div>
+    </div>`;
+  
+  history.forEach(m => {
+    if (m.role === 'user') {
+      html += `<div style="margin-bottom:14px;text-align:right">
+        <div style="display:inline-block;max-width:75%;background:#0071e3;color:#fff;padding:10px 14px;border-radius:14px;font-size:13px;text-align:left">${m.content.replace(/\n/g, '<br>')}</div>
+      </div>`;
+    } else {
+      html += `<div style="margin-bottom:14px">
+        <div style="display:inline-block;max-width:85%;background:#f5f5f7;color:#1d1d1f;padding:10px 14px;border-radius:14px;font-size:13px">
+          <div style="font-weight:bold;margin-bottom:4px;font-size:11px;color:#666">${current.emoji} ${current.name}</div>
+          ${m.content.replace(/\n/g, '<br>')}
+        </div>
+      </div>`;
+    }
+  });
+  
+  html += `<div style="text-align:center;color:#999;font-size:11px;margin-top:30px;padding-top:20px;border-top:1px solid #ddd">Generated by My Tycoon Advisors</div>
+  </div>`;
+  
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;left:0;top:0;width:800px;background:#FAF3E3;padding:40px;font-family:Arial,sans-serif;z-index:99999';
+  container.innerHTML = html;
+  document.body.appendChild(container);
+  
+  setTimeout(() => {
+    html2pdf().set({
+      margin: [10, 10, 10, 10],
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff', windowWidth: 800 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(container).save().then(() => container.remove()).catch(err => {
+      alert('PDF error: ' + err.message);
+      container.remove();
+    });
+  }, 500);
+}
+
+
 // ── BOARD HISTORY ──
 function saveBoardToHistory(result, conversation) {
   try {
@@ -673,7 +1003,7 @@ function renderBoardHistory() {
     const date = new Date(entry.date);
     const dateStr = date.toLocaleDateString() + ' • ' + date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
     const preview = (entry.result?.context || 'Board meeting').substring(0, 100);
-    return `<div style="background:#fff;border:1px solid #d2d2d7;border-radius:14px;padding:14px;margin-bottom:10px">
+    return `<div style="background:#E8D5B7;border:1px solid #8B4513;border-radius:4px;padding:16px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
         <div style="font-size:11px;color:#86868b;font-weight:500">${dateStr}</div>
         <div style="font-size:11px;color:#86868b">${entry.tycoonEmoji} ${entry.tycoon}</div>
@@ -711,8 +1041,8 @@ function viewHistoryEntry(idx) {
   viewsContainer.innerHTML = '';
   result.views.forEach(v => {
     const card = document.createElement('div');
-    card.style.cssText = 'background:#fff;border:1px solid #d2d2d7;border-radius:14px;padding:14px;display:flex;gap:10px;align-items:flex-start';
-    card.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;background:#1d1d1f;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${v.emoji}</div><div><div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:4px">${v.name}</div><div style="font-size:13px;color:#3a3a3c;line-height:1.65">${v.view}</div></div>`;
+    card.style.cssText = 'background:#E8D5B7;border:1px solid #8B4513;border-radius:4px;padding:16px;display:flex;gap:10px;align-items:flex-start';
+    card.innerHTML = `<div style="width:42px;height:42px;border-radius:50%;background:#FAF3E3;border:2px solid #B87333;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:1px 1px 0 rgba(43,24,16,0.2)">${v.emoji}</div><div><div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:4px">${v.name}</div><div style="font-size:13px;color:#3a3a3c;line-height:1.65">${v.view}</div></div>`;
     viewsContainer.appendChild(card);
   });
   
@@ -806,35 +1136,36 @@ function exportHistoryPDF(idx) {
 }
 
 function generatePDF(entry, decision) {
-  const template = document.getElementById('pdfTemplate');
-  template.innerHTML = buildPDFHTML(entry, decision);
   const filename = 'Board-Room-' + new Date(entry.date || Date.now()).toISOString().split('T')[0] + '.pdf';
   
-  // Make template visible briefly for rendering
-  template.style.left = '0';
-  template.style.top = '0';
-  template.style.zIndex = '-1';
-  template.style.opacity = '0';
-  template.style.pointerEvents = 'none';
+  // Create a fresh visible container for PDF
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;left:0;top:0;width:800px;background:#FAF3E3;padding:40px;font-family:Arial,sans-serif;z-index:99999;overflow:visible';
+  container.innerHTML = buildPDFHTML(entry, decision);
+  document.body.appendChild(container);
   
+  // Wait for render then capture
   setTimeout(() => {
     html2pdf().set({
-      margin: 10,
+      margin: [10, 10, 10, 10],
       filename: filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, width: 800 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    }).from(template).save().then(() => {
-      // Hide template after PDF saved
-      template.style.left = '-10000px';
-      template.innerHTML = '';
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        windowWidth: 800
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(container).save().then(() => {
+      container.remove();
     }).catch(err => {
       console.error('PDF error:', err);
-      alert('PDF generation failed: ' + err.message);
-      template.style.left = '-10000px';
+      alert('PDF error: ' + err.message);
+      container.remove();
     });
-  }, 200);
+  }, 500);
 }
 
 
@@ -1009,9 +1340,9 @@ async function runBoardRoom() {
     viewsContainer.innerHTML = '';
     result.views.forEach(v => {
       const card = document.createElement('div');
-      card.style.cssText = 'background:#fff;border:1px solid #d2d2d7;border-radius:14px;padding:14px;display:flex;gap:10px;align-items:flex-start';
+      card.style.cssText = 'background:#E8D5B7;border:1px solid #8B4513;border-radius:4px;padding:16px;display:flex;gap:10px;align-items:flex-start';
       card.innerHTML = `
-        <div style="width:36px;height:36px;border-radius:50%;background:#1d1d1f;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${v.emoji}</div>
+        <div style="width:42px;height:42px;border-radius:50%;background:#FAF3E3;border:2px solid #B87333;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:1px 1px 0 rgba(43,24,16,0.2)">${v.emoji}</div>
         <div>
           <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:4px">${v.name}</div>
           <div style="font-size:13px;color:#3a3a3c;line-height:1.65">${v.view}</div>
@@ -1039,11 +1370,31 @@ document.getElementById('inp').addEventListener('keydown', e => { if (e.key === 
 document.getElementById('sbtn').addEventListener('click', sendMsg);
 </script>
 
+
+<!-- HOME BOARD ROOM (Ask without picking a tycoon) -->
+<div id="homeBoardRoom" style="display:none;position:fixed;inset:0;background:#EFE4D2;z-index:250;flex-direction:column;overflow:hidden">
+  <div style="padding:14px 16px;background:#E8D5B7;border-bottom:2px solid #8B4513;display:flex;align-items:center;gap:12px;flex-shrink:0">
+    <button onclick="closeHomeBoardRoom()" style="background:transparent;border:none;color:#0071e3;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">← Back</button>
+    <div style="flex:1;text-align:center">
+      <div style="font-size:16px;font-weight:700;color:#1d1d1f">🏆 Ask the Board</div>
+      <div style="font-size:11px;color:#86868b">12 tycoons answer directly</div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:20px">
+    <div style="background:#E8D5B7;border:2px solid #8B4513;border-radius:4px;padding:18px">
+      <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">💼 Your Question</div>
+      <div style="font-size:12px;color:#86868b;margin-bottom:12px">Describe your business situation, problem, or decision</div>
+      <textarea id="homeBoardQuestion" placeholder="e.g., I want to import 4 containers per month. How should I plan financing and scaling?" style="width:100%;background:#F5E6D3;border:2px solid #C8956D;border-radius:4px;color:#2B1810;padding:14px;font-size:15px;font-family:'Crimson Text',serif;outline:none;resize:vertical;min-height:140px;line-height:1.7;font-style:italic;line-height:1.6"></textarea>
+      <button onclick="askHomeBoardRoom()" style="margin-top:12px;background:#1d1d1f;border:none;border-radius:10px;color:#fff;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%">🚀 Ask All 12 Tycoons</button>
+    </div>
+  </div>
+</div>
+
 <!-- BOARD ROOM OVERLAY -->
-<div id="boardRoom" style="display:none;position:fixed;inset:0;background:#fbfbfd;z-index:200;flex-direction:column;overflow:hidden">
+<div id="boardRoom" style="display:none;position:fixed;inset:0;background:#EFE4D2;z-index:200;flex-direction:column;overflow:hidden">
   
   <!-- Header -->
-  <div style="padding:14px 16px;background:#fff;border-bottom:1px solid #d2d2d7;display:flex;align-items:center;gap:8px;flex-shrink:0">
+  <div style="padding:14px 16px;background:#E8D5B7;border-bottom:2px solid #8B4513;display:flex;align-items:center;gap:8px;flex-shrink:0">
     <button onclick="closeBoardRoom()" style="background:transparent;border:none;color:#0071e3;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">← Back</button>
     <div style="flex:1;text-align:center">
       <div style="font-size:16px;font-weight:700;color:#1d1d1f">🏆 Board Room</div>
@@ -1078,40 +1429,40 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
     <div id="boardResults" style="display:none">
       
       <!-- Context bar -->
-      <div id="boardContext" style="background:#f5f5f7;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#86868b;line-height:1.5"></div>
+      <div id="boardContext" style="background:#E7D4B4;border:1px dashed #B87333;border-radius:4px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#5C4033;line-height:1.6;font-family:'Crimson Text',serif;font-style:italic"></div>
 
       <!-- Consensus -->
-      <div style="background:#fff;border:1px solid #d2d2d7;border-radius:16px;padding:16px;margin-bottom:12px">
-        <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">📊 Consensus</div>
-        <div id="boardConsensus" style="font-size:14px;color:#1d1d1f;line-height:1.75"></div>
+      <div style="background:#E8D5B7;border:2px solid #8B4513;border-radius:4px;padding:18px;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;color:#8B4513;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.12em;font-family:'Playfair Display',serif;border-bottom:1px solid #C8956D;padding-bottom:6px">📊 Consensus</div>
+        <div id="boardConsensus" style="font-size:15px;color:#2B1810;line-height:1.8;font-family:'Crimson Text',serif"></div>
       </div>
 
       <!-- Individual views -->
-      <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">💬 Each Tycoon's Take</div>
+      <div style="font-size:13px;font-weight:700;color:#8B4513;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.12em;font-family:'Playfair Display',serif;border-bottom:1px solid #C8956D;padding-bottom:6px">💬 Each Tycoon's Take</div>
       <div id="boardViews" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px"></div>
 
       <!-- Disagreements -->
-      <div style="background:#fff;border:1px solid #d2d2d7;border-radius:16px;padding:16px;margin-bottom:12px">
-        <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">⚡ Key Disagreements</div>
-        <div id="boardDisagreements" style="font-size:14px;color:#1d1d1f;line-height:1.75"></div>
+      <div style="background:#E8D5B7;border:2px solid #8B4513;border-radius:4px;padding:18px;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;color:#8B4513;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.12em;font-family:'Playfair Display',serif;border-bottom:1px solid #C8956D;padding-bottom:6px">⚡ Key Disagreements</div>
+        <div id="boardDisagreements" style="font-size:15px;color:#2B1810;line-height:1.8;font-family:'Crimson Text',serif"></div>
       </div>
 
       <!-- Unique insights -->
-      <div style="background:#fff;border:1px solid #d2d2d7;border-radius:16px;padding:16px;margin-bottom:16px">
-        <div style="font-size:12px;font-weight:700;color:#1d1d1f;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">💡 Unique Insights</div>
-        <div id="boardInsights" style="font-size:14px;color:#1d1d1f;line-height:1.75"></div>
+      <div style="background:#E8D5B7;border:2px solid #8B4513;border-radius:4px;padding:18px;margin-bottom:16px">
+        <div style="font-size:13px;font-weight:700;color:#8B4513;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.12em;font-family:'Playfair Display',serif;border-bottom:1px solid #C8956D;padding-bottom:6px">💡 Unique Insights</div>
+        <div id="boardInsights" style="font-size:15px;color:#2B1810;line-height:1.8;font-family:'Crimson Text',serif"></div>
       </div>
 
       <!-- Export PDF Button -->
-      <button onclick="exportBoardPDF()" style="width:100%;background:#fff;border:1px solid #d2d2d7;border-radius:12px;color:#1d1d1f;padding:13px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px">
+      <button onclick="exportBoardPDF()" style="width:100%;background:#D4B896;border:2px solid #8B4513;border-radius:4px;color:#2B1810;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.08em;text-transform:uppercase;box-shadow:2px 2px 0 rgba(43,24,16,0.2)">
         📄 Export as PDF (Share with Family)
       </button>
 
       <!-- Your Decision -->
-      <div style="background:#1d1d1f;border-radius:16px;padding:16px;margin-bottom:20px">
+      <div style="background:#2B1810;border:2px solid #B87333;border-radius:4px;padding:18px;margin-bottom:20px;box-shadow:3px 3px 0 rgba(184,115,51,0.3)">
         <div style="font-size:12px;font-weight:700;color:#f5f5f7;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">✍️ Your Decision</div>
         <div style="font-size:12px;color:#86868b;margin-bottom:10px">After hearing all perspectives — what will YOU do?</div>
-        <textarea id="myDecision" placeholder="Write your own conclusion and action plan here..." style="width:100%;background:#2a2a2a;border:1px solid #3a3a3a;border-radius:10px;color:#f5f5f7;padding:12px;font-size:14px;font-family:inherit;outline:none;resize:none;min-height:100px;line-height:1.6"></textarea>
+        <textarea id="myDecision" placeholder="Write your own conclusion and action plan here..." style="width:100%;background:#F5E6D3;border:2px solid #B87333;border-radius:4px;color:#2B1810;padding:14px;font-size:15px;font-family:'Crimson Text',serif;outline:none;resize:none;min-height:100px;line-height:1.7;font-style:italic;line-height:1.6"></textarea>
         <button onclick="saveDecision()" style="margin-top:10px;background:#0071e3;border:none;border-radius:10px;color:#fff;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;width:100%">💾 Save My Decision</button>
         <div id="decisionSaved" style="display:none;text-align:center;margin-top:8px;font-size:12px;color:#50c878">✅ Decision saved!</div>
       </div>
@@ -1122,8 +1473,8 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
 
 
 <!-- BOARD HISTORY OVERLAY -->
-<div id="boardHistory" style="display:none;position:fixed;inset:0;background:#fbfbfd;z-index:300;flex-direction:column;overflow:hidden">
-  <div style="padding:14px 16px;background:#fff;border-bottom:1px solid #d2d2d7;display:flex;align-items:center;gap:12px;flex-shrink:0">
+<div id="boardHistory" style="display:none;position:fixed;inset:0;background:#EFE4D2;z-index:300;flex-direction:column;overflow:hidden">
+  <div style="padding:14px 16px;background:#E8D5B7;border-bottom:2px solid #8B4513;display:flex;align-items:center;gap:12px;flex-shrink:0">
     <button onclick="closeBoardHistory()" style="background:transparent;border:none;color:#0071e3;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">← Back</button>
     <div style="flex:1;text-align:center">
       <div style="font-size:16px;font-weight:700;color:#1d1d1f">📚 Board History</div>
@@ -1135,7 +1486,83 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
 </div>
 
 <!-- HIDDEN PDF EXPORT TEMPLATE -->
-<div id="pdfTemplate" style="position:fixed;left:-10000px;top:0;width:800px;background:#fff;padding:40px;font-family:Arial,sans-serif;z-index:-1"></div>
+<div id="pdfTemplate" style="position:fixed;left:-10000px;top:0;width:800px;background:#FAF3E3;padding:40px;font-family:Arial,sans-serif;z-index:-1"></div>
 
+
+<!-- DECISION LOG -->
+<div id="decisionLog" style="display:none;position:fixed;inset:0;background:#EFE4D2;z-index:280;flex-direction:column">
+  <div style="padding:14px 16px;background:#E8D5B7;border-bottom:2px solid #8B4513;display:flex;align-items:center;gap:12px">
+    <button onclick="closeDecisionLog()" style="background:transparent;border:1px solid #B87333;color:#2B1810;border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:600;text-transform:uppercase">← Back</button>
+    <div style="flex:1;text-align:center;font-size:18px;font-weight:700;color:#2B1810;font-family:'Playfair Display',serif">📜 Decision Log</div>
+  </div>
+  <div id="decisionLogList" style="flex:1;overflow-y:auto;padding:16px"></div>
+</div>
+
+<!-- GOALS -->
+<div id="goalsOverlay" style="display:none;position:fixed;inset:0;background:#EFE4D2;z-index:280;flex-direction:column">
+  <div style="padding:14px 16px;background:#E8D5B7;border-bottom:2px solid #8B4513;display:flex;align-items:center;gap:12px">
+    <button onclick="closeGoals()" style="background:transparent;border:1px solid #B87333;color:#2B1810;border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:600;text-transform:uppercase">← Back</button>
+    <div style="flex:1;text-align:center;font-size:18px;font-weight:700;color:#2B1810;font-family:'Playfair Display',serif">🎯 My Goals</div>
+  </div>
+  <div style="padding:16px;background:#E8D5B7;border-bottom:1px solid #8B4513">
+    <div style="display:flex;gap:8px">
+      <input id="goalInput" placeholder="Add a business goal..." onkeydown="if(event.key==='Enter')addGoal()" style="flex:1;background:#FAF3E3;border:2px solid #8B4513;border-radius:4px;color:#2B1810;padding:11px 14px;font-size:14px;font-family:'Crimson Text',serif;outline:none;font-style:italic">
+      <button onclick="addGoal()" style="background:#2B1810;border:2px solid #B87333;color:#EFE4D2;border-radius:4px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:700;text-transform:uppercase">Add</button>
+    </div>
+  </div>
+  <div id="goalsList" style="flex:1;overflow-y:auto;padding:16px"></div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settingsOverlay" style="display:none;position:fixed;inset:0;background:#EFE4D2;z-index:280;flex-direction:column">
+  <div style="padding:14px 16px;background:#E8D5B7;border-bottom:2px solid #8B4513;display:flex;align-items:center;gap:12px">
+    <button onclick="closeSettings()" style="background:transparent;border:1px solid #B87333;color:#2B1810;border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:600;text-transform:uppercase">← Back</button>
+    <div style="flex:1;text-align:center;font-size:18px;font-weight:700;color:#2B1810;font-family:'Playfair Display',serif">⚙️ Settings</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px">
+    <div style="background:#E8D5B7;border:2px solid #8B4513;border-radius:4px;padding:16px;margin-bottom:12px;box-shadow:2px 2px 0 rgba(43,24,16,0.15)">
+      <div style="font-size:14px;font-weight:700;color:#2B1810;margin-bottom:6px;font-family:'Playfair Display',serif">💾 Backup Your Data</div>
+      <div style="font-size:12px;color:#8B6F47;margin-bottom:12px;font-style:italic">Download all chats, decisions, goals, and board meetings as a backup file.</div>
+      <button onclick="backupData()" style="background:#2B1810;border:2px solid #B87333;color:#EFE4D2;border-radius:4px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:700;text-transform:uppercase;width:100%">📥 Download Backup</button>
+    </div>
+    <div style="background:#E8D5B7;border:2px solid #8B4513;border-radius:4px;padding:16px;margin-bottom:12px;box-shadow:2px 2px 0 rgba(43,24,16,0.15)">
+      <div style="font-size:14px;font-weight:700;color:#2B1810;margin-bottom:6px;font-family:'Playfair Display',serif">📤 Restore Backup</div>
+      <div style="font-size:12px;color:#8B6F47;margin-bottom:12px;font-style:italic">Restore from a previous backup file.</div>
+      <button onclick="restoreData()" style="background:#D4B896;border:2px solid #8B4513;color:#2B1810;border-radius:4px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:700;text-transform:uppercase;width:100%">📁 Choose Backup File</button>
+    </div>
+    <div style="background:#E8D5B7;border:2px solid #8B4513;border-radius:4px;padding:16px;box-shadow:2px 2px 0 rgba(43,24,16,0.15)">
+      <div style="font-size:14px;font-weight:700;color:#2B1810;margin-bottom:8px;font-family:'Playfair Display',serif">ℹ️ About</div>
+      <div style="font-size:12px;color:#2B1810;line-height:1.7;font-family:'Crimson Text',serif">
+        <b>My Tycoon Advisors</b><br>
+        12 business legends. Real perspectives. Better decisions.<br><br>
+        Powered by Claude AI.<br>
+        All data saved on your device.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PWA Manifest -->
+<script>
+if ('serviceWorker' in navigator) {
+  const manifestData = {
+    name: "My Tycoon Advisors",
+    short_name: "Tycoons",
+    description: "12 business legends. Real perspectives.",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#EFE4D2",
+    theme_color: "#2B1810",
+    icons: [{ src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFE4D2'/%3E%3Ctext x='50' y='65' font-size='60' text-anchor='middle'%3E%F0%9F%8F%86%3C/text%3E%3C/svg%3E", sizes: "192x192", type: "image/svg+xml" }]
+  };
+  const blob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = URL.createObjectURL(blob);
+  document.head.appendChild(link);
+}
+</script>
+
+<script>document.addEventListener("DOMContentLoaded", () => { if (typeof showDailyQuote === "function") showDailyQuote(); });</script>
 </body>
 </html>
