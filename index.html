@@ -886,10 +886,21 @@ function generatePDF(entry, decision) {
     const r = entry.result || entry;
     
     // === CONVERSATION SUMMARY ===
+    // Fallback: if no messages array, parse from conversation string
+    if ((!entry.messages || entry.messages.length === 0) && entry.conversation) {
+      const parts = entry.conversation.split('\n\n');
+      entry.messages = parts.map(p => {
+        if (p.startsWith('User: ')) return { role: 'user', content: p.substring(6) };
+        const colonIdx = p.indexOf(': ');
+        if (colonIdx > 0) return { role: 'assistant', content: p.substring(colonIdx + 2) };
+        return null;
+      }).filter(Boolean);
+    }
+    
     if (entry.messages && entry.messages.length > 0) {
       // Get user's main question (first user message)
       const userMsgs = entry.messages.filter(m => m.role === 'user');
-      const aiMsgs = entry.messages.filter(m => m.role === 'ai');
+      const aiMsgs = entry.messages.filter(m => m.role === 'assistant' || m.role === 'ai');
       
       const mainQuestion = userMsgs[0]?.content || '';
       // Combine all tycoon responses into one detailed paragraph
