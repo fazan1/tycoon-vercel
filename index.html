@@ -885,6 +885,67 @@ function generatePDF(entry, decision) {
     
     const r = entry.result || entry;
     
+    // === CONVERSATION SUMMARY ===
+    if (entry.messages && entry.messages.length > 0) {
+      // Get user's main question (first user message)
+      const userMsgs = entry.messages.filter(m => m.role === 'user');
+      const aiMsgs = entry.messages.filter(m => m.role === 'ai');
+      
+      const mainQuestion = userMsgs[0]?.content || '';
+      // Combine all tycoon responses into one detailed paragraph
+      const tycoonSummary = aiMsgs.map(m => m.content).join('\n\n').trim();
+      
+      if (mainQuestion) {
+        addText('THE QUESTION YOU ASKED', 11, 'bold', '#8B4513');
+        y += 2;
+        // Italic styled question
+        doc.setFillColor('#FAF3E3');
+        const qLines = doc.splitTextToSize(mainQuestion, contentW - 8);
+        const qH = 8 + qLines.length * 5;
+        checkPage(qH + 4);
+        doc.rect(margin, y, contentW, qH, 'F');
+        doc.setDrawColor('#B87333');
+        doc.setLineWidth(0.3);
+        doc.line(margin, y, margin, y + qH);
+        doc.line(margin, y, margin + 2, y);
+        doc.setTextColor('#1d1d1f');
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'italic');
+        doc.text(qLines, margin + 4, y + 6);
+        y += qH + 6;
+      }
+      
+      if (tycoonSummary && entry.tycoon && entry.tycoon !== 'General') {
+        addText((entry.tycoon || 'TYCOON').toUpperCase() + "'S ADVICE", 11, 'bold', '#8B4513');
+        y += 2;
+        doc.setFillColor('#FAF3E3');
+        const sLines = doc.splitTextToSize(tycoonSummary, contentW - 8);
+        const sH = 8 + sLines.length * 5;
+        checkPage(sH + 4);
+        doc.rect(margin, y, contentW, sH, 'F');
+        doc.setDrawColor('#B87333');
+        doc.setLineWidth(0.3);
+        doc.line(margin, y, margin, y + sH);
+        doc.setTextColor('#1d1d1f');
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.text(sLines, margin + 4, y + 6);
+        y += sH + 6;
+      }
+      
+      addDivider();
+      
+      // Section header for board analysis
+      checkPage(15);
+      doc.setFillColor('#8B4513');
+      doc.rect(margin, y - 2, contentW, 10, 'F');
+      doc.setTextColor('#EFE4D2');
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('BOARD ROOM ANALYSIS - ALL 12 TYCOONS', margin + 3, y + 4);
+      y += 14;
+    }
+    
     addText('QUESTION / CONTEXT', 11, 'bold', '#8B4513');
     y += 2;
     addText(r.context || 'Business consultation', 11, 'normal', '#1d1d1f');
@@ -1133,6 +1194,7 @@ function saveBoardToHistory(result, conversation) {
       tycoonEmoji: current?.emoji || '🏆',
       result: result,
       conversation: conversation,
+      messages: (typeof history !== "undefined" && Array.isArray(history)) ? [...history] : [], // Save actual messages
       decision: ''
     };
     history.unshift(entry);
