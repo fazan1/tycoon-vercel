@@ -1061,6 +1061,10 @@ let userName = localStorage.getItem('tycoon_username') || '';
 const nameInp = document.getElementById('nameInp');
 if (userName) nameInp.value = userName;
 
+function loadName() {
+  const saved = localStorage.getItem('tycoon_username');
+  if (saved && nameInp) nameInp.value = saved;
+}
 function saveName() {
   const n = nameInp.value.trim();
   const btn = document.getElementById('nameSave');
@@ -1081,6 +1085,7 @@ function saveName() {
   nameInp.blur();
 }
 nameInp.addEventListener('keydown', e => { if (e.key === 'Enter') saveName(); });
+loadName();
 
 const grid = document.getElementById('grid');
 TYCOONS.forEach(t => {
@@ -1114,7 +1119,10 @@ function openChat(t) {
 
   const msgs = document.getElementById('msgs');
   const typingrow = document.getElementById('typingrow');
-  while (msgs.firstChild && msgs.firstChild !== document.getElementById('chipswrap')) msgs.removeChild(msgs.firstChild);
+  // Remove all existing message bubbles (keep chipswrap and typingrow)
+  Array.from(msgs.querySelectorAll('.msg')).forEach(m => {
+    if (m.id !== 'typingrow') m.remove();
+  });
 
   document.getElementById('inp').onfocus = e => e.target.style.borderColor = t.ac;
   document.getElementById('inp').onblur = e => e.target.style.borderColor = '#1e1e1e';
@@ -1310,7 +1318,12 @@ function initSupabase() {
 }
 
 function getUserId() {
-  return localStorage.getItem('tycoon_username') || 'anonymous';
+  let name = localStorage.getItem('tycoon_username');
+  if (!name) {
+    name = 'Fazan'; // Default name - always syncs
+    localStorage.setItem('tycoon_username', name);
+  }
+  return name;
 }
 
 // Sync chat to cloud
@@ -1444,10 +1457,7 @@ function showSyncBanner(text) {
 window.addEventListener('load', () => {
   setTimeout(() => {
     if (initSupabase()) {
-      const userId = getUserId();
-      if (userId && userId !== 'anonymous') {
-        pullFromCloud();
-      }
+      pullFromCloud(); // Always sync, default name handles it
     }
   }, 500);
 });
@@ -1884,8 +1894,12 @@ function loadChatHistory() {
       const oldHistory = JSON.parse(saved);
       if (Array.isArray(oldHistory) && oldHistory.length > 0) {
         history = oldHistory;
+        // Remove existing bubbles (NOT chipswrap or typingrow)
+        const msgs = document.getElementById('msgs');
+        Array.from(msgs.querySelectorAll('.msg')).forEach(m => {
+          if (m.id !== 'typingrow') m.remove();
+        });
         // Render saved messages
-        document.getElementById('msgs').innerHTML = '';
         history.forEach(m => {
           if (m.role === 'user') addBubble('user', m.content);
           else addBubble('ai', m.content);
@@ -1899,7 +1913,10 @@ function loadChatHistory() {
 function clearChat() {
   if (!confirm('Clear this chat with ' + (current?.name || 'tycoon') + '? Your memory will be kept.')) return;
   history = [];
-  document.getElementById('msgs').innerHTML = '';
+  const msgs = document.getElementById('msgs');
+  Array.from(msgs.querySelectorAll('.msg')).forEach(m => {
+    if (m.id !== 'typingrow') m.remove();
+  });
   if (current) localStorage.removeItem('chat_' + current.name);
   document.getElementById('boardFloatBtn').style.display = 'none';
 }
