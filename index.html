@@ -1711,23 +1711,93 @@ function closeDecisionLog() {
   document.getElementById('decisionLog').style.display = 'none';
 }
 
+function addDecisionPrompt() {
+  const text = prompt('What decision are you considering or have made?\n\nExample: "Expand factory to import 4 containers a month"');
+  if (!text || !text.trim()) return;
+  const log = JSON.parse(localStorage.getItem('decisions_log') || '[]');
+  log.unshift({
+    id: Date.now(),
+    decision: text.trim(),
+    tycoon: 'Self',
+    status: 'pending',
+    outcome: '',
+    learned: '',
+    date: new Date().toISOString()
+  });
+  localStorage.setItem('decisions_log', JSON.stringify(log));
+  renderDecisionLog();
+}
+
+function updateDecisionField(id, field, value) {
+  const log = JSON.parse(localStorage.getItem('decisions_log') || '[]');
+  const d = log.find(x => (x.id || x.date) == id);
+  if (d) {
+    d[field] = value;
+    localStorage.setItem('decisions_log', JSON.stringify(log));
+  }
+}
+
+function markDecided(id) {
+  updateDecisionField(id, 'status', 'decided');
+  renderDecisionLog();
+}
+
+function logOutcome(id) {
+  const outcome = prompt('What happened with this decision?\n\nExample: "Sold 50 goats for 180K LKR, partner agreed to formal split"');
+  if (!outcome || !outcome.trim()) return;
+  updateDecisionField(id, 'outcome', outcome.trim());
+  updateDecisionField(id, 'status', 'outcome');
+  renderDecisionLog();
+}
+
+function addLearning(id) {
+  const log = JSON.parse(localStorage.getItem('decisions_log') || '[]');
+  const d = log.find(x => (x.id || x.date) == id);
+  const learned = prompt('What did you learn from this?\n\nExample: "Always get written agreement before money changes hands"', d?.learned || '');
+  if (learned === null) return;
+  updateDecisionField(id, 'learned', learned.trim());
+  renderDecisionLog();
+}
+
+function deleteDecisionEntry(id) {
+  if (!confirm('Delete this decision?')) return;
+  let log = JSON.parse(localStorage.getItem('decisions_log') || '[]');
+  log = log.filter(d => (d.id || d.date) != id);
+  localStorage.setItem('decisions_log', JSON.stringify(log));
+  renderDecisionLog();
+}
+
 function renderDecisionLog() {
   const list = document.getElementById('decisionLogList');
   const log = JSON.parse(localStorage.getItem('decisions_log') || '[]');
   
   if (log.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#6b7280;font-family:\'Crimson Text\',serif;font-style:italic"><div style="font-size:48px;margin-bottom:16px">📜</div><div style="font-size:14px">No decisions saved yet</div></div>';
+    list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#6b7280;font-family:\'Crimson Text\',serif;font-style:italic"><div style="font-size:48px;margin-bottom:16px">📜</div><div style="font-size:14px">No decisions saved yet</div><div style="font-size:12px;margin-top:10px;color:#a855f7">Tap + Add to log your first decision</div></div>';
     return;
   }
   
-  list.innerHTML = log.map((d, idx) => {
+  list.innerHTML = log.map((d) => {
+    const id = d.id || d.date;
     const date = new Date(d.date).toLocaleDateString() + ' • ' + new Date(d.date).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-    return `<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(99,102,241,0.4);border-radius:4px;padding:14px;margin-bottom:10px;box-shadow:2px 2px 0 rgba(43,24,16,0.15)">
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin-bottom:8px;font-family:'Playfair Display',serif;letter-spacing:0.06em;text-transform:uppercase">
-        <span>${date}</span><span>${d.tycoon}</span>
+    const status = d.status || 'pending';
+    const statusColor = status === 'decided' ? '#34d399' : status === 'outcome' ? '#a855f7' : '#fbbf24';
+    const statusLabel = status === 'decided' ? '✓ DECIDED' : status === 'outcome' ? '📊 OUTCOME LOGGED' : '⏳ PENDING';
+    
+    return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:18px;padding:16px;margin-bottom:12px;backdrop-filter:blur(10px)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+        <span style="font-size:10px;color:${statusColor};padding:4px 12px;background:${statusColor}22;border:1px solid ${statusColor}55;border-radius:100px;font-weight:700;letter-spacing:0.08em;font-family:'Inter',sans-serif">${statusLabel}</span>
+        <span style="font-size:11px;color:#7c6db5;font-family:'Inter',sans-serif">${date}${d.tycoon && d.tycoon !== 'Self' ? ' · '+d.tycoon : ''}</span>
       </div>
-      <div style="font-size:14px;color:#f3f4f6;line-height:1.6;font-family:'Crimson Text',serif">${d.decision}</div>
-      ${d.context ? `<div style="font-size:11px;color:#6b7280;margin-top:8px;font-style:italic">Context: ${d.context}</div>` : ''}
+      <div style="font-size:15px;color:#f5f3ff;margin-bottom:10px;font-weight:500;line-height:1.5;font-family:'Inter',sans-serif">${d.decision}</div>
+      ${d.context ? `<div style="font-size:12px;color:#c4b5fd;padding:8px 12px;background:rgba(168,85,247,0.06);border-left:2px solid #a855f7;border-radius:6px;margin-bottom:8px;font-style:italic">Context: ${d.context}</div>` : ''}
+      ${d.outcome ? `<div style="font-size:13px;color:#c4b5fd;padding:10px 12px;background:rgba(168,85,247,0.08);border-left:2px solid #a855f7;border-radius:6px;margin-bottom:8px;font-family:'Inter',sans-serif"><b style="color:#a855f7">📊 OUTCOME:</b> ${d.outcome}</div>` : ''}
+      ${d.learned ? `<div style="font-size:13px;color:#c4b5fd;padding:10px 12px;background:rgba(52,211,153,0.08);border-left:2px solid #34d399;border-radius:6px;margin-bottom:8px;font-family:'Inter',sans-serif"><b style="color:#34d399">💡 LESSON:</b> ${d.learned}</div>` : ''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+        ${status === 'pending' ? `<button onclick="markDecided(${id})" style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.4);color:#34d399;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600">✓ Decided</button>` : ''}
+        ${status !== 'outcome' ? `<button onclick="logOutcome(${id})" style="background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.4);color:#a855f7;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600">📊 Log Outcome</button>` : ''}
+        <button onclick="addLearning(${id})" style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fbbf24;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600">💡 ${d.learned ? 'Edit' : 'Add'} Lesson</button>
+        <button onclick="deleteDecisionEntry(${id})" style="background:transparent;border:1px solid rgba(239,68,68,0.3);color:#fca5a5;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;margin-left:auto">Delete</button>
+      </div>
     </div>`;
   }).join('');
 }
@@ -2720,6 +2790,7 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
   <div style="padding:14px 16px;background:rgba(255,255,255,0.06);border-bottom:2px solid rgba(99,102,241,0.4);display:flex;align-items:center;gap:12px">
     <button onclick="closeDecisionLog()" style="background:transparent;border:1px solid rgba(99,102,241,0.3);color:#f3f4f6;border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:600;text-transform:uppercase">← Back</button>
     <div style="flex:1;text-align:center;font-size:18px;font-weight:700;color:#f3f4f6;font-family:'Playfair Display',serif">📜 Decision Log</div>
+    <button onclick="addDecisionPrompt()" style="background:linear-gradient(135deg,#6e2cf4,#ec4899);border:none;color:#fff;border-radius:100px;padding:8px 16px;font-size:12px;cursor:pointer;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 4px 14px rgba(168,85,247,0.4)">+ Add</button>
   </div>
   <div id="decisionLogList" style="flex:1;overflow-y:auto;padding:16px"></div>
 </div>
