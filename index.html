@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#EFE4D2;min-height:100vh;margin:0;padding:0}
@@ -468,6 +469,8 @@ function saveName() {
       btn.style.background = '';
       btn.style.color = '';
     }, 1500);
+    // Pull data from cloud now that we have user_id
+    if (syncEnabled) pullFromCloud();
   }
   nameInp.blur();
 }
@@ -678,6 +681,114 @@ function updateBtn() { document.getElementById('sbtn').disabled = busy || !docum
 
 
 
+
+
+
+// ── SUPABASE CLOUD SYNC ──
+const SUPABASE_URL = 'https://fceomyvmaqgwjdhgxgfh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZW9teXZtYXFnd2pkaGd4Z2ZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjcyOTksImV4cCI6MjA5NDcwMzI5OX0.ozA7p_m7Q_JCCvKm4HocmqPA0id2iVekSgSsS599GtU';
+
+let supabase = null;
+let syncEnabled = false;
+
+function initSupabase() {
+  try {
+    if (window.supabase && window.supabase.createClient) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      syncEnabled = true;
+      console.log('✅ Cloud sync ready');
+      return true;
+    }
+  } catch(e) { console.error('Supabase init error:', e); }
+  return false;
+}
+
+function getUserId() {
+  return localStorage.getItem('tycoon_username') || 'anonymous';
+}
+
+// Sync chat to cloud
+async function syncChatToCloud(tycoonName, messages) {
+  if (!syncEnabled || !supabase) return;
+  try {
+    const user_id = getUserId();
+    await supabase.from('chats').upsert({
+      user_id, tycoon: tycoonName,
+      messages, updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,tycoon' });
+  } catch(e) { console.error('Cloud sync chat error:', e); }
+}
+
+// Sync board meeting to cloud
+async function syncBoardToCloud(entry) {
+  if (!syncEnabled || !supabase) return;
+  try {
+    const user_id = getUserId();
+    await supabase.from('board_meetings').insert({
+      user_id, tycoon: entry.tycoon || 'General',
+      result: entry.result, messages: entry.messages || [],
+      decision: entry.decision || ''
+    });
+  } catch(e) { console.error('Cloud sync board error:', e); }
+}
+
+// Pull all data from cloud for this user
+async function pullFromCloud() {
+  if (!syncEnabled || !supabase) return;
+  try {
+    const user_id = getUserId();
+    if (user_id === 'anonymous') return;
+    
+    // Pull chats
+    const { data: chats } = await supabase.from('chats').select('*').eq('user_id', user_id);
+    if (chats) {
+      chats.forEach(c => {
+        if (c.messages && c.messages.length > 0) {
+          localStorage.setItem('chat_' + c.tycoon, JSON.stringify(c.messages));
+        }
+      });
+    }
+    
+    // Pull board meetings
+    const { data: boards } = await supabase.from('board_meetings').select('*').eq('user_id', user_id).order('created_at', { ascending: false }).limit(30);
+    if (boards && boards.length > 0) {
+      const formatted = boards.map(b => ({
+        date: b.created_at,
+        tycoon: b.tycoon,
+        tycoonEmoji: '🏆',
+        result: b.result,
+        messages: b.messages || [],
+        decision: b.decision || ''
+      }));
+      localStorage.setItem('board_history', JSON.stringify(formatted));
+    }
+    
+    console.log('✅ Synced from cloud');
+    showSyncBanner('✅ Synced from cloud');
+  } catch(e) { 
+    console.error('Pull error:', e);
+  }
+}
+
+function showSyncBanner(text) {
+  const b = document.createElement('div');
+  b.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#2D5016;color:#EFE4D2;padding:10px 20px;border:2px solid #B87333;z-index:99999;font-family:"Playfair Display",serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;box-shadow:2px 2px 0 rgba(184,115,51,0.4)';
+  b.innerHTML = text;
+  document.body.appendChild(b);
+  setTimeout(() => b.remove(), 2500);
+}
+
+// Initialize on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (initSupabase()) {
+      const userId = getUserId();
+      if (userId && userId !== 'anonymous') {
+        pullFromCloud();
+      }
+    }
+  }, 500);
+});
 
 
 // ── DAILY WISDOM ──
@@ -927,21 +1038,42 @@ function generatePDF(entry, decision) {
       }
       
       if (tycoonSummary && entry.tycoon && entry.tycoon !== 'General') {
-        addText((entry.tycoon || 'TYCOON').toUpperCase() + "'S ADVICE", 11, 'bold', '#8B4513');
-        y += 2;
-        doc.setFillColor('#FAF3E3');
-        const sLines = doc.splitTextToSize(tycoonSummary, contentW - 8);
-        const sH = 8 + sLines.length * 5;
-        checkPage(sH + 4);
-        doc.rect(margin, y, contentW, sH, 'F');
-        doc.setDrawColor('#B87333');
-        doc.setLineWidth(0.3);
-        doc.line(margin, y, margin, y + sH);
-        doc.setTextColor('#1d1d1f');
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'normal');
-        doc.text(sLines, margin + 4, y + 6);
-        y += sH + 6;
+        addText((entry.tycoon || 'TYCOON').toUpperCase() + "'S KEY POINTS", 11, 'bold', '#8B4513');
+        y += 3;
+        
+        // Extract key sentences as bullet points
+        const fullText = tycoonSummary.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+        // Split by sentences, keep substantial ones (>40 chars, <300 chars)
+        const sentences = fullText.split(/(?<=[.!?])\s+/)
+          .map(s => s.trim())
+          .filter(s => s.length > 40 && s.length < 300)
+          .filter(s => !s.toLowerCase().startsWith('let me') && !s.toLowerCase().startsWith('i need'))
+          .slice(0, 7); // Top 7 key points
+        
+        // If no good sentences, fall back to original text chunked
+        const bullets = sentences.length > 0 ? sentences : [fullText.substring(0, 800)];
+        
+        bullets.forEach(bullet => {
+          const bulletText = '• ' + bullet;
+          const bLines = doc.splitTextToSize(bulletText, contentW - 12);
+          const bH = bLines.length * 5 + 3;
+          checkPage(bH + 2);
+          
+          // Cream background with brown left border
+          doc.setFillColor('#FAF3E3');
+          doc.rect(margin, y, contentW, bH, 'F');
+          doc.setDrawColor('#B87333');
+          doc.setLineWidth(0.5);
+          doc.line(margin, y, margin, y + bH);
+          
+          doc.setTextColor('#1d1d1f');
+          doc.setFontSize(11);
+          doc.setFont('helvetica', 'normal');
+          doc.text(bLines, margin + 4, y + 5);
+          
+          y += bH + 2;
+        });
+        y += 6;
       }
       
       addDivider();
@@ -1078,6 +1210,7 @@ function saveChatHistory() {
   if (!current || !history || history.length === 0) return;
   try {
     localStorage.setItem('chat_' + current.name, JSON.stringify(history));
+    syncChatToCloud(current.name, history);
   } catch(e) {}
 }
 
