@@ -688,13 +688,13 @@ function updateBtn() { document.getElementById('sbtn').disabled = busy || !docum
 const SUPABASE_URL = 'https://fceomyvmaqgwjdhgxgfh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZW9teXZtYXFnd2pkaGd4Z2ZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMjcyOTksImV4cCI6MjA5NDcwMzI5OX0.ozA7p_m7Q_JCCvKm4HocmqPA0id2iVekSgSsS599GtU';
 
-let supabase = null;
+let sbClient = null;
 let syncEnabled = false;
 
 function initSupabase() {
   try {
     if (window.supabase && window.supabase.createClient) {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       syncEnabled = true;
       console.log('✅ Cloud sync ready');
       return true;
@@ -709,10 +709,10 @@ function getUserId() {
 
 // Sync chat to cloud
 async function syncChatToCloud(tycoonName, messages) {
-  if (!syncEnabled || !supabase) return;
+  if (!syncEnabled || !sbClient) return;
   try {
     const user_id = getUserId();
-    await supabase.from('chats').upsert({
+    await sbClient.from('chats').upsert({
       user_id, tycoon: tycoonName,
       messages, updated_at: new Date().toISOString()
     }, { onConflict: 'user_id,tycoon' });
@@ -721,10 +721,10 @@ async function syncChatToCloud(tycoonName, messages) {
 
 // Sync board meeting to cloud
 async function syncBoardToCloud(entry) {
-  if (!syncEnabled || !supabase) return;
+  if (!syncEnabled || !sbClient) return;
   try {
     const user_id = getUserId();
-    await supabase.from('board_meetings').insert({
+    await sbClient.from('board_meetings').insert({
       user_id, tycoon: entry.tycoon || 'General',
       result: entry.result, messages: entry.messages || [],
       decision: entry.decision || ''
@@ -734,13 +734,13 @@ async function syncBoardToCloud(entry) {
 
 // Pull all data from cloud for this user
 async function pullFromCloud() {
-  if (!syncEnabled || !supabase) return;
+  if (!syncEnabled || !sbClient) return;
   try {
     const user_id = getUserId();
     if (user_id === 'anonymous') return;
     
     // Pull chats
-    const { data: chats } = await supabase.from('chats').select('*').eq('user_id', user_id);
+    const { data: chats } = await sbClient.from('chats').select('*').eq('user_id', user_id);
     if (chats) {
       chats.forEach(c => {
         if (c.messages && c.messages.length > 0) {
@@ -750,7 +750,7 @@ async function pullFromCloud() {
     }
     
     // Pull board meetings
-    const { data: boards } = await supabase.from('board_meetings').select('*').eq('user_id', user_id).order('created_at', { ascending: false }).limit(30);
+    const { data: boards } = await sbClient.from('board_meetings').select('*').eq('user_id', user_id).order('created_at', { ascending: false }).limit(30);
     if (boards && boards.length > 0) {
       const formatted = boards.map(b => ({
         date: b.created_at,
