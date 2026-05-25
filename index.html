@@ -1088,14 +1088,27 @@ const nameInp = document.getElementById('nameInp');
 if (userName) nameInp.value = userName;
 
 function loadName() {
-  const saved = localStorage.getItem('tycoon_username');
-  if (saved && nameInp) nameInp.value = saved;
+  let saved = localStorage.getItem('tycoon_username');
+  // Auto-fix common issues
+  if (!saved || saved === 'anonymous' || saved === '7up' || saved === '7 UP' || saved === '7 up') {
+    saved = 'Fazan';
+    localStorage.setItem('tycoon_username', saved);
+  }
+  // Normalize: trim + capitalize first letter
+  saved = saved.trim();
+  saved = saved.charAt(0).toUpperCase() + saved.slice(1).toLowerCase();
+  localStorage.setItem('tycoon_username', saved);
+  if (nameInp) nameInp.value = saved;
+  userName = saved;
 }
 function saveName() {
-  const n = nameInp.value.trim();
+  const raw = nameInp.value.trim();
+  // Normalize: capitalize first letter, trim spaces
+  const n = raw ? raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase() : 'Fazan';
   const btn = document.getElementById('nameSave');
   if (n) {
     userName = n;
+    nameInp.value = n; // show normalized version
     localStorage.setItem('tycoon_username', n);
     btn.textContent = '✅';
     btn.style.background = '#10b981';
@@ -1105,8 +1118,12 @@ function saveName() {
       btn.style.background = '';
       btn.style.color = '';
     }, 1500);
-    // Pull data from cloud now that we have user_id
-    if (syncEnabled) pullFromCloud();
+    // Pull + push on name save to ensure sync
+    if (syncEnabled) {
+      pullFromCloud().then(() => {
+        pushAllToCloud(); // Also push local data with new name
+      });
+    }
   }
   nameInp.blur();
 }
@@ -1830,12 +1847,13 @@ function initSupabase() {
 }
 
 function getUserId() {
-  let name = localStorage.getItem('tycoon_username');
-  if (!name) {
-    name = 'Fazan'; // Default name - always syncs
-    localStorage.setItem('tycoon_username', name);
+  // Always use fixed ID - prevents sync issues across devices
+  const saved = localStorage.getItem('tycoon_username');
+  if (!saved || saved.trim() === '' || saved === 'anonymous') {
+    localStorage.setItem('tycoon_username', 'Fazan');
+    return 'Fazan';
   }
-  return name;
+  return saved.trim(); // trim spaces to avoid "Fazan " vs "Fazan" mismatch
 }
 
 // Sync chat to cloud
