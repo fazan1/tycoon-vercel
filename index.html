@@ -331,6 +331,19 @@ body::after {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+#syncNowBtn {
+  background: rgba(168,85,247,0.1);
+  border: 1px solid rgba(168,85,247,0.3);
+  color: #c4b5fd;
+  border-radius: 100px;
+  padding: 7px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
 
 #backbtn:hover {
   background: rgba(168,85,247,0.15);
@@ -529,21 +542,26 @@ body::after {
 .msg-actions { display: flex; gap: 6px; margin-top: 6px; }
 
 .msg-act {
-  background: transparent;
+  background: rgba(255,255,255,0.04);
   border: 1px solid rgba(168,85,247,0.2);
   color: var(--text-dim);
-  padding: 3px 10px;
-  font-size: 11px;
+  padding: 6px 12px;
+  font-size: 12px;
   cursor: pointer;
   font-family: inherit;
-  border-radius: 100px;
+  border-radius: 8px;
   font-weight: 500;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .msg-act:hover {
   border-color: var(--purple-light);
   color: var(--text);
-  background: rgba(168,85,247,0.1);
+  background: rgba(168,85,247,0.15);
+  transform: translateY(-1px);
 }
 
 .badge {
@@ -712,7 +730,8 @@ body::after {
 <div id="quickActions2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
   <button onclick="openBoardHistory()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:100px;color:#c4b5fd;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;backdrop-filter:blur(20px)">📚 Board</button>
   <button onclick="openDecisionLog()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:100px;color:#c4b5fd;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;backdrop-filter:blur(20px)">📜 Log</button>
-  <button onclick="openSettings()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:100px;color:#c4b5fd;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;backdrop-filter:blur(20px)">⚙️ More</button>
+  <button onclick="openReminders()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:100px;color:#c4b5fd;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;position:relative">🔔 REMINDERS<span id="reminderBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center;font-weight:700">0</span></button>
+<button onclick="openSettings()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:100px;color:#c4b5fd;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;backdrop-filter:blur(20px)">⚙️ More</button>
 </div>
 
 <!-- Search bar -->
@@ -730,14 +749,15 @@ body::after {
 <div id="chat">
 <div id="hdr">
 <button id="backbtn" onclick="goBack()">← Back</button>
+    <button id="syncNowBtn" onclick="manualSync()" title="Sync from cloud">☁️ Sync</button>
 <div id="hav"></div>
 <div id="hinfo"><div id="hname"></div><div id="hsub"></div></div>
 <button class="hbtn" onclick="toggleMem()" title="Memory">💾</button>
     <button class="hbtn" onclick="exportChatPDF()" title="Export chat as PDF" style="margin-left:4px">📄</button>
     <button class="hbtn" onclick="clearChat()" title="Clear chat" style="margin-left:4px;color:#ff3b30">🗑️</button>
 </div>
-<div id="modeIndicator">Mode: <b id="modeLabel">✨ Auto</b> · <span style="color:#9ca3af">detects from your message</span></div>
-<div id="modebar">
+<div id="modeIndicator" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>Mode: <b id="modeLabel">✨ Auto</b></span><button id="deepToggle" onclick="toggleDeepMode()" title="Toggle Quick/Deep thinking" style="background:rgba(255,255,255,0.05);border:1px solid rgba(168,85,247,0.3);border-radius:100px;color:#c4b5fd;padding:5px 12px;font-size:10px;cursor:pointer;font-family:inherit;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;flex-shrink:0">⚡ Quick</button></div>
+<div id="modebar"><button id="boardFloatBtn" onclick="openBoardRoom()" style="display:none;background:linear-gradient(135deg,#fbbf24,#f59e0b);border:none;color:#000;padding:7px 14px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 10px rgba(251,191,36,0.3)" title="Get all 12 tycoons opinions">🏆 BOARD</button>
 <button class="modeBtn active" data-mode="auto" onclick="setMode('auto')">✨ Auto</button>
 <button class="modeBtn" data-mode="chat" onclick="setMode('chat')">💬 Chat</button>
 <button class="modeBtn" data-mode="pitch" onclick="setMode('pitch')">🎯 Pitch</button>
@@ -758,12 +778,7 @@ body::after {
 <div class="bub ai" style="display:flex;gap:5px;align-items:center"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>
 </div>
 </div>
-<!-- Floating Board Room Button -->
-<div id="boardFloatBtn" style="display:none;padding:8px 12px;background:#fbfbfd;border-top:1px solid #d2d2d7;flex-shrink:0">
-  <button onclick="openBoardRoom()" style="width:100%;background:#f3f4f6;border:2px solid rgba(99,102,241,0.3);border-radius:4px;color:#0a0e1a;padding:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.08em;text-transform:uppercase;box-shadow:2px 2px 0 rgba(184,115,51,0.4)">
-    🏆 Take to Board Room — Get All 12 Perspectives
-  </button>
-</div>
+
 
 <div id="inputarea">
 <div id="irow">
@@ -771,22 +786,32 @@ body::after {
 <input id="inp" type="text" placeholder="Type or 🎤 speak..."/>
 <button id="sbtn" disabled>↑</button>
 </div>
-<div id="disc">Personal use · AI simulation · They admit when they don't know</div>
+<div id="disc">Personal use · ⚡ Quick mode for daily chat · 🧠 Deep mode for big decisions</div>
 </div>
 </div>
 
 <script>
 const CORE_RULES = `
-HOW YOU MUST THINK:
+HOW YOU MUST THINK (CRITICAL — READ TWICE):
+0. UNDERSTAND BEFORE ADVISING — Read the user's message carefully. What are they REALLY asking? What's the underlying business problem? What context is missing? If you don't understand, ASK before advising.
 1. REASON FROM YOUR REAL PAST — Not textbook advice. Pull from actual decisions, deals, failures. Reference specific years, names, dollar amounts from YOUR life.
 2. IF YOU DON'T KNOW, SAY SO — Never invent facts. Say: "Honestly, I don't have direct experience with that — but here's how I'd think about it..." or "I don't know. Anyone claiming certainty is lying."
-3. SPEAK IN POSSIBILITIES, NOT ABSOLUTES — Frame as exploration:
+3. THINK LIKE A REAL ADVISOR (not a chatbot):
+   - Ask: What numbers do I need? Costs? Margins? Risks?
+   - Consider: 1st order effects vs 2nd order effects
+   - Stress-test: What if it goes wrong? What's the worst case?
+   - Compare: 3 different options with trade-offs
+   - Time horizon: What changes in 6 months vs 5 years?
+4. SPEAK IN POSSIBILITIES, NOT ABSOLUTES — Frame as exploration:
    - "IF you do X, THEN Y might happen — but watch for Z"
    - "Three paths I see: Option A... Option B... Trade-offs..."
    - NEVER "you must" or "this is the only way"
 4. SHOW REASONING — Walk through HOW you arrived at the thought: "Let me think... First the market is... Second your competition... So..."
 5. ACKNOWLEDGE UNCERTAINTY — "Best guess but I've been wrong many times" — "Probabilities, not promises"
 6. ACT AS AGENT — Ask probing questions BEFORE advising. Challenge weak thinking. Set firm boundaries on off-topic asks (gossip/politics/medical/legal/relationships) — redirect: "Not where I add value."
+7. CONTEXT MATTERS — If user mentions Sri Lanka, glove factory, goat farming, family business, partnerships, or any specific business situation, use that context. Don't give generic advice — make it SPECIFIC to their situation.
+8. GO DEEPER — Don't give surface answers. Probe: What's the real risk? What's the real opportunity cost? What numbers matter? What would a smart enemy say to attack this plan?
+9. END WITH ACTION — Always end with: a clear next step OR a clarifying question OR a specific number/decision they need to make. Never end vague.
 7. STAY IN CHARACTER — Never break the fourth wall. You ARE this person.
 `;
 
@@ -1246,6 +1271,7 @@ function openChat(t) {
   document.getElementById('tav').textContent = t.emoji;
   document.getElementById('sbtn').style.background = t.grad;
   document.getElementById('modeIndicator').style.setProperty('--ac', t.ac);
+  updateThinkingButton();
 
   document.querySelectorAll('.modeBtn').forEach(b => { b.style.background = ''; b.style.color = ''; b.classList.remove('active'); });
   const autoBtn = document.querySelector('[data-mode="auto"]');
@@ -1276,7 +1302,7 @@ function openChat(t) {
     chips.appendChild(b);
   });
   document.getElementById('chipswrap').style.display = '';
-  document.getElementById('boardFloatBtn').style.display = 'none';
+  const bbtn2 = document.getElementById('boardFloatBtn'); if (bbtn2) bbtn2.style.display = 'none';
   setTimeout(() => loadChatHistory(), 50);
   document.getElementById('inp').value = '';
   updateBtn();
@@ -1362,8 +1388,8 @@ async function sendMsg() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 12000,
-        thinking: { type: 'enabled', budget_tokens: 8000 },
+        max_tokens: getThinkingMode() === 'deep' ? 16000 : 2500,
+        ...(getThinkingMode() === 'deep' ? { thinking: { type: 'enabled', budget_tokens: 12000 } } : {}),
         system: buildSystem(),
         messages: history
       })
@@ -1375,6 +1401,7 @@ async function sendMsg() {
     document.getElementById('typingrow').style.display = 'none';
     addBubble('ai', reply, hadThinking, mode === 'auto' ? detectedMode : mode);
     extractAndSaveMem(reply);
+    extractReminders(text, reply);
   } catch(e) {
     document.getElementById('typingrow').style.display = 'none';
     addBubble('ai', 'Connection issue. Please try again.');
@@ -1385,7 +1412,8 @@ async function sendMsg() {
 function addBubble(role, text, hadThinking = false, usedMode = null) {
   // Show Board Room button after first AI response
   if (role === 'ai' && history.length > 0) {
-    document.getElementById('boardFloatBtn').style.display = 'block';
+    const bbtn = document.getElementById('boardFloatBtn');
+    if (bbtn) bbtn.style.display = 'inline-block';
     saveChatHistory();
   }
   const msgs = document.getElementById('msgs');
@@ -1415,9 +1443,42 @@ function addBubble(role, text, hadThinking = false, usedMode = null) {
   if (role === 'ai') {
     const acts = document.createElement('div'); acts.className = 'msg-actions';
     const copyBtn = document.createElement('button');
-    copyBtn.className = 'msg-act'; copyBtn.textContent = '📋 Copy';
-    copyBtn.onclick = () => { navigator.clipboard.writeText(text); copyBtn.textContent = '✓ Copied'; setTimeout(()=>copyBtn.textContent='📋 Copy',1500); };
+    copyBtn.className = 'msg-act';
+    copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+    copyBtn.title = 'Copy message';
+    copyBtn.onclick = () => { 
+      navigator.clipboard.writeText(text); 
+      copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" style="vertical-align:-2px;margin-right:5px"><polyline points="20 6 9 17 4 12"/></svg><span style="color:#34d399">Copied!</span>'; 
+      setTimeout(()=>{
+        copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy';
+      },1500); 
+    };
     acts.appendChild(copyBtn);
+    
+    // Add Share button (like Claude)
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'msg-act';
+    shareBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share';
+    shareBtn.title = 'Share via WhatsApp/etc';
+    shareBtn.onclick = async () => {
+      const tycoonName = current?.name || 'Tycoon';
+      const shareText = `💡 ${tycoonName} said:\n\n${text}\n\n— via My Tycoon Advisors`;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: tycoonName + " - My Tycoon Advisors", text: shareText });
+        } catch(e) {
+          navigator.clipboard.writeText(shareText);
+          shareBtn.innerHTML = '<span style="color:#34d399">✓ Copied to share</span>';
+          setTimeout(()=>shareBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share', 1500);
+        }
+      } else {
+        navigator.clipboard.writeText(shareText);
+        shareBtn.innerHTML = '<span style="color:#34d399">✓ Copied to share</span>';
+        setTimeout(()=>shareBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:5px"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share', 1500);
+      }
+    };
+    acts.appendChild(shareBtn);
+    
     col.appendChild(acts);
   }
   wrap.appendChild(col);
@@ -1433,6 +1494,246 @@ function updateBtn() { document.getElementById('sbtn').disabled = busy || !docum
 
 
 
+
+
+// ── THINKING MODE TOGGLE ──
+function getThinkingMode() {
+  return localStorage.getItem('thinking_mode') || 'deep';
+}
+
+function toggleThinkingMode() {
+  const current = getThinkingMode();
+  const newMode = current === 'deep' ? 'quick' : 'deep';
+  localStorage.setItem('thinking_mode', newMode);
+  updateThinkingButton();
+  
+  // Show notification
+  const banner = document.createElement('div');
+  const isDeep = newMode === 'deep';
+  banner.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:' + (isDeep ? 'linear-gradient(135deg,#6e2cf4,#ec4899)' : 'linear-gradient(135deg,#10b981,#06b6d4)') + ';color:#fff;padding:12px 22px;border-radius:100px;z-index:99999;font-family:Inter,sans-serif;font-weight:700;font-size:12px;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 8px 30px rgba(0,0,0,0.3)';
+  banner.innerHTML = isDeep ? '🧠 Deep Thinking ON · slower, smarter, costs more' : '🚀 Quick Mode ON · faster, cheaper, less depth';
+  document.body.appendChild(banner);
+  setTimeout(() => banner.remove(), 3000);
+}
+
+function updateThinkingButton() {
+  const btn = document.getElementById('thinkToggle');
+  if (!btn) return;
+  const mode = getThinkingMode();
+  if (mode === 'deep') {
+    btn.innerHTML = '🧠 Deep';
+    btn.style.background = 'rgba(168,85,247,0.15)';
+    btn.style.borderColor = 'rgba(168,85,247,0.3)';
+    btn.style.color = '#c4b5fd';
+    btn.title = 'Deep thinking - smarter but costs more. Tap to switch to Quick mode.';
+  } else {
+    btn.innerHTML = '🚀 Quick';
+    btn.style.background = 'rgba(16,185,129,0.15)';
+    btn.style.borderColor = 'rgba(16,185,129,0.3)';
+    btn.style.color = '#34d399';
+    btn.title = 'Quick mode - faster and cheaper. Tap to switch to Deep mode.';
+  }
+}
+
+
+
+function toggleDeepMode() {
+  const current = localStorage.getItem('deep_mode') === 'true';
+  const newState = !current;
+  localStorage.setItem('deep_mode', newState ? 'true' : 'false');
+  updateDeepModeUI();
+}
+
+function updateDeepModeUI() {
+  const btn = document.getElementById('deepToggle');
+  if (!btn) return;
+  const isDeep = localStorage.getItem('deep_mode') === 'true';
+  if (isDeep) {
+    btn.textContent = '🧠 Deep';
+    btn.style.background = 'linear-gradient(135deg,#6e2cf4,#ec4899)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'transparent';
+    btn.style.boxShadow = '0 2px 10px rgba(168,85,247,0.4)';
+    btn.title = 'Deep thinking ON - more accurate but costs more credits. Tap to switch to Quick.';
+  } else {
+    btn.textContent = '⚡ Quick';
+    btn.style.background = 'rgba(255,255,255,0.05)';
+    btn.style.color = '#c4b5fd';
+    btn.style.borderColor = 'rgba(168,85,247,0.3)';
+    btn.style.boxShadow = 'none';
+    btn.title = 'Quick mode - cheaper and faster. Tap for Deep thinking (better for important decisions).';
+  }
+}
+
+// Initialize on chat open
+const _origOpenChat = window.openChat;
+
+
+
+// ── AUTO REMINDERS (Level 2 Agent) ──
+async function extractReminders(userMsg, aiMsg) {
+  if (!userMsg || !aiMsg) return;
+  // Only run if user mentioned future actions
+  const triggers = /will|going to|tomorrow|next week|friday|monday|tuesday|wednesday|thursday|saturday|sunday|tonight|later|i'll|i need to|i should|i must|by end of|deadline|follow up|remind|call|email|send|meet|talk to/i;
+  if (!triggers.test(userMsg)) return;
+  
+  try {
+    const prompt = `Analyze this brief conversation. Extract ONLY action items the USER (not the tycoon) committed to doing. Return JSON array only.
+
+USER said: "${userMsg.substring(0, 500)}"
+TYCOON replied: "${aiMsg.substring(0, 800)}"
+
+Return JSON like this (max 3 items, only clear commitments):
+[{"task":"Talk to goat partner about agreement","when":"this week","priority":"high"}]
+
+Rules:
+- ONLY user's commitments, not suggestions
+- Each task must be specific & actionable
+- "when" should be specific (today/tomorrow/this week/etc)
+- priority: high/medium/low
+- If no clear commitments, return []
+- Return ONLY valid JSON, no explanation`;
+    
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 500,
+        messages: [{ role: 'user', content: prompt }],
+        system: 'You extract action items from conversations. Return ONLY valid JSON arrays, no markdown.'
+      })
+    });
+    const data = await res.json();
+    let text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    text = text.replace(/```json|```/g, '').trim();
+    
+    const items = JSON.parse(text);
+    if (!Array.isArray(items) || items.length === 0) return;
+    
+    const reminders = JSON.parse(localStorage.getItem('pending_reminders') || '[]');
+    items.forEach(item => {
+      reminders.unshift({
+        id: 'r_' + Date.now() + Math.random(),
+        task: item.task,
+        when: item.when || 'soon',
+        priority: item.priority || 'medium',
+        tycoon: current?.name || 'General',
+        created: new Date().toISOString(),
+        done: false
+      });
+    });
+    if (reminders.length > 50) reminders.length = 50;
+    localStorage.setItem('pending_reminders', JSON.stringify(reminders));
+    updateReminderBadge();
+    
+    if (items.length > 0) {
+      showSyncBanner(`🔔 ${items.length} reminder${items.length>1?'s':''} added`);
+    }
+  } catch(e) { console.log('Reminder extract skipped:', e.message); }
+}
+
+function updateReminderBadge() {
+  const reminders = JSON.parse(localStorage.getItem('pending_reminders') || '[]');
+  const pending = reminders.filter(r => !r.done).length;
+  const badge = document.getElementById('reminderBadge');
+  if (badge) {
+    badge.textContent = pending > 0 ? pending : '';
+    badge.style.display = pending > 0 ? 'flex' : 'none';
+  }
+}
+
+function openReminders() {
+  document.getElementById('remindersOverlay').style.display = 'flex';
+  renderReminders();
+}
+
+function closeReminders() {
+  document.getElementById('remindersOverlay').style.display = 'none';
+}
+
+function toggleReminder(id) {
+  const reminders = JSON.parse(localStorage.getItem('pending_reminders') || '[]');
+  const r = reminders.find(x => x.id === id);
+  if (r) {
+    r.done = !r.done;
+    if (r.done) r.completedAt = new Date().toISOString();
+    localStorage.setItem('pending_reminders', JSON.stringify(reminders));
+    renderReminders();
+    updateReminderBadge();
+  }
+}
+
+function deleteReminder(id) {
+  let reminders = JSON.parse(localStorage.getItem('pending_reminders') || '[]');
+  reminders = reminders.filter(r => r.id !== id);
+  localStorage.setItem('pending_reminders', JSON.stringify(reminders));
+  renderReminders();
+  updateReminderBadge();
+}
+
+function renderReminders() {
+  const list = document.getElementById('remindersList');
+  const reminders = JSON.parse(localStorage.getItem('pending_reminders') || '[]');
+  const pending = reminders.filter(r => !r.done);
+  const done = reminders.filter(r => r.done).slice(0, 10);
+  
+  if (reminders.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#7c6db5"><div style="font-size:48px;margin-bottom:12px">🔔</div><div style="font-size:13px;font-style:italic;line-height:1.6">No reminders yet.<br><br>When you chat with tycoons and mention things you\'ll do (call partner, send email, follow up), I\'ll auto-detect and add them here!</div></div>';
+    return;
+  }
+  
+  const priorityColor = (p) => p === 'high' ? '#ef4444' : p === 'medium' ? '#fbbf24' : '#a855f7';
+  
+  let html = '';
+  if (pending.length > 0) {
+    html += '<div style="font-size:11px;color:#a855f7;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;font-weight:700">⏳ Pending (' + pending.length + ')</div>';
+    html += pending.map(r => `
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-left:3px solid ${priorityColor(r.priority)};border-radius:14px;padding:14px;margin-bottom:10px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <button onclick="toggleReminder('${r.id}')" style="background:transparent;border:2px solid ${priorityColor(r.priority)};width:22px;height:22px;border-radius:50%;cursor:pointer;flex-shrink:0;margin-top:2px"></button>
+          <div style="flex:1">
+            <div style="font-size:14px;color:#f5f3ff;font-weight:500;line-height:1.4">${r.task}</div>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <span style="font-size:10px;color:${priorityColor(r.priority)};padding:2px 8px;background:${priorityColor(r.priority)}22;border-radius:100px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase">${r.priority}</span>
+              <span style="font-size:10px;color:#c4b5fd;padding:2px 8px;background:rgba(168,85,247,0.1);border-radius:100px;font-weight:500">⏰ ${r.when}</span>
+              ${r.tycoon !== 'General' ? `<span style="font-size:10px;color:#7c6db5;padding:2px 8px">via ${r.tycoon}</span>` : ''}
+            </div>
+          </div>
+          <button onclick="deleteReminder('${r.id}')" style="background:transparent;border:none;color:#fca5a5;cursor:pointer;font-size:18px">×</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  if (done.length > 0) {
+    html += '<div style="font-size:11px;color:#34d399;letter-spacing:0.1em;text-transform:uppercase;margin:20px 0 12px;font-weight:700">✓ Completed (' + done.length + ')</div>';
+    html += done.map(r => `
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(52,211,153,0.15);border-radius:14px;padding:12px;margin-bottom:8px;opacity:0.65">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button onclick="toggleReminder('${r.id}')" style="background:#34d399;border:2px solid #34d399;width:22px;height:22px;border-radius:50%;cursor:pointer;flex-shrink:0;color:#000;font-size:12px;font-weight:bold">✓</button>
+          <div style="flex:1;font-size:13px;color:#a1a1aa;text-decoration:line-through">${r.task}</div>
+          <button onclick="deleteReminder('${r.id}')" style="background:transparent;border:none;color:#71717a;cursor:pointer;font-size:16px">×</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  list.innerHTML = html;
+}
+
+
+
+function manualSync() {
+  const btn = document.getElementById('syncNowBtn');
+  if (btn) { btn.textContent = '⏳...'; btn.disabled = true; }
+  initSupabase();
+  pullFromCloud().then(() => {
+    if (btn) { btn.textContent = '☁️ Sync'; btn.disabled = false; }
+  }).catch(() => {
+    if (btn) { btn.textContent = '☁️ Sync'; btn.disabled = false; }
+  });
+}
 
 // ── VOICE INPUT ──
 let recognition = null;
@@ -1595,6 +1896,29 @@ async function pullFromCloud() {
     
     console.log('✅ Synced from cloud');
     showSyncBanner('✅ Synced from cloud');
+    // If a chat is currently open, reload it with fresh data
+    if (current) {
+      const saved = localStorage.getItem('chat_' + current.name);
+      if (saved) {
+        try {
+          const msgs = JSON.parse(saved);
+          if (msgs.length > history.length) {
+            // Cloud has more messages - reload
+            history = msgs;
+            const msgsEl = document.getElementById('msgs');
+            if (msgsEl) {
+              Array.from(msgsEl.querySelectorAll('.msg')).forEach(m => {
+                if (m.id !== 'typingrow') m.remove();
+              });
+              history.forEach(m => {
+                if (m.role === 'user') addBubble('user', m.content);
+                else addBubble('ai', m.content);
+              });
+            }
+          }
+        } catch(e) {}
+      }
+    }
   } catch(e) { 
     console.error('Pull error:', e);
   }
@@ -1666,9 +1990,12 @@ function showSyncBanner(text) {
 
 // Initialize on load
 window.addEventListener('load', () => {
-  setTimeout(() => {
+  setTimeout(updateReminderBadge, 1000);
+  setTimeout(async () => {
     if (initSupabase()) {
-      pullFromCloud(); // Always sync, default name handles it
+      await pullFromCloud(); // Pull every time app opens
+      // Reload grid after sync in case new chats arrived
+      if (typeof renderAllTycoons === 'function') renderAllTycoons();
     }
   }, 500);
 });
@@ -1814,10 +2141,19 @@ function closeGoals() {
 
 function renderGoals() {
   const list = document.getElementById('goalsList');
-  const goals = JSON.parse(localStorage.getItem('biz_goals') || '[]');
+  let goals = JSON.parse(localStorage.getItem('biz_goals') || '[]');
+  
+  // Migrate old string-based goals to object format
+  goals = goals.map(g => {
+    if (typeof g === 'string') {
+      return { id: 'g_' + Date.now() + Math.random(), text: g, done: false, milestones: [] };
+    }
+    return g;
+  });
+  localStorage.setItem('biz_goals', JSON.stringify(goals));
   
   if (goals.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#6b7280;font-style:italic">No goals yet. Add your first below ↓</div>';
+    list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#7c6db5;font-style:italic">No goals yet. Add your first below ↓</div>';
     return;
   }
   
@@ -2185,7 +2521,7 @@ function loadChatHistory() {
           if (m.role === 'user') addBubble('user', m.content);
           else addBubble('ai', m.content);
         });
-        document.getElementById('boardFloatBtn').style.display = 'block';
+        const bbtn = document.getElementById('boardFloatBtn'); if (bbtn) bbtn.style.display = 'inline-block';
       }
     }
   } catch(e) {}
@@ -2199,7 +2535,7 @@ function clearChat() {
     if (m.id !== 'typingrow') m.remove();
   });
   if (current) localStorage.removeItem('chat_' + current.name);
-  document.getElementById('boardFloatBtn').style.display = 'none';
+  const bbtn2 = document.getElementById('boardFloatBtn'); if (bbtn2) bbtn2.style.display = 'none';
 }
 
 // ── CHAT PDF EXPORT ──
@@ -2866,5 +3202,17 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <script>document.addEventListener("DOMContentLoaded", () => { if (typeof showDailyQuote === "function") showDailyQuote(); });</script>
+
+
+<!-- REMINDERS OVERLAY -->
+<div id="remindersOverlay" style="display:none;position:fixed;inset:0;background:#0f0420;z-index:285;flex-direction:column">
+  <div style="padding:14px 16px;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(168,85,247,0.2);display:flex;align-items:center;gap:10px;padding-top:calc(14px + env(safe-area-inset-top))">
+    <button onclick="closeReminders()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(168,85,247,0.2);color:#c4b5fd;border-radius:100px;padding:7px 14px;font-size:11px;cursor:pointer;font-weight:600;letter-spacing:0.04em;text-transform:uppercase">← Back</button>
+    <div style="flex:1;text-align:center;font-size:16px;font-weight:700;color:#f5f3ff">🔔 Smart Reminders</div>
+    <div style="width:60px"></div>
+  </div>
+  <div id="remindersList" style="flex:1;overflow-y:auto;padding:16px"></div>
+</div>
+
 </body>
 </html>
