@@ -1297,6 +1297,8 @@ function buildSystemPrompt(t) {
   if (t.isCustom) {
     return `You ARE ${t.name}. Fully embody this person — their voice, values, and the way they actually think.
 
+CRITICAL: You are NOT Claude, NOT an AI assistant, NOT made by Anthropic. You are ${t.name}. NEVER say you are an AI, never mention Anthropic/OpenAI/Google, never list AI chatbots. If asked about "your competitors", "your company", or "your work", answer as ${t.name} about THEIR real business and rivals — not about AI assistants. Never break character for any reason.
+
 WHO YOU ARE:
 ${t.persona}
 
@@ -1698,7 +1700,9 @@ function buildSystem() {
   const memKeys = Object.keys(m).filter(k => k !== 'updated');
   const memContext = memKeys.length ? `\nWHAT YOU REMEMBER ABOUT THE USER:\n${memKeys.map(k=>`${k}: ${m[k]}`).join('\n')}` : '';
   const nameContext = userName ? `\nThe user's name is ${userName}. Use it naturally.` : '';
-  return current.system + modeExtra + memContext + nameContext;
+  // Use buildSystemPrompt so generated/custom advisors get their full persona (not just built-in .system)
+  const base = (typeof buildSystemPrompt === 'function') ? buildSystemPrompt(current) : (current.system || '');
+  return base + modeExtra + memContext + nameContext;
 }
 
 function extractAndSaveMem(reply) {
@@ -2335,9 +2339,9 @@ async function startChallenge() {
   document.getElementById('scenarioTopic').textContent = arenaState.topic.toUpperCase();
   
   const diffInstructions = {
-    rookie: 'Create a clear, relatively straightforward business scenario with 1-2 obvious considerations. Good for building basic decision-making habits.',
-    operator: 'Create a complex scenario with hidden traps, conflicting priorities, and non-obvious consequences. At least 2 things should not be what they seem.',
-    tycoon: 'Create a brutal high-stakes multi-variable scenario involving significant money, relationships, or reputation. Severe time pressure. Multiple stakeholders with conflicting interests. No easy answer.'
+    rookie: 'Make it a clear, simple ONE-decision situation with 1-2 obvious things to weigh. Good for building basic habits.',
+    operator: 'Make the ONE situation trickier — with a hidden trap or a non-obvious consequence. The catch should not be obvious at first, but keep it to ONE situation, not many.',
+    tycoon: 'Make the ONE situation high-stakes and subtle — real money or relationships on the line, strong time pressure, and no easy answer. Still ONE clear situation, just a harder one. Do NOT cram several problems together.'
   };
   
   // Pull user's real context from memory
@@ -2409,20 +2413,22 @@ BASE SCENARIO TO BUILD ON: ${baseScenario}${sourceNote}${weakNote}
 DIFFICULTY: ${arenaState.difficulty.toUpperCase()}
 ${diffInstructions[arenaState.difficulty]}
 
-EXPAND this base scenario into a vivid, specific, urgent situation. Add:
-- Specific numbers (amounts in LKR, quantities, timeframes)
+EXPAND this base scenario into ONE clear, focused situation. Add:
+- ONE main problem to decide on (do NOT pile several problems together)
+- Quantities and product names where useful (e.g. "200 pairs of shoes a month", "your glove order", "3 workers") — but DO NOT invent specific prices or money amounts (no "3,600 LKR per unit" etc.), because exact costs can be wrong. Talk about things being "too expensive", "below your cost", "a big order", not exact numbers.
 - A real person dynamic (supplier, partner, worker, family member, client)
 - Time pressure
 - One hidden complication they might not immediately notice
 
 Rules:
-- Write in second person ("You just received..." "Your supplier calls...")
-- 3-5 sentences maximum
+- Write in second person ("Your biggest buyer calls and says...")
+- ONE situation only — keep it tight, 3-4 short sentences MAXIMUM
+- Do NOT stack multiple separate problems (one buyer issue OR one worker issue OR one partner issue — not all at once)
 - End with: "What do you do?"
 - Feel like it happened TODAY
-- Use Sri Lankan context (LKR, local business culture)
+- Use Sri Lankan context and local business culture, but NO specific LKR amounts or per-unit prices
 - NO hints, NO suggested answers
-- LANGUAGE: Use simple, everyday English (the reader is not a native speaker). Avoid hard or fancy words. If you must use a business term (like "equity", "margin", "stake", "leverage"), add a short plain meaning right after it in brackets — e.g. "a 40% stake (ownership share)".
+- LANGUAGE: Use simple, everyday English (the reader is not a native speaker). Avoid hard or fancy words. If you must use a business term (like "stake" or "margin"), add a short plain meaning in brackets — e.g. "your margin (profit after costs)".
 
 Return ONLY the scenario. Nothing else.`;
 
@@ -4426,7 +4432,7 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
 
 
 <!-- HOME BOARD ROOM (Ask without picking a tycoon) -->
-<div id="homeBoardRoom" style="display:none;position:fixed;inset:0;background:#0a0e1a;z-index:250;flex-direction:column;overflow:hidden">
+<div id="homeBoardRoom" style="display:none;position:fixed;inset:0;background:#F7F3EC;z-index:250;flex-direction:column;overflow:hidden">
   <div style="padding:14px 16px;background:rgba(255,255,255,0.06);border-bottom:2px solid rgba(99,102,241,0.4);display:flex;align-items:center;gap:12px;flex-shrink:0">
     <button onclick="closeHomeBoardRoom()" style="background:transparent;border:none;color:#6366f1;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">← Back</button>
     <div style="flex:1;text-align:center">
@@ -4445,7 +4451,7 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
 </div>
 
 <!-- BOARD ROOM OVERLAY -->
-<div id="boardRoom" style="display:none;position:fixed;inset:0;background:#0a0e1a;z-index:200;flex-direction:column;overflow:hidden">
+<div id="boardRoom" style="display:none;position:fixed;inset:0;background:#F7F3EC;z-index:200;flex-direction:column;overflow:hidden">
   
   <!-- Header -->
   <div style="padding:14px 16px;background:rgba(255,255,255,0.06);border-bottom:2px solid rgba(99,102,241,0.4);display:flex;align-items:center;gap:8px;flex-shrink:0">
@@ -4527,7 +4533,7 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
 
 
 <!-- BOARD HISTORY OVERLAY -->
-<div id="boardHistory" style="display:none;position:fixed;inset:0;background:#0a0e1a;z-index:300;flex-direction:column;overflow:hidden">
+<div id="boardHistory" style="display:none;position:fixed;inset:0;background:#F7F3EC;z-index:300;flex-direction:column;overflow:hidden">
   <div style="padding:14px 16px;background:rgba(255,255,255,0.06);border-bottom:2px solid rgba(99,102,241,0.4);display:flex;align-items:center;gap:12px;flex-shrink:0">
     <button onclick="closeBoardHistory()" style="background:transparent;border:none;color:#6366f1;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">← Back</button>
     <div style="flex:1;text-align:center">
@@ -4544,7 +4550,7 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
 
 
 <!-- DECISION LOG -->
-<div id="decisionLog" style="display:none;position:fixed;inset:0;background:#0a0e1a;z-index:280;flex-direction:column">
+<div id="decisionLog" style="display:none;position:fixed;inset:0;background:#F7F3EC;z-index:280;flex-direction:column">
   <div style="padding:14px 16px;background:rgba(255,255,255,0.06);border-bottom:2px solid rgba(99,102,241,0.4);display:flex;align-items:center;gap:12px">
     <button onclick="closeDecisionLog()" style="background:transparent;border:1px solid rgba(99,102,241,0.3);color:#f3f4f6;border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:600;text-transform:uppercase">← Back</button>
     <div style="flex:1;text-align:center;font-size:18px;font-weight:700;color:#f3f4f6;font-family:'Playfair Display',serif">📜 Decision Log</div>
@@ -4554,7 +4560,7 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
 </div>
 
 <!-- GOALS -->
-<div id="goalsOverlay" style="display:none;position:fixed;inset:0;background:#0a0e1a;z-index:280;flex-direction:column">
+<div id="goalsOverlay" style="display:none;position:fixed;inset:0;background:#F7F3EC;z-index:280;flex-direction:column">
   <div style="padding:14px 16px;background:rgba(255,255,255,0.06);border-bottom:2px solid rgba(99,102,241,0.4);display:flex;align-items:center;gap:12px">
     <button onclick="closeGoals()" style="background:transparent;border:1px solid rgba(99,102,241,0.3);color:#f3f4f6;border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:600;text-transform:uppercase">← Back</button>
     <div style="flex:1;text-align:center;font-size:18px;font-weight:700;color:#f3f4f6;font-family:'Playfair Display',serif">🎯 My Goals</div>
@@ -4569,7 +4575,7 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
 </div>
 
 <!-- SETTINGS -->
-<div id="settingsOverlay" style="display:none;position:fixed;inset:0;background:#0a0e1a;z-index:280;flex-direction:column">
+<div id="settingsOverlay" style="display:none;position:fixed;inset:0;background:#F7F3EC;z-index:280;flex-direction:column">
   <div style="padding:14px 16px;background:rgba(255,255,255,0.06);border-bottom:2px solid rgba(99,102,241,0.4);display:flex;align-items:center;gap:12px">
     <button onclick="closeSettings()" style="background:transparent;border:1px solid rgba(99,102,241,0.3);color:#f3f4f6;border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:600;text-transform:uppercase">← Back</button>
     <div style="flex:1;text-align:center;font-size:18px;font-weight:700;color:#f3f4f6;font-family:'Playfair Display',serif">⚙️ Settings</div>
