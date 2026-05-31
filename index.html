@@ -1735,6 +1735,23 @@ async function sendMsg() {
   const inp = document.getElementById('inp');
   const text = inp.value.trim();
   if (!text || busy) return;
+
+  // Type "/debug" to see what this advisor is sending (diagnostic)
+  if (text.toLowerCase() === '/debug') {
+    inp.value = '';
+    const sys = buildSystem();
+    const report =
+      'NAME: ' + (current && current.name || '(none)') +
+      '\nisCustom: ' + (current && current.isCustom) +
+      '\ngenerated: ' + (current && current.generated) +
+      '\nhas .system: ' + (current && current.system ? 'YES (' + current.system.length + ')' : 'NO') +
+      '\nhas .persona: ' + (current && current.persona ? 'YES (' + current.persona.length + ')' : 'NO') +
+      '\n\nSYSTEM PROMPT SENT (first 300):\n' + (sys ? sys.slice(0,300) : '(EMPTY)');
+    addBubble('ai', report);
+    return;
+  }
+
+  if (busy) return;
   busy = true; inp.value = ''; updateBtn();
   document.getElementById('chipswrap').style.display = 'none';
 
@@ -1762,6 +1779,16 @@ async function sendMsg() {
       })
     });
     const data = await res.json();
+    // If the backend returned an error (no content), show it so we can diagnose
+    if (!data.content || !data.content.length) {
+      const errMsg = data.error
+        ? (typeof data.error === 'string' ? data.error : JSON.stringify(data.error))
+        : ('No content. Raw response: ' + JSON.stringify(data).slice(0, 300));
+      document.getElementById('typingrow').style.display = 'none';
+      addBubble('ai', '⚠️ Backend error: ' + errMsg);
+      busy = false; updateBtn();
+      return;
+    }
     const reply = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('') || 'Let us try again.';
     const hadThinking = (data.content || []).some(b => b.type === 'thinking');
     history.push({ role: 'assistant', content: reply });
