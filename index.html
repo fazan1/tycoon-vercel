@@ -814,6 +814,7 @@ body {
 <button class="hbtn" onclick="toggleMem()" title="Memory">💾</button>
     <button class="hbtn" onclick="exportChatPDF()" title="Export chat as PDF" style="margin-left:4px">📄</button>
     <button class="hbtn" onclick="clearChat()" title="Clear chat" style="margin-left:4px;color:#ff3b30">🗑️</button>
+    <button class="hbtn" onclick="debugAdvisor()" title="Debug" style="margin-left:4px">🐞</button>
 </div>
 <div id="modeIndicator" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>Mode: <b id="modeLabel">✨ Auto</b></span><button id="deepToggle" onclick="toggleDeepMode()" title="Toggle Quick/Deep thinking" style="background:rgba(255,255,255,0.05);border:1px solid rgba(168,85,247,0.3);border-radius:100px;color:#c4b5fd;padding:5px 12px;font-size:10px;cursor:pointer;font-family:inherit;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;flex-shrink:0">⚡ Quick</button></div>
 <div id="modebar"><button id="boardFloatBtn" onclick="openBoardRoom()" style="display:none;background:linear-gradient(135deg,#fbbf24,#f59e0b);border:none;color:#000;padding:7px 14px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;box-shadow:0 2px 10px rgba(251,191,36,0.3)" title="Get all 12 tycoons opinions">🏆 BOARD</button>
@@ -1695,6 +1696,20 @@ function updateMemPanel() {
   }
 }
 function clearMem() { localStorage.removeItem(getMemKey()); updateMemPanel(); }
+
+function debugAdvisor() {
+  if (!current) { alert('No advisor open'); return; }
+  const sys = buildSystem();
+  const info =
+    'NAME: ' + (current.name || '(none)') +
+    '\nisCustom: ' + current.isCustom +
+    '\ngenerated: ' + current.generated +
+    '\nhas .system: ' + (current.system ? 'YES ('+current.system.length+' chars)' : 'NO') +
+    '\nhas .persona: ' + (current.persona ? 'YES ('+current.persona.length+' chars)' : 'NO') +
+    '\n\n--- SYSTEM PROMPT BEING SENT (first 300 chars) ---\n' +
+    (sys ? sys.slice(0,300) : '(EMPTY!)');
+  alert(info);
+}
 
 function buildSystem() {
   const useMode = mode === 'auto' ? detectedMode : mode;
