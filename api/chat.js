@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured in environment variables' });
   }
@@ -22,19 +21,18 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 4000,
+        model: req.body.model || 'claude-sonnet-4-20250514',
+        max_tokens: req.body.max_tokens || 2500,
         system: req.body.system,
-        messages: req.body.messages
+        messages: req.body.messages,
+        ...(req.body.thinking ? { thinking: req.body.thinking } : {})
       })
     });
 
     const data = await response.json();
-    
     if (!response.ok) {
       return res.status(response.status).json(data);
     }
-    
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({ error: err.message || 'Unknown error' });
