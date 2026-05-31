@@ -9,97 +9,59 @@
 <title>My Tycoon Advisors</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg-1: #0f0420;
-  --bg-2: #1a0832;
-  --purple: #6e2cf4;
-  --purple-light: #a855f7;
-  --pink: #ec4899;
-  --cyan: #06b6d4;
-  --green: #34d399;
-  --text: #f5f3ff;
-  --text-dim: #c4b5fd;
-  --text-mute: #7c6db5;
+  --bg: #F7F3EC;
+  --bg-2: #FBF8F2;
+  --surface: #FFFFFF;
+  --surface-2: #F3EEE5;
+  --surface-3: #ECE6DA;
+  --gold: #C9A24B;
+  --gold-dark: #9A7A2E;
+  --gold-light: #B8901F;
+  --gold-soft: rgba(201,162,75,0.10);
+  --gold-line: rgba(201,162,75,0.30);
+  --gold-grad: linear-gradient(135deg, #D4A93F 0%, #C9A24B 45%, #9A7A2E 100%);
+  --black: #2B2620;
+  --ink: #2B2620;
+  --ink-soft: #5C564C;
+  --gray-dark: #5C564C;
+  --gray-mid: #8A8275;
+  --gray-light: #A9A092;
+  --border: rgba(43,38,32,0.08);
+  --border-2: rgba(43,38,32,0.13);
+  --shadow-sm: 0 1px 3px rgba(43,38,32,0.06);
+  --shadow: 0 6px 24px rgba(43,38,32,0.08);
+  --shadow-lg: 0 16px 48px rgba(43,38,32,0.12);
+  --font-display: 'Fraunces', 'Newsreader', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 html, body {
   height: 100%;
-  width: 100%;
-  background: var(--bg-1);
+  background:
+    radial-gradient(1200px 700px at 50% -10%, rgba(201,162,75,0.06), transparent 60%),
+    var(--bg);
   overflow: hidden;
   -webkit-text-size-adjust: 100%;
   -webkit-overflow-scrolling: touch;
-  margin: 0;
-  padding: 0;
 }
 
 body {
-  color: var(--text);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+  font-family: var(--font-body);
   font-size: 14px;
-  line-height: 1.5;
-  height: 100%;
+  line-height: 1.55;
+  height: 100dvh; height: 100vh; height: -webkit-fill-available;
   -webkit-font-smoothing: antialiased;
-  position: relative;
+  letter-spacing: -0.011em;
   display: flex;
   flex-direction: column;
-  background:
-    radial-gradient(ellipse at 100% 50%, rgba(110,44,244,0.4) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 30%, rgba(236,72,153,0.3) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 70%, rgba(52,211,153,0.2) 0%, transparent 50%),
-    radial-gradient(ellipse at 90% 60%, rgba(251,191,36,0.15) 0%, transparent 40%),
-    linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
-}
-
-/* Animated aurora blob */
-body::before {
-  content: '';
-  position: fixed;
-  width: 400px;
-  height: 400px;
-  right: -80px;
-  top: 30%;
-  background: 
-    radial-gradient(circle at 30% 50%, rgba(236,72,153,0.4) 0%, transparent 50%),
-    radial-gradient(circle at 70% 50%, rgba(52,211,153,0.3) 0%, transparent 50%),
-    radial-gradient(circle at 50% 30%, rgba(168,85,247,0.4) 0%, transparent 50%);
-  filter: blur(50px);
-  pointer-events: none;
-  animation: floatBlob 25s ease-in-out infinite;
-  z-index: 0;
-  will-change: transform;
-}
-
-@keyframes floatBlob {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(-30px, 40px) rotate(120deg); }
-  66% { transform: translate(40px, -20px) rotate(240deg); }
-}
-
-/* Stars */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: 
-    radial-gradient(1px 1px at 20% 30%, white, transparent),
-    radial-gradient(1px 1px at 60% 70%, white, transparent),
-    radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.8), transparent),
-    radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,0.6), transparent),
-    radial-gradient(1px 1px at 90% 60%, white, transparent),
-    radial-gradient(1px 1px at 33% 80%, rgba(255,255,255,0.5), transparent),
-    radial-gradient(2px 2px at 15% 60%, white, transparent),
-    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.7), transparent);
-  background-size: 100% 100%;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.6;
 }
 
 #wrap {
@@ -116,303 +78,296 @@ body::after {
   min-height: 0;
 }
 
+/* ========== SELECTOR ========== */
 #selector {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 24px 16px 30px;
+  padding: 48px 20px 70px;
   scrollbar-width: none;
   touch-action: pan-y;
-  position: relative;
+  background: transparent;
 }
 
 #selector::-webkit-scrollbar { display: none; }
 
 .sel-title {
   text-align: center;
-  font-size: 38px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 6px;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  text-shadow: 0 0 40px rgba(168,85,247,0.5);
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-size: 54px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 14px;
+  margin-top: 12px;
+  letter-spacing: -0.03em;
+  line-height: 1.0;
+}
+.sel-title .gild {
+  background: var(--gold-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-style: italic;
 }
 
 .sel-sub {
   text-align: center;
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-bottom: 28px;
-  letter-spacing: 0.18em;
+  font-size: 11px;
+  color: var(--gold-dark);
+  margin-bottom: 38px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  font-weight: 500;
-  opacity: 0.7;
+  font-weight: 600;
+  opacity: 0.85;
 }
 
-#nameSetup {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-}
+#nameSetup { display: flex; gap: 8px; margin-bottom: 16px; }
 
 #nameInp {
   flex: 1;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(168,85,247,0.2);
-  border-radius: 100px;
-  color: var(--text);
-  padding: 14px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: 14px;
+  color: var(--ink);
+  padding: 14px 18px;
   font-size: 14px;
   outline: none;
   font-family: inherit;
   font-weight: 500;
-  letter-spacing: 0.02em;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
 }
 
-#nameInp::placeholder { color: var(--text-mute); }
-
-#nameInp:focus {
-  border-color: var(--purple-light);
-  background: rgba(168,85,247,0.08);
-  box-shadow: 0 0 30px rgba(168,85,247,0.2);
-}
+#nameInp::placeholder { color: var(--gray-light); }
+#nameInp:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
 
 #nameSave {
-  background: linear-gradient(135deg, var(--purple), var(--pink));
+  background: var(--gold-grad);
   border: none;
-  border-radius: 100px;
-  color: #fff;
-  padding: 14px 26px;
+  border-radius: 14px;
+  color: #1a1505;
+  padding: 14px 22px;
   font-size: 13px;
   cursor: pointer;
   font-family: inherit;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  box-shadow: 0 8px 30px rgba(110,44,244,0.4);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 20px rgba(201,162,75,0.3);
+  transition: all 0.2s;
 }
 
-#nameSave:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(236,72,153,0.5);
-}
+#nameSave:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(201,162,75,0.45); }
 
-#grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
+/* ========== GRID & CARDS ========== */
+#grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 @media (min-width: 500px) { #grid { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 768px) { #grid { grid-template-columns: repeat(4, 1fr); } }
 
 .card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(168,85,247,0.15);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 22px;
-  padding: 22px 14px 16px;
+  padding: 28px 18px 22px;
   cursor: pointer;
   text-align: center;
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-tap-highlight-color: transparent;
-  min-height: 150px;
+  min-height: 166px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--shadow-sm);
 }
 
 .card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, var(--ac, #a855f7) 0%, transparent 60%);
+  background: radial-gradient(120px 80px at 50% 0%, var(--gold-soft), transparent 70%);
   opacity: 0;
-  transition: opacity 0.4s;
-  pointer-events: none;
+  transition: opacity 0.3s;
 }
 
-.card:hover::before, .card:active::before { opacity: 0.15; }
-
-.card:hover, .card:active {
-  border-color: rgba(168,85,247,0.4);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(110,44,244,0.3);
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--gold-grad);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
-.card:active { transform: translateY(0) scale(0.97); }
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--gold-line); }
+.card:hover::after { opacity: 1; }
+.card:hover::before { opacity: 1; }
+.card:active { transform: translateY(0) scale(0.98); transition: all 0.1s; }
 
-.card-emoji {
-  font-size: 34px;
-  display: block;
-  margin-bottom: 10px;
-  filter: drop-shadow(0 4px 12px rgba(168,85,247,0.4));
-  position: relative;
-  z-index: 1;
-}
+.card-emoji { font-size: 38px; display: block; margin-bottom: 14px; position: relative; }
 
 .card-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
   position: relative;
-  z-index: 1;
 }
 
-.card-sub {
-  font-size: 10px;
-  color: var(--text-dim);
-  line-height: 1.4;
-  margin-bottom: 8px;
-  position: relative;
-  z-index: 1;
-}
+.card-sub { font-size: 10.5px; color: var(--gray-mid); line-height: 1.45; margin-bottom: 12px; position: relative; }
 
 .card-tag {
   display: inline-block;
   font-size: 9px;
-  padding: 4px 10px;
+  padding: 4px 11px;
   border-radius: 100px;
-  background: rgba(168,85,247,0.15);
-  color: var(--text-dim);
+  background: var(--gold-soft);
+  color: var(--gold-dark);
   letter-spacing: 0.06em;
   font-weight: 600;
   text-transform: uppercase;
-  border: 1px solid rgba(168,85,247,0.2);
+  border: 1px solid var(--gold-line);
   position: relative;
-  z-index: 1;
 }
 
-#chat {
-  display: none;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-  min-height: 0;
-}
+/* ========== CHAT VIEW ========== */
+#chat { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; background: transparent; }
 
 #hdr {
-  padding: 10px 14px;
-  padding-top: calc(10px + env(safe-area-inset-top));
+  padding: 12px 16px;
+  padding-top: calc(12px + env(safe-area-inset-top));
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(168,85,247,0.1);
-  background: rgba(15,4,32,0.7);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  border-bottom: 1px solid var(--border);
+  background: rgba(247,243,236,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
 #backbtn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(168,85,247,0.2);
-  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  color: var(--ink-soft);
   border-radius: 100px;
   padding: 7px 12px;
-  font-size: 11px;
+  font-size: 14px;
   cursor: pointer;
   font-family: inherit;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-#syncNowBtn {
-  background: rgba(168,85,247,0.1);
-  border: 1px solid rgba(168,85,247,0.3);
-  color: #c4b5fd;
-  border-radius: 100px;
-  padding: 7px 12px;
-  font-size: 11px;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s;
+  flex-shrink: 0;
 }
 
-#backbtn:hover {
-  background: rgba(168,85,247,0.15);
-  color: var(--text);
-  border-color: var(--purple-light);
+#backbtn:hover { border-color: var(--gold); color: var(--gold-light); }
+
+#syncNowBtn {
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  color: var(--gray-mid);
+  border-radius: 100px;
+  padding: 7px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 #hav {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   flex-shrink: 0;
-  background: linear-gradient(135deg, var(--purple), var(--pink));
-  box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+  background: linear-gradient(135deg, #2a2410, #1a1608);
+  border: 1px solid var(--gold-line);
+  box-shadow: 0 2px 10px rgba(201,162,75,0.18);
 }
 
 #hinfo { flex: 1; min-width: 0; }
 
 #hname {
-  font-weight: 700;
-  font-size: 14px;
-  color: #fff !important;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+  letter-spacing: -0.015em;
   line-height: 1.2;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-#hsub {
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-top: 2px;
-  line-height: 1.2;
-}
+#hsub { font-size: 11px; color: var(--gray-mid); margin-top: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .hbtn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(168,85,247,0.2);
-  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  color: var(--gray-mid);
   border-radius: 10px;
-  padding: 7px 9px;
+  padding: 7px 10px;
   font-size: 14px;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s;
 }
 
-.hbtn:hover {
-  background: rgba(168,85,247,0.15);
-  color: var(--text);
-}
+.hbtn:hover { border-color: var(--gold); color: var(--gold); }
 
 #modeIndicator {
-  padding: 8px 18px;
-  background: rgba(168,85,247,0.05);
-  border-bottom: 1px solid rgba(168,85,247,0.08);
+  padding: 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   font-size: 11px;
-  color: var(--text-mute);
+  color: var(--gray-mid);
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
-#modeIndicator b { color: var(--purple-light); font-weight: 700; }
+#modeIndicator b { color: var(--gold-light); font-weight: 700; }
+
+#deepToggle {
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  color: var(--gray-mid);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
 
 #modebar {
   display: flex;
   gap: 6px;
-  padding: 10px 18px;
-  background: rgba(15,4,32,0.5);
-  border-bottom: 1px solid rgba(168,85,247,0.08);
+  padding: 10px 16px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -422,10 +377,10 @@ body::after {
 #modebar::-webkit-scrollbar { display: none; }
 
 .modeBtn {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(168,85,247,0.15);
-  color: var(--text-dim);
-  padding: 7px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  color: var(--gray-mid);
+  padding: 7px 14px;
   border-radius: 100px;
   font-size: 11px;
   cursor: pointer;
@@ -433,47 +388,36 @@ body::after {
   white-space: nowrap;
   flex-shrink: 0;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transition: all 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 
-.modeBtn:hover {
-  color: var(--text);
-  border-color: var(--purple-light);
-}
+.modeBtn:hover { border-color: var(--gold); color: var(--gold-light); }
 
 .modeBtn.active {
-  background: linear-gradient(135deg, var(--purple), var(--pink));
-  color: #fff;
+  background: var(--gold-grad);
+  color: #1a1505;
   border-color: transparent;
-  box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+  box-shadow: 0 4px 16px rgba(201,162,75,0.3);
 }
 
 #memPanel {
   display: none;
-  background: rgba(168,85,247,0.06);
-  border-bottom: 1px solid rgba(168,85,247,0.1);
-  padding: 12px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
   flex-shrink: 0;
 }
 
-#memPanel h4 {
-  font-size: 11px;
-  color: var(--purple-light);
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-weight: 700;
-}
-
-#memContent { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+#memPanel h4 { font-size: 11px; color: var(--gold-light); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+#memContent { font-size: 12px; color: var(--ink-soft); line-height: 1.7; }
 
 #memClear {
   margin-top: 8px;
-  background: rgba(239,68,68,0.1);
-  border: 1px solid rgba(239,68,68,0.3);
-  color: #fca5a5;
+  background: transparent;
+  border: 1px solid #fca5a5;
+  color: #ef4444;
   border-radius: 100px;
   padding: 5px 14px;
   font-size: 11px;
@@ -486,12 +430,13 @@ body::after {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 18px;
+  padding: 20px 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
   min-height: 0;
   scrollbar-width: none;
+  background: transparent;
 }
 
 #msgs::-webkit-scrollbar { display: none; }
@@ -502,20 +447,21 @@ body::after {
 .mav {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+  border-radius: 10px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  background: linear-gradient(135deg, var(--purple), var(--pink));
+  font-size: 15px;
+  background: linear-gradient(135deg, #2a2410, #1a1608);
+  border: 1px solid var(--gold-line);
 }
 
 .bub {
   max-width: 85%;
-  padding: 13px 18px;
+  padding: 13px 16px;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.65;
   white-space: pre-wrap;
   word-wrap: break-word;
   font-family: inherit;
@@ -523,29 +469,29 @@ body::after {
 }
 
 .bub.ai {
-  border-radius: 20px 20px 20px 6px;
-  background: rgba(255,255,255,0.06);
-  color: var(--text);
-  border: 1px solid rgba(168,85,247,0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px 16px 16px 4px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border-2);
+  box-shadow: var(--shadow-sm);
 }
 
 .bub.user {
-  border-radius: 20px 20px 6px 20px;
-  background: linear-gradient(135deg, var(--purple), var(--pink));
-  color: #fff;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--gold-grad);
+  color: #1a1505;
   border: none;
-  box-shadow: 0 4px 20px rgba(168,85,247,0.3);
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(201,162,75,0.25);
 }
 
 .msg-actions { display: flex; gap: 6px; margin-top: 6px; }
 
 .msg-act {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(168,85,247,0.2);
-  color: var(--text-dim);
-  padding: 6px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  color: var(--gray-mid);
+  padding: 5px 12px;
   font-size: 12px;
   cursor: pointer;
   font-family: inherit;
@@ -555,48 +501,42 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  box-shadow: var(--shadow-sm);
 }
 
-.msg-act:hover {
-  border-color: var(--purple-light);
-  color: var(--text);
-  background: rgba(168,85,247,0.15);
-  transform: translateY(-1px);
-}
+.msg-act:hover { border-color: var(--gold); color: var(--gold-light); background: var(--surface-3); }
 
 .badge {
   font-size: 10px;
   padding: 3px 10px;
-  background: rgba(168,85,247,0.15);
-  color: var(--text-dim);
+  background: var(--gold-soft);
+  color: var(--gold-light);
   border-radius: 100px;
   display: inline-block;
   font-weight: 600;
   letter-spacing: 0.04em;
-  border: 1px solid rgba(168,85,247,0.2);
+  border: 1px solid var(--gold-line);
 }
 
-#chipswrap { padding: 8px 18px; }
-#chips { display: flex; flex-wrap: wrap; gap: 8px; }
+#chipswrap { padding: 8px 16px; }
+#chips { display: flex; flex-wrap: wrap; gap: 7px; }
 
 .chip {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(168,85,247,0.2);
-  color: var(--text-dim);
-  padding: 9px 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  color: var(--ink-soft);
+  padding: 8px 16px;
   border-radius: 100px;
   font-size: 12px;
   cursor: pointer;
   font-family: inherit;
   font-weight: 500;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 
-.chip:hover, .chip:active {
-  background: rgba(168,85,247,0.15);
-  color: var(--text);
-  border-color: var(--purple-light);
-}
+.chip:hover, .chip:active { background: var(--surface-3); border-color: var(--gold); color: var(--gold-light); }
 
 #typingrow { display: none; }
 
@@ -604,7 +544,7 @@ body::after {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--purple-light);
+  background: var(--gold);
   display: inline-block;
   animation: bnc 1s infinite;
 }
@@ -618,51 +558,61 @@ body::after {
 }
 
 #inputarea {
-  border-top: 1px solid rgba(168,85,247,0.1);
-  padding: 10px 14px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
   flex-shrink: 0;
-  background: rgba(15,4,32,0.85);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  background: rgba(247,243,236,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   position: sticky;
   bottom: 0;
 }
 
-#irow { display: flex; gap: 10px; align-items: flex-end; }
+#irow { display: flex; gap: 8px; align-items: flex-end; }
+
+#micBtn {
+  border: 1px solid var(--border-2) !important;
+  background: var(--surface-2) !important;
+  color: var(--gray-mid) !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  font-size: 18px !important;
+  flex-shrink: 0 !important;
+  box-shadow: var(--shadow-sm) !important;
+}
 
 #inp {
   flex: 1;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(168,85,247,0.2);
-  border-radius: 24px;
-  color: var(--text);
-  padding: 12px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: 14px;
+  color: var(--ink);
+  padding: 12px 16px;
   font-size: 15px;
-  line-height: 1.4;
+  line-height: 1.5;
   font-family: inherit;
   outline: none;
   resize: none;
-  max-height: 100px;
+  max-height: 120px;
   overflow-y: auto;
   min-height: 44px;
   -webkit-appearance: none;
   font-weight: 500;
-  letter-spacing: -0.005em;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s;
 }
 
-#inp::placeholder { color: var(--text-mute); }
-
-#inp:focus {
-  border-color: var(--purple-light);
-  background: rgba(168,85,247,0.08);
-}
+#inp::placeholder { color: var(--gray-light); }
+#inp:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
 
 #sbtn {
   border: none;
-  border-radius: 50%;
-  color: #fff;
-  background: linear-gradient(135deg, var(--purple), var(--pink));
+  border-radius: 14px;
+  color: #1a1505;
+  background: var(--gold-grad);
   width: 44px;
   height: 44px;
   font-size: 18px;
@@ -670,32 +620,17 @@ body::after {
   cursor: pointer;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 4px 20px rgba(168,85,247,0.5);
+  box-shadow: 0 4px 16px rgba(201,162,75,0.4);
+  transition: all 0.15s;
 }
 
-#sbtn:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 10px 30px rgba(236,72,153,0.6);
-}
+#sbtn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(201,162,75,0.5); }
+#sbtn:disabled { background: var(--surface-2) !important; color: var(--gray-light); box-shadow: none; cursor: not-allowed; }
 
-#sbtn:disabled {
-  background: rgba(255,255,255,0.08) !important;
-  color: var(--text-mute);
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-#disc {
-  text-align: center;
-  margin-top: 6px;
-  font-size: 9px;
-  color: var(--text-mute);
-  letter-spacing: 0.04em;
-  opacity: 0.6;
-}
+#disc { text-align: center; margin-top: 8px; font-size: 10px; color: var(--gray-light); letter-spacing: 0.02em; }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -712,44 +647,168 @@ body::after {
 .card:nth-child(10) { animation-delay: 0.50s; }
 .card:nth-child(11) { animation-delay: 0.55s; }
 .card:nth-child(12) { animation-delay: 0.60s; }
+
+/* ============================================================
+   DARK-LUXE OVERRIDES — normalize legacy inline styles
+   ============================================================ */
+
+/* tdot accent */
+.tdot { background: var(--gold) !important; }
+
+/* Daily quote card */
+#dailyQuote {
+  background: linear-gradient(160deg, var(--surface), var(--bg-2)) !important;
+  border: 1px solid var(--gold-line) !important;
+  border-top: 2px solid var(--gold) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--shadow) !important;
+  color: var(--ink) !important;
+}
+#dailyQuote * { color: var(--ink-soft) !important; }
+#dailyQuote .dq-mark, #dailyQuote .gild { color: var(--gold-light) !important; -webkit-text-fill-color: var(--gold-light) !important; }
+
+/* Home quick-action buttons — unify to luxe pills */
+#quickActions button, #quickActions2 button {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-2) !important;
+  border-radius: 14px !important;
+  color: var(--ink-soft) !important;
+  font-family: var(--font-body) !important;
+  box-shadow: var(--shadow-sm) !important;
+  letter-spacing: 0.02em !important;
+  transition: all 0.18s !important;
+  position: relative;
+}
+#quickActions button:hover, #quickActions2 button:hover {
+  border-color: var(--gold) !important;
+  color: var(--gold-light) !important;
+  transform: translateY(-2px);
+}
+/* Primary CTA: Ask Board */
+#quickActions button[onclick*="openHomeBoardRoom"] {
+  background: var(--gold-grad) !important;
+  border: none !important;
+  color: #1a1505 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 6px 20px rgba(201,162,75,0.3) !important;
+}
+#quickActions button[onclick*="openHomeBoardRoom"]:hover { color: #1a1505 !important; box-shadow: 0 10px 28px rgba(201,162,75,0.45) !important; }
+/* Arena button — keep dark, gold text, with sheen */
+#quickActions2 button[onclick*="openArena"] {
+  background: linear-gradient(135deg, #1a1608, #0e0c06) !important;
+  border: 1px solid var(--gold-line) !important;
+  color: var(--gold-light) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+}
+
+/* Search bar — was invisible white-on-white */
+#searchInp {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-2) !important;
+  color: var(--ink) !important;
+  border-radius: 100px !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+#searchInp::placeholder { color: var(--gray-light) !important; }
+#searchInp:focus { border-color: var(--gold) !important; outline: none; box-shadow: 0 0 0 3px var(--gold-soft) !important; }
+
+/* Reminder badge */
+#reminderBadge { background: var(--gold) !important; color: #1a1505 !important; display:none; }
+
+/* ---- Global overlay normalization (Decision Log, Goals, Settings, Board, History, Reminders) ---- */
+[id$="Overlay"], #decisionLogOverlay, #goalsOverlay, #settingsOverlay,
+#boardHistoryOverlay, #boardRoomOverlay, #homeBoardOverlay {
+  background: var(--bg) !important;
+}
+/* Any leftover purple/indigo borders & text → gold/ink */
+[style*="99,102,241"], [style*="6366f1"], [style*="a855f7"], [style*="168,85,247"] {
+  border-color: var(--gold-line) !important;
+}
+/* Old near-white panel fills → dark surface */
+[style*="#f3f4f6"] { background: var(--surface) !important; color: var(--ink) !important; }
+[style*="#0a0e1a"] { color: var(--ink) !important; }
+
+/* Generic overlay buttons (Back etc.) inside overlays */
+[id$="Overlay"] button[onclick^="close"],
+[id$="Overlay"] button[onclick^="back"] {
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border-2) !important;
+  color: var(--ink-soft) !important;
+  border-radius: 100px !important;
+  font-family: var(--font-body) !important;
+}
+/* Overlay headings use display serif */
+[id$="Overlay"] h1, [id$="Overlay"] h2, [id$="Overlay"] h3 { font-family: var(--font-display) !important; }
+
+/* Fix Playfair/Crimson references that never loaded → our fonts */
+[style*="Playfair"] { font-family: var(--font-display) !important; }
+[style*="Crimson"] { font-family: var(--font-display) !important; }
+[style*="Plus Jakarta"], [style*="Jakarta"] { font-family: var(--font-body) !important; }
+
+/* Sync/PDF toast banners */
+.dl-banner { font-family: var(--font-body) !important; }
+
+/* Scrollbars hidden globally for overlays */
+[id$="Overlay"] ::-webkit-scrollbar { display: none; }
+
+/* ---- Arena refinement ---- */
+#arenaOverlay { font-family: var(--font-body) !important; }
+#arenaOverlay [style*="font-weight:900"], #arenaStart div[style*="font-size:28px"] { font-family: var(--font-display) !important; font-weight: 600 !important; }
+#arenaStart > div:first-child > div[style*="font-size:28px"] { font-family: var(--font-display) !important; }
+.diffBtn { transition: all 0.2s !important; }
+#startBtn { background: var(--gold-grad) !important; color: #1a1505 !important; box-shadow: 0 10px 34px rgba(201,162,75,0.4) !important; }
+#arenaScoreNum, #resultScoreNum { font-family: var(--font-display) !important; }
 </style>
+
 </head>
 <body>
 
 <div id="selector">
-<div class="sel-title">🏆 My Tycoon Advisors</div>
-<div class="sel-sub">Personal AI · Reasons from real past · Admits unknowns · Hybrid mode</div>
+<div class="sel-title">My <span class="gild">Tycoon</span> Advisors</div>
+<div class="sel-sub">Reasons from real past · Admits unknowns · Trains your judgment</div>
 <!-- Daily Wisdom -->
-<div id="dailyQuote" style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:24px;padding:24px;margin-bottom:22px;text-align:center;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:relative;box-shadow:0 8px 30px rgba(110,44,244,0.15)"></div>
+<div id="dailyQuote" style="background:#FFFFFF;border:1px solid rgba(201,168,76,0.2);border-top:3px solid #C9A84C;border-radius:16px;padding:22px;margin-bottom:20px;text-align:left;box-shadow:0 4px 24px rgba(0,0,0,0.06);position:relative"></div>
 
 <!-- Quick Actions Bar -->
 <div id="quickActions" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
   <button onclick="openHomeBoardRoom()" style="background:#f3f4f6;border:2px solid rgba(99,102,241,0.3);border-radius:4px;color:#0a0e1a;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;letter-spacing:0.06em;text-transform:uppercase;box-shadow:2px 2px 0 rgba(184,115,51,0.4)">🏆 Ask Board</button>
-  <button onclick="openGoals()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:100px;color:#f5f3ff;padding:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;backdrop-filter:blur(20px)">🎯 Goals</button>
+  <button onclick="openGoals()" style="background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:14px;color:#3D3D3D;padding:14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 1px 4px rgba(0,0,0,0.06)">🎯 Goals</button>
 </div>
 <div id="quickActions2" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-  <button onclick="openBoardHistory()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:100px;color:#c4b5fd;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;backdrop-filter:blur(20px)">📚 Board</button>
-  <button onclick="openDecisionLog()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:100px;color:#c4b5fd;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;backdrop-filter:blur(20px)">📜 Log</button>
-  <button onclick="openReminders()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:100px;color:#c4b5fd;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;position:relative">🔔 REMINDERS<span id="reminderBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center;font-weight:700">0</span></button>
-<button onclick="openSettings()" style="background:rgba(255,255,255,0.03);border:1px solid rgba(168,85,247,0.15);border-radius:100px;color:#c4b5fd;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;backdrop-filter:blur(20px)">⚙️ More</button>
+  <button onclick="openBoardHistory()" style="background:#F5F3EF;border:1px solid rgba(0,0,0,0.07);border-radius:12px;color:#6B6B6B;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">📚 Board</button>
+  <button onclick="openDecisionLog()" style="background:#F5F3EF;border:1px solid rgba(0,0,0,0.07);border-radius:12px;color:#6B6B6B;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">📜 Log</button>
+  <button onclick="openReminders()" style="background:#F5F3EF;border:1px solid rgba(0,0,0,0.07);border-radius:12px;color:#6B6B6B;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🔔 REMINDERS<span id="reminderBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#C9A84C;color:#fff;font-size:10px;width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center;font-weight:700">0</span></button>
+<button onclick="openArena()" style="background:linear-gradient(135deg,#0D0D0D,#1A1A1A);border:none;border-radius:14px;color:#DAA520;padding:14px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.1em;text-transform:uppercase;box-shadow:0 4px 20px rgba(0,0,0,0.3);position:relative;overflow:hidden">🥊 ARENA</button>
+<button onclick="openSettings()" style="background:#F5F3EF;border:1px solid rgba(0,0,0,0.07);border-radius:12px;color:#6B6B6B;padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">⚙️ More</button>
 </div>
 
 <!-- Search bar -->
-<div style="margin-bottom:14px">
-  <input id="searchInp" placeholder="🔍 Search tycoons by name, country, industry..." oninput="filterTycoons()" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:100px;color:#f5f3ff;padding:14px 22px;font-size:14px;font-family:inherit;outline:none;font-weight:500;backdrop-filter:blur(20px)">
+<div id="searchWrap" style="margin-bottom:14px;display:none">
+  <input id="searchInp" placeholder="🔍 Type any name to add..." oninput="filterTycoons()" style="width:100%;background:var(--surface);border:1px solid var(--border-2);border-radius:100px;color:var(--ink);padding:14px 22px;font-size:14px;font-family:inherit;outline:none;font-weight:500">
 </div>
 
 <div id="nameSetup">
 <input id="nameInp" type="text" placeholder="Your name (so they remember you)..."/>
 <button id="nameSave" onclick="saveName()">Save</button>
 </div>
+
+<!-- Category picker (the new front door) -->
+<div id="categoryPicker"></div>
+
+<!-- In-category header (shown after picking a category) -->
+<div id="categoryHeader" style="display:none;align-items:center;gap:10px;margin-bottom:14px">
+  <button onclick="backToCategories()" style="background:var(--surface-2);border:1px solid var(--border-2);color:var(--ink-soft);border-radius:100px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">← Categories</button>
+  <div id="categoryHeaderTitle" style="font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--ink)"></div>
+</div>
+
 <div id="grid"></div>
 </div>
 
 <div id="chat">
 <div id="hdr">
-<button id="backbtn" onclick="goBack()">← Back</button>
-    <button id="syncNowBtn" onclick="manualSync()" title="Sync from cloud">☁️ Sync</button>
+<button id="backbtn" onclick="goBack()">←</button>
+    <button id="syncNowBtn" onclick="manualSync()" title="Sync from cloud">☁️</button>
 <div id="hav"></div>
 <div id="hinfo"><div id="hname"></div><div id="hsub"></div></div>
 <button class="hbtn" onclick="toggleMem()" title="Memory">💾</button>
@@ -1081,7 +1140,24 @@ BOUNDARIES: No partisan politics. No specific funding promises — direct to TEF
 ${CORE_RULES}` }
 ];
 
+// ── ADVISOR CATEGORIES ──
+const CATEGORIES = [
+  { id:'business',   emoji:'💼', name:'Business & Entrepreneurs', desc:'Strategy, money, building companies', color:'#C9A24B' },
+  { id:'authors',    emoji:'📚', name:'Authors & Thinkers',       desc:'Wisdom, mental models, big ideas', color:'#8b7fd4' },
+  { id:'health',     emoji:'🩺', name:'Health & Wellness',         desc:'Habits, sleep, energy (not medical advice)', color:'#5bb98a' },
+  { id:'mindset',    emoji:'🧠', name:'Mindset & Wellbeing',       desc:'Stress, focus, confidence (not therapy)', color:'#5b9bd4' },
+  { id:'motivation', emoji:'🔥', name:'Motivation & Discipline',   desc:'Drive, grit, pushing through', color:'#e07a5f' },
+  { id:'spiritual',  emoji:'🕊️', name:'Spiritual & Philosophy',    desc:'Meaning, calm, purpose', color:'#d4a85b' },
+  { id:'leaders',    emoji:'⚔️', name:'Leaders & Strategists',     desc:'Decisions, conflict, leadership', color:'#c2554e' },
+  { id:'personal',   emoji:'👤', name:'Personal Mentors',          desc:'Your father, teacher, anyone you describe', color:'#9a9a9a' }
+];
+
+let currentCategory = null; // null = showing the category picker
+
+function getCategoryById(id) { return CATEGORIES.find(c => c.id === id) || CATEGORIES[0]; }
+
 let current = null, history = [], busy = false, mode = 'auto', detectedMode = 'chat';
+
 let userName = localStorage.getItem('tycoon_username') || '';
 
 const nameInp = document.getElementById('nameInp');
@@ -1219,18 +1295,263 @@ function deleteCustomTycoon(id) {
 
 function buildSystemPrompt(t) {
   if (t.isCustom) {
-    return `You are ${t.name}. ${t.persona}\n\nSpeak as this person would. Be authentic to their personality, experience, and wisdom. Give thoughtful advice based on who they are. If you don't know something they would know, say so honestly.\n\n${CORE_RULES}`;
+    return `You ARE ${t.name}. Fully embody this person — their voice, values, and the way they actually think.
+
+WHO YOU ARE:
+${t.persona}
+
+HOW YOU MUST THINK (this is what makes you valuable, not a generic chatbot):
+- REASON FROM YOUR REAL LIFE — pull from the actual decisions, work, failures and wins ${t.name} is known for. Reference specifics (events, projects, time periods, numbers) wherever you can, in character.
+- See the problem from ${t.name}'s unique PERSPECTIVE — what would THEY notice that others miss? What's their signature lens?
+- Give real depth: weigh trade-offs, 1st vs 2nd-order effects, what could go wrong, the worst case.
+- Speak in possibilities, not absolutes: "If you do X, then Y — but watch for Z." Offer options with trade-offs.
+- If you don't know something, say so honestly rather than inventing facts.
+- Ask a sharp question before advising when the situation is unclear.
+- Use the user's real context (their business, country, situation) — never generic advice.
+- End with a clear next step, a specific number to find, or a pointed question. Never end vague.
+- Stay fully in character. You ARE ${t.name}.
+
+${t.safety ? t.safety + '\n\n' : ''}${CORE_RULES}`;
   }
   return t.system; // built-in tycoons use their predefined system
+}
+
+// Category-specific guidance for auto-generating an advisor from just a name
+const CATEGORY_GEN = {
+  business:   { role:'a business leader / entrepreneur', focus:'strategy, money, building companies, real decisions they made' },
+  authors:    { role:'an author / thinker', focus:'their key ideas, books, mental models, philosophy' },
+  health:     { role:'a health & wellness guide', focus:'habits, sleep, energy, movement, general wellbeing' },
+  mindset:    { role:'a mindset & wellbeing guide', focus:'stress, focus, confidence, everyday mental habits' },
+  motivation: { role:'a motivation & discipline coach', focus:'drive, grit, consistency, pushing through hard things' },
+  spiritual:  { role:'a spiritual / philosophical guide', focus:'meaning, calm, purpose, inner peace' },
+  leaders:    { role:'a leader / strategist', focus:'decisions under pressure, conflict, leadership, strategy' },
+  personal:   { role:'a personal mentor', focus:'practical life and work wisdom' }
+};
+
+// Safety rules injected for sensitive categories
+const HEALTH_SAFETY = `IMPORTANT SAFETY RULES (you MUST follow):
+- You are NOT a doctor. NEVER diagnose conditions, interpret symptoms or test results, or name/recommend any medicine, supplement dose, or treatment.
+- If asked anything medical, say clearly: "I can't help with that — please see a qualified doctor," then offer only general wellbeing ideas (sleep, routine, movement, stress).
+- Always remind the user this is general information, not medical advice.`;
+const MINDSET_SAFETY = `IMPORTANT SAFETY RULES (you MUST follow):
+- You are NOT a therapist and this is NOT therapy. Never diagnose mental health conditions.
+- If the user shows signs of real distress, crisis, or self-harm, gently stop coaching and encourage them to reach out to a trusted person or a professional / local helpline.
+- Keep advice to everyday habits, focus, and confidence. Remind the user this is general support, not professional help.`;
+
+// Called when user taps "Generate" for a typed name in a category
+async function generateAdvisor(rawName) {
+  const name = (rawName || '').trim();
+  if (!name) return;
+  const catId = currentCategory || 'business';
+  const cat = getCategoryById(catId);
+  const gen = CATEGORY_GEN[catId] || CATEGORY_GEN.business;
+
+  // Loading card
+  const grid = document.getElementById('grid');
+  const loading = document.createElement('div');
+  loading.className = 'card';
+  loading.id = 'genLoading';
+  loading.style.setProperty('--ac', cat.color);
+  loading.innerHTML = `<span class="card-emoji">✨</span><div class="card-name">Creating ${name}…</div><div class="card-sub">Building advisor</div><span class="card-tag">PLEASE WAIT</span>`;
+  if (grid) grid.insertBefore(loading, grid.firstChild);
+
+  const genPrompt = `Create an advisor profile for "${name}" as ${gen.role}, for an app where users get advice from notable people.
+
+Focus on: ${gen.focus}.
+
+Return ONLY valid JSON, no markdown, with these fields:
+{
+  "emoji": "one emoji that represents them",
+  "sub": "short line: their field/work · country flag emoji if known (max 6 words)",
+  "tag": "a 2-3 word label (e.g. 'Tech Visionary')",
+  "summary": "2-3 simple sentences telling the user who this person is and what they're known for, so they can confirm it's who they meant. Plain, friendly English.",
+  "greeting": "first thing they'd say to someone seeking their advice — in their real voice, 1-2 sentences",
+  "qs": ["4 short starter questions a user might tap, in their domain"],
+  "persona": "A rich 150-220 word first-person-ready description so an AI can fully BECOME this person. Include: their real background and 3-5 SPECIFIC career-defining events/decisions (with rough years, projects, or numbers if known), their core philosophy and signature way of thinking, how they speak, and the kind of advice they give. Be concrete and factual — name real things they did, not vague traits."
+}
+
+If "${name}" is not a real or recognizable person, still make a reasonable advisor but keep the persona and summary honest about what's known.`;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 900,
+        messages: [{ role: 'user', content: genPrompt }],
+        system: 'You build concise, accurate advisor profiles of notable people. Return ONLY valid JSON.'
+      })
+    });
+    const data = await res.json();
+    let text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    // Robust: pull the JSON object even if the AI added text around it
+    text = text.replace(/```json|```/g, '').trim();
+    const firstBrace = text.indexOf('{');
+    const lastBrace = text.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1) text = text.slice(firstBrace, lastBrace + 1);
+    let prof;
+    try { prof = JSON.parse(text); }
+    catch(parseErr) {
+      prof = { persona: 'You are ' + name + ', ' + (CATEGORY_GEN[catId]||CATEGORY_GEN.business).role + '. Reason and speak as this person would, drawing on what they are publicly known for.', summary: "We couldn't load full details, but you can still add them and start chatting." };
+    }
+
+    const safety = catId === 'health' ? HEALTH_SAFETY : catId === 'mindset' ? MINDSET_SAFETY : '';
+    const advisor = {
+      id: 'gen_' + Date.now(),
+      name,
+      emoji: prof.emoji || cat.emoji,
+      sub: prof.sub || cat.name,
+      tag: prof.tag || cat.name.split(' ')[0],
+      persona: prof.persona || (name + ' — ' + gen.role),
+      greeting: prof.greeting || `Hello, I'm ${name}. What would you like to talk about?`,
+      qs: Array.isArray(prof.qs) && prof.qs.length ? prof.qs.slice(0,4) : ['Give me advice','Help me decide','What should I focus on?','Share your wisdom'],
+      cat: catId,
+      ac: cat.color,
+      grad: `linear-gradient(135deg, ${cat.color}, #1a1608)`,
+      safety,
+      isCustom: true,
+      generated: true
+    };
+    // Remove loading card, show a PREVIEW so the user confirms it's the right person
+    const l = document.getElementById('genLoading'); if (l) l.remove();
+    showAdvisorPreview(advisor, prof.summary || '');
+    return;
+  } catch(e) {
+    const l = document.getElementById('genLoading'); if (l) l.remove();
+    alert("Couldn't create " + name + ".\n\nReason: " + (e && e.message ? e.message : 'unknown') + "\n\nThis usually means the AI backend isn't reachable. Your Tycoon chat must be working for Generate to work — they use the same connection.");
+  }
+}
+
+// Preview modal: shows who the person is before adding
+let _pendingAdvisor = null;
+function showAdvisorPreview(advisor, summary) {
+  _pendingAdvisor = advisor;
+  const modal = document.createElement('div');
+  modal.id = 'advisorPreview';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(10px)';
+  modal.innerHTML = `
+    <div style="background:linear-gradient(160deg,#16161A,#0e0e10);border:1px solid rgba(201,162,75,0.3);border-radius:24px;padding:26px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.6);text-align:center">
+      <div style="font-size:46px;margin-bottom:8px">${advisor.emoji}</div>
+      <div style="font-family:var(--font-display);font-size:22px;font-weight:600;color:#fff;margin-bottom:4px">${advisor.name}</div>
+      <div style="font-size:12px;color:#E6C97A;font-weight:600;margin-bottom:14px">${advisor.sub}</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.75);line-height:1.6;text-align:left;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:18px">${summary || 'Ready to add this advisor.'}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:16px">Is this who you meant?</div>
+      <div style="display:flex;gap:10px">
+        <button onclick="cancelAdvisorPreview()" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:100px;color:#fff;padding:13px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Not this one</button>
+        <button onclick="confirmAddAdvisor()" style="flex:1.4;background:linear-gradient(135deg,#E6C97A,#C9A24B,#9A7A2E);border:none;border-radius:100px;color:#1a1505;padding:13px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.04em">✓ Add ${advisor.name.split(' ')[0]}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+function cancelAdvisorPreview() {
+  _pendingAdvisor = null;
+  const m = document.getElementById('advisorPreview'); if (m) m.remove();
+}
+
+function confirmAddAdvisor() {
+  if (!_pendingAdvisor) return;
+  const advisor = _pendingAdvisor;
+  _pendingAdvisor = null;
+  const m = document.getElementById('advisorPreview'); if (m) m.remove();
+  const tycoons = loadCustomTycoons();
+  tycoons.push(advisor);
+  saveCustomTycoons(tycoons);
+  if (typeof syncCustomToCloud === 'function') syncCustomToCloud();
+  const inp = document.getElementById('searchInp'); if (inp) inp.value = '';
+  renderAllTycoons();
+  openChat(advisor);
+}
+
+// stub so call above never throws if cloud sync not defined
+function syncCustomToCloud() {
+  if (typeof syncEnabled === 'undefined' || !syncEnabled || !sbClient) return;
+  try {
+    sbClient.from('custom_advisors').upsert({
+      user_id: getUserId(),
+      advisors: loadCustomTycoons(),
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
+  } catch(e) {}
+}
+
+// Render the category picker tiles (the front door)
+function renderCategories() {
+  const picker = document.getElementById('categoryPicker');
+  const grid = document.getElementById('grid');
+  const header = document.getElementById('categoryHeader');
+  const search = document.getElementById('searchWrap');
+  if (!picker) return;
+  // showing categories: hide grid, header, search
+  if (grid) grid.style.display = 'none';
+  if (header) header.style.display = 'none';
+  if (search) search.style.display = 'none';
+
+  // hint banner (lives just above the picker)
+  let hint = document.getElementById('categoryHint');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.id = 'categoryHint';
+    picker.parentNode.insertBefore(hint, picker);
+  }
+  hint.style.cssText = 'background:linear-gradient(135deg,rgba(201,162,75,0.14),rgba(201,162,75,0.05));border:1px solid rgba(201,162,75,0.35);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center';
+  hint.innerHTML = `<div style="font-size:14px;color:#9A7A2E;font-weight:700;margin-bottom:4px">👇 Pick a category to begin</div><div style="font-size:12px;color:#5C564C;line-height:1.5">Open any category, then type <b style="color:#2B2620">any famous name</b> in the search bar to add them as your advisor.</div>`;
+
+  picker.style.display = 'grid';
+  picker.style.gridTemplateColumns = '1fr 1fr';
+  picker.style.gap = '12px';
+  picker.innerHTML = CATEGORIES.map(cat => {
+    const count = countAdvisorsInCategory(cat.id);
+    return `<div onclick="openCategory('${cat.id}')" class="card" style="--ac:${cat.color};cursor:pointer;min-height:130px">
+      <span class="card-emoji">${cat.emoji}</span>
+      <div class="card-name">${cat.name}</div>
+      <div class="card-sub">${cat.desc}</div>
+      <span class="card-tag">${count} advisor${count===1?'':'s'}</span>
+    </div>`;
+  }).join('');
+}
+
+function countAdvisorsInCategory(catId) {
+  let n = 0;
+  TYCOONS.forEach(t => { if ((t.cat || 'business') === catId) n++; });
+  loadCustomTycoons().forEach(t => { if ((t.cat || 'personal') === catId) n++; });
+  return n;
+}
+
+function openCategory(catId) {
+  currentCategory = catId;
+  const cat = getCategoryById(catId);
+  document.getElementById('categoryPicker').style.display = 'none';
+  var hint = document.getElementById('categoryHint'); if (hint) hint.style.display = 'none';
+  const header = document.getElementById('categoryHeader');
+  header.style.display = 'flex';
+  document.getElementById('categoryHeaderTitle').textContent = cat.emoji + ' ' + cat.name;
+  const search = document.getElementById('searchWrap');
+  if (search) search.style.display = 'block';
+  const inp = document.getElementById('searchInp');
+  if (inp) { inp.value = ''; inp.placeholder = '🔍 Type any name to add to ' + cat.name.split(' ')[0] + '…'; }
+  renderAllTycoons();
+}
+
+function backToCategories() {
+  currentCategory = null;
+  renderCategories();
 }
 
 function renderAllTycoons() {
   const grid = document.getElementById('grid');
   if (!grid) return;
+  // if no category chosen yet, show the picker instead
+  if (!currentCategory) { renderCategories(); return; }
+  grid.style.display = 'grid';
   grid.innerHTML = '';
-  
-  // Render built-in tycoons
+
+  const cat = getCategoryById(currentCategory);
+
+  // Built-in tycoons in this category
   TYCOONS.forEach(t => {
+    if ((t.cat || 'business') !== currentCategory) return;
     const c = document.createElement('div');
     c.className = 'card';
     c.style.setProperty('--ac', t.ac);
@@ -1238,25 +1559,32 @@ function renderAllTycoons() {
     c.onclick = () => openChat(t);
     grid.appendChild(c);
   });
-  
-  // Render custom tycoons
+
+  // Custom/generated advisors in this category
   const custom = loadCustomTycoons();
   custom.forEach(t => {
+    if ((t.cat || 'personal') !== currentCategory) return;
     const c = document.createElement('div');
     c.className = 'card';
-    c.style.setProperty('--ac', t.ac);
+    c.style.setProperty('--ac', t.ac || cat.color);
     c.innerHTML = `<span class="card-emoji">${t.emoji}</span><div class="card-name">${t.name}</div><div class="card-sub">${t.sub}</div><span class="card-tag">${t.tag}</span><button onclick="event.stopPropagation();openCustomTycoonForm('${t.id}')" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.4);border:none;color:#c4b5fd;width:22px;height:22px;border-radius:50%;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5">✏️</button>`;
     c.onclick = () => openChat(t);
     grid.appendChild(c);
   });
-  
-  // Add "+ Add Custom Mentor" card
+
+  // "+ Add by name" card for this category
   const addCard = document.createElement('div');
   addCard.className = 'card';
-  addCard.style.setProperty('--ac', '#a855f7');
+  addCard.setAttribute('data-add', '1');
+  addCard.style.setProperty('--ac', cat.color);
   addCard.style.borderStyle = 'dashed';
-  addCard.innerHTML = `<span class="card-emoji">➕</span><div class="card-name">ADD MENTOR</div><div class="card-sub">Your father, mentor, anyone</div><span class="card-tag">CUSTOM</span>`;
-  addCard.onclick = () => openCustomTycoonForm();
+  const addLabel = currentCategory === 'personal' ? 'ADD MENTOR' : 'ADD BY NAME';
+  const addSub = currentCategory === 'personal' ? 'Describe your own person' : 'Type any famous name above';
+  addCard.innerHTML = `<span class="card-emoji">➕</span><div class="card-name">${addLabel}</div><div class="card-sub">${addSub}</div><span class="card-tag">NEW</span>`;
+  addCard.onclick = () => {
+    if (currentCategory === 'personal') { openCustomTycoonForm(); }
+    else { const inp = document.getElementById('searchInp'); if (inp) { inp.focus(); inp.scrollIntoView({behavior:'smooth', block:'center'}); } }
+  };
   grid.appendChild(addCard);
 }
 
@@ -1615,7 +1943,7 @@ Rules:
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 500,
         messages: [{ role: 'user', content: prompt }],
         system: 'You extract action items from conversations. Return ONLY valid JSON arrays, no markdown.'
@@ -1704,17 +2032,17 @@ function renderReminders() {
   
   let html = '';
   if (pending.length > 0) {
-    html += '<div style="font-size:11px;color:#a855f7;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;font-weight:700">⏳ Pending (' + pending.length + ')</div>';
+    html += '<div style="font-size:11px;color:#E6C97A;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;font-weight:700">⏳ Pending (' + pending.length + ')</div>';
     html += pending.map(r => `
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-left:3px solid ${priorityColor(r.priority)};border-radius:14px;padding:14px;margin-bottom:10px">
+      <div style="background:linear-gradient(160deg,#16161A,#0e0e10);border:1px solid rgba(255,255,255,0.08);box-shadow:0 8px 24px rgba(0,0,0,0.4);border-left:3px solid ${priorityColor(r.priority)};border-radius:14px;padding:14px;margin-bottom:10px">
         <div style="display:flex;align-items:flex-start;gap:10px">
           <button onclick="toggleReminder('${r.id}')" style="background:transparent;border:2px solid ${priorityColor(r.priority)};width:22px;height:22px;border-radius:50%;cursor:pointer;flex-shrink:0;margin-top:2px"></button>
           <div style="flex:1">
-            <div style="font-size:14px;color:#f5f3ff;font-weight:500;line-height:1.4">${r.task}</div>
+            <div style="font-size:14px;color:#F4F1EA;font-weight:500;line-height:1.4">${r.task}</div>
             <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
               <span style="font-size:10px;color:${priorityColor(r.priority)};padding:2px 8px;background:${priorityColor(r.priority)}22;border-radius:100px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase">${r.priority}</span>
-              <span style="font-size:10px;color:#c4b5fd;padding:2px 8px;background:rgba(168,85,247,0.1);border-radius:100px;font-weight:500">⏰ ${r.when}</span>
-              ${r.tycoon !== 'General' ? `<span style="font-size:10px;color:#7c6db5;padding:2px 8px">via ${r.tycoon}</span>` : ''}
+              <span style="font-size:10px;color:#E6C97A;padding:2px 8px;background:rgba(201,162,75,0.12);border-radius:100px;font-weight:500">⏰ ${r.when}</span>
+              ${r.tycoon !== 'General' ? `<span style="font-size:10px;color:rgba(255,255,255,0.4);padding:2px 8px">via ${r.tycoon}</span>` : ''}
             </div>
           </div>
           <button onclick="deleteReminder('${r.id}')" style="background:transparent;border:none;color:#fca5a5;cursor:pointer;font-size:18px">×</button>
@@ -1743,14 +2071,1046 @@ function renderReminders() {
 
 function manualSync() {
   const btn = document.getElementById('syncNowBtn');
-  if (btn) { btn.textContent = '⏳...'; btn.disabled = true; }
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
   initSupabase();
   pullFromCloud().then(() => {
-    if (btn) { btn.textContent = '☁️ Sync'; btn.disabled = false; }
+    if (btn) { btn.textContent = '☁️'; btn.disabled = false; }
   }).catch(() => {
-    if (btn) { btn.textContent = '☁️ Sync'; btn.disabled = false; }
+    if (btn) { btn.textContent = '☁️'; btn.disabled = false; }
   });
 }
+
+
+// ══════════════════════════════════════
+// ⚔️  ARENA — Brain Training Module
+// ══════════════════════════════════════
+let arenaState = {
+  difficulty: 'operator',
+  round: 1,
+  maxRounds: 3,
+  answers: [],
+  scenario: null,
+  topic: null,
+  conversationHistory: [],
+  source: null,
+  helpsLeft: 2,
+  helpsUsed: 0,
+  mode: 'practice',   // 'practice' = generated, 'real' = user's real decision
+  realDecision: null
+};
+const ARENA_MAX_HELPS = 2;
+
+// Pull a real decision the user faced from their saved chats (Option 3).
+// Returns { context, source } or null. We extract the user's own words and
+// strip any advisor answer so Arena tests THEIR thinking, not recall.
+function pullRealChatContext() {
+  try {
+    const candidates = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith('chat_')) continue;
+      const tycoon = key.substring(5);
+      let msgs;
+      try { msgs = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { continue; }
+      if (!Array.isArray(msgs)) continue;
+      // Collect substantive user messages (real decisions, not one-liners)
+      msgs.forEach(m => {
+        if (m.role === 'user' && typeof m.content === 'string') {
+          const t = m.content.trim();
+          if (t.length >= 40 && /\b(should|decide|whether|or|risk|invest|partner|hire|expand|buy|sell|offer|deal|loan|client|supplier|worker|price)\b/i.test(t)) {
+            candidates.push({ text: t, tycoon });
+          }
+        }
+      });
+    }
+    if (candidates.length === 0) return null;
+    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    return { context: pick.text.slice(0, 400), source: pick.tycoon };
+  } catch(e) { return null; }
+}
+
+const ARENA_DIMS = ['risk', 'stakeholders', 'decisiveness', 'depth', 'practicality'];
+const ARENA_DIM_LABELS = {
+  risk: 'Risk Awareness', stakeholders: 'Stakeholder Thinking',
+  decisiveness: 'Decisiveness', depth: '2nd-Order Depth', practicality: 'Practicality'
+};
+
+// 10 hand-written offline scenarios — used when the AI backend is unreachable
+// so Arena always works. Mixed types: supplier, partner, hiring, expansion,
+// crisis, family, cash flow, negotiation, ethics, opportunity.
+const ARENA_OFFLINE = {
+  rookie: [
+    { topic:'SUPPLIER', text:"Your cotton supplier just raised prices 18%, starting from your next order. A newer supplier offers the same quality 12% cheaper, but you have never tested them before, and they want full payment before delivery. Your next production run (making your products) starts in 5 days. What do you do?" },
+    { topic:'HIRING', text:"A reliable worker who has been with you 2 years asks for a 15% pay rise. She is good but not impossible to replace, and three other workers earn the same as her now. If you say yes, they may all ask too. If you say no, she may leave. What do you do?" },
+    { topic:'CASH FLOW', text:"You have 600,000 LKR in the bank. A client owes you 400,000, due in 30 days. A supplier offers 25% off if you pay 500,000 today for materials you will need next month anyway. Taking the deal leaves you very low on cash for a month. What do you do?" }
+  ],
+  operator: [
+    { topic:'PARTNERSHIP', text:"Your goat-farming partner has run the daily work for 6 months with no written pay agreement — just a spoken promise to 'split profits fairly.' Now the goats are worth much more than expected, and he is hinting he deserves 50%. You put in 1.7M LKR; he put in his labour (work). He mentions another investor is interested in him. What do you do?" },
+    { topic:'EXPANSION', text:"A hospital wants to order 10,000 gloves every month — triple what you make now — but they require an ISO certificate (an official quality stamp) that you do not have. Getting it takes about 4 months and 800,000 LKR. They need an answer in 10 days and will not wait; they will 'see what you can supply now.' A competitor is also trying to win this deal. What do you do?" },
+    { topic:'CRISIS', text:"Your import container is stuck at customs for 3 weeks, with no clear release date. Your biggest client (35% of your income) needs delivery in 6 days or they cancel — and may switch to someone else for good. You could buy local stock at 30% higher cost to cover this one order at a loss (selling for less than it cost you). What do you do?" },
+    { topic:'ETHICS', text:"Your accountant quietly tells you a 200,000 LKR difference in last quarter's records points to your cousin, who manages buying and is family. Confronting him risks a family fight; ignoring it sets a bad example and the amount may grow. The year-end audit (official check of your accounts) is in 8 weeks. What do you do?" }
+  ],
+  tycoon: [
+    { topic:'NEGOTIATION', text:"A Malaysian glove company offers 5M LKR for a 40% stake (ownership share) in your factory — money that would fund the growth you have wanted for years. But the contract gives them a veto (power to block) over hiring and pricing, and the right to buy another 20% in 2 years at today's value (even if the company is worth far more by then). Your cash is tight and they want a signed answer in 72 hours. What do you do?" },
+    { topic:'OPPORTUNITY', text:"A government tender (open bid for a big contract) for 50,000 pairs of gloves opens — deadline in 5 days. Winning would double your yearly income, but the profit per pair is very small, and you would need to borrow 3M LKR to make the gloves before they pay you (they pay after 90 days, often late). If you lose the bid, a rival locks in this customer for years. What do you do?" },
+    { topic:'FAMILY', text:"Your brother wants to join as an equal partner. He has 2M LKR to invest — money you genuinely need — but no business experience, and a habit of overruling decisions in family matters. Saying no risks a lasting family wound; saying yes risks losing control of a business you built alone. Your parents are quietly pushing you to include him. What do you do?" }
+  ]
+};
+
+function getOfflineScenario(diff) {
+  const pool = ARENA_OFFLINE[diff] || ARENA_OFFLINE.operator;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// Find the user's weakest skill across history (for targeted training)
+function getWeakestArenaSkill() {
+  const s = getArenaStats();
+  let weakest = null, low = 101;
+  ARENA_DIMS.forEach(d => {
+    const arr = s.dims[d] || [];
+    if (arr.length < 2) return; // need a little data first
+    const avg = arr.reduce((a,b)=>a+b,0)/arr.length;
+    if (avg < low) { low = avg; weakest = d; }
+  });
+  return weakest;
+}
+
+// Update the Help button label with remaining count
+function updateHelpButton() {
+  const btn = document.getElementById('arenaHelpBtn');
+  if (!btn) return;
+  if (arenaState.helpsLeft > 0) {
+    btn.textContent = '🤝 Help (' + arenaState.helpsLeft + ' left)';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  } else {
+    btn.textContent = '🤝 No Help left — you\u2019ve got this';
+    btn.disabled = true;
+    btn.style.opacity = '0.45';
+  }
+}
+
+// Help: explains the SITUATION (never the decision), costs 1 of 2 helps
+async function useArenaHelp() {
+  if (arenaState.helpsLeft <= 0) return;
+  arenaState.helpsLeft--;
+  arenaState.helpsUsed++;
+  updateHelpButton();
+
+  const msgs = document.getElementById('arenaMessages');
+  // show that help was used
+  const tag = document.createElement('div');
+  tag.style.cssText = 'align-self:center;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.08em;text-transform:uppercase';
+  tag.textContent = '🤝 Help used · ' + arenaState.helpsLeft + ' left';
+  msgs.appendChild(tag);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const helpPrompt = `The user is stuck on this decision scenario and tapped "Help".
+
+SCENARIO: ${arenaState.scenario}
+
+Your job: make the SITUATION clearer so THEY can decide. You may:
+- explain any hard word or business term in simple language
+- lay out the main options they realistically have (just name them, do NOT pick one)
+- point out the 2-3 key things they should weigh
+
+You must NOT:
+- tell them what to do or which option is best
+- give your opinion on the decision
+
+BE SPECIFIC: use the actual names, numbers and things from THIS scenario (the goats, the factory, your partner, your workers, the supplier, the LKR amounts). Do not speak in general terms — refer to exactly what's in the situation above.
+
+End by handing it back: ask them one simple question (mentioning a real thing from the scenario) to get them thinking. Keep it short, warm, simple English (non-native reader).`;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 350,
+        messages: [{ role: 'user', content: helpPrompt }],
+        system: 'You are a thinking-coach. You clarify the situation but NEVER make the decision for the user.'
+      })
+    });
+    const data = await res.json();
+    const reply = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+    if (!reply) throw new Error('empty');
+    addArenaCoachBubble(reply, false);
+  } catch(e) {
+    addArenaCoachBubble("Here's a simpler way to see it: break the situation into (1) what you might gain, (2) what you might lose, and (3) who is affected. You don't need the perfect answer — just weigh those three. Which of the three worries you most right now?", true);
+  }
+}
+
+// Collapse/expand the pinned situation box
+function toggleScenario() {
+  const t = document.getElementById('scenarioText');
+  const diff = document.getElementById('scenarioDiff');
+  const btn = document.getElementById('scenarioToggle');
+  if (!t) return;
+  if (t.style.display === 'none') {
+    t.style.display = ''; if (diff) diff.style.display = 'inline-block';
+    btn.textContent = 'Hide';
+  } else {
+    t.style.display = 'none'; if (diff) diff.style.display = 'none';
+    btn.textContent = 'Show';
+  }
+}
+
+function getArenaStats() {
+  const s = JSON.parse(localStorage.getItem('arena_stats') || '{}');
+  return {
+    total: s.total || 0,
+    streak: s.streak || 0,
+    scores: s.scores || [],
+    gaps: s.gaps || [],
+    dims: s.dims || {},      // {risk:[...], stakeholders:[...], ...}
+    history: s.history || [], // [{date, score, gap, difficulty, dims}]
+    lastDate: s.lastDate || '',
+    milestones: s.milestones || []
+  };
+}
+
+function openArena() {
+  document.getElementById('arenaOverlay').style.display = 'flex';
+  loadArenaStats();
+}
+
+function closeArena() {
+  document.getElementById('arenaOverlay').style.display = 'none';
+}
+
+function setDifficulty(level) {
+  arenaState.difficulty = level;
+  document.querySelectorAll('.diffBtn').forEach(b => {
+    b.style.opacity = '0.5';
+    b.style.transform = 'scale(0.97)';
+  });
+  const btn = document.getElementById('diff_' + level);
+  if (btn) { btn.style.opacity = '1'; btn.style.transform = 'scale(1.03)'; }
+}
+
+function loadArenaStats() {
+  const stats = JSON.parse(localStorage.getItem('arena_stats') || '{"total":0,"streak":0,"scores":[]}');
+  document.getElementById('statChallenges').textContent = stats.total || 0;
+  document.getElementById('statStreak').textContent = stats.streak || 0;
+  const avg = stats.scores && stats.scores.length > 0 ? Math.round(stats.scores.reduce((a,b)=>a+b,0)/stats.scores.length) : '-';
+  document.getElementById('statAvg').textContent = avg;
+  document.getElementById('arenaScoreNum').textContent = stats.total || 0;
+  setDifficulty(arenaState.difficulty);
+}
+
+async function startChallenge() {
+  // Reset state
+  arenaState.round = 1;
+  arenaState.answers = [];
+  arenaState.conversationHistory = [];
+  arenaState.helpsLeft = ARENA_MAX_HELPS;
+  arenaState.helpsUsed = 0;
+  
+  // Show challenge screen
+  document.getElementById('arenaStart').style.display = 'none';
+  var _ap = document.getElementById('arenaProgress'); if (_ap) _ap.style.display = 'none';
+  document.getElementById('arenaChallenge').style.display = 'block';
+  document.getElementById('arenaResult').style.display = 'none';
+  document.getElementById('arenaInputArea').style.display = 'block';
+  document.getElementById('arenaMessages').innerHTML = '';
+  document.getElementById('arenaInp').value = '';
+  updateHelpButton();
+  
+  const diffLabels = { rookie: '🟢 ROOKIE', operator: '🟡 OPERATOR', tycoon: '🔴 TYCOON' };
+  document.getElementById('scenarioDiff').textContent = diffLabels[arenaState.difficulty];
+  document.getElementById('roundIndicator').textContent = 'Think it through · ask if unsure';
+  document.getElementById('scenarioText').textContent = 'Generating your scenario...';
+  document.getElementById('arenaSubmit').disabled = true;
+  document.getElementById('arenaSubmit').style.opacity = '0.5';
+  // make sure scenario box is expanded for a fresh challenge
+  var _st = document.getElementById('scenarioText'); if (_st) _st.style.display = '';
+  var _sd = document.getElementById('scenarioDiff'); if (_sd) _sd.style.display = 'inline-block';
+  var _stg = document.getElementById('scenarioToggle'); if (_stg) _stg.textContent = 'Hide';
+  
+  const userName = getUserId();
+  const topics = ['business', 'partnership', 'money', 'people', 'life', 'expansion', 'crisis', 'negotiation', 'family business', 'opportunity'];
+  arenaState.topic = topics[Math.floor(Math.random() * topics.length)];
+  document.getElementById('scenarioTopic').textContent = arenaState.topic.toUpperCase();
+  
+  const diffInstructions = {
+    rookie: 'Create a clear, relatively straightforward business scenario with 1-2 obvious considerations. Good for building basic decision-making habits.',
+    operator: 'Create a complex scenario with hidden traps, conflicting priorities, and non-obvious consequences. At least 2 things should not be what they seem.',
+    tycoon: 'Create a brutal high-stakes multi-variable scenario involving significant money, relationships, or reputation. Severe time pressure. Multiple stakeholders with conflicting interests. No easy answer.'
+  };
+  
+  // Pull user's real context from memory
+  const userMem = JSON.parse(localStorage.getItem('user_memory') || '{}');
+  const memContext = userMem.general || '';
+  const goals = JSON.parse(localStorage.getItem('biz_goals') || '[]');
+  const goalText = goals.slice(0,3).map(g => typeof g === 'string' ? g : g.text).join(', ');
+  const decisions = JSON.parse(localStorage.getItem('decisions_log') || '[]');
+  const recentDecision = decisions[0]?.decision || '';
+  
+  // Real scenario pools based on Fazan's actual life
+  const realContexts = [
+    "You run a glove factory in Sri Lanka. Your current cotton supplier just increased prices by 18%.",
+    "Your goat farming partner has been handling daily operations for 6 months with no formal salary agreement.",
+    "A large hospital wants to order 10,000 gloves monthly but requires ISO certification you don't have yet.",
+    "Your best factory worker asks for a 40% salary increase or he will leave to a competitor.",
+    "A Malaysian glove company offers to buy 40% stake in your factory for 5 million LKR.",
+    "Your import container is stuck at customs for 3 weeks. Your biggest client is threatening to cancel.",
+    "Your goat partner wants to sell 50 goats now. You think waiting 3 more months means 30% more profit.",
+    "A competitor is spreading rumors your gloves are low quality. Two clients called asking questions.",
+    "Your factory accountant found a 200,000 LKR discrepancy in last quarter's records.",
+    "Your brother wants to join the business as a partner. He has no business experience but has capital.",
+    "A government tender for 50,000 pairs of gloves is open. Deadline is 5 days. Margin is thin but volume is huge.",
+    "Your main raw material supplier offers 25% discount if you pay 6 months upfront. Your cash flow is tight.",
+    "A fire damaged 20% of your factory storage. Insurance claim is pending. You have orders due next week.",
+    "Your top client wants exclusive supply rights in exchange for doubling their order.",
+    "A new factory nearby is hiring your workers with higher salaries. Three staff already left this month."
+  ];
+  
+  const randomContext = realContexts[Math.floor(Math.random() * realContexts.length)];
+
+  // Determine weakest skill for targeted training
+  const weakSkill = getWeakestArenaSkill();
+  const weakNote = weakSkill ? `\nIMPORTANT TRAINING FOCUS: This user's weakest decision skill is "${ARENA_DIM_LABELS[weakSkill]}". Design the scenario so that skill is exactly what's needed to do well — make that the hidden key to the situation.` : '';
+
+  // Mode: 'real' = user typed their own real decision; else generated
+  const realChat = (arenaState.mode === 'real') ? null : pullRealChatContext();
+  let baseScenario, sourceNote;
+  if (arenaState.mode === 'real' && arenaState.realDecision) {
+    baseScenario = arenaState.realDecision;
+    arenaState.source = null;
+    sourceNote = `\nThis is a REAL decision the user is facing RIGHT NOW. Keep it realistic and close to what they wrote. Do NOT invent wildly different facts — sharpen and clarify what they gave. Still end with "What do you do?"`;
+    document.getElementById('scenarioTopic').textContent = 'YOUR REAL DECISION';
+  } else if (realChat) {
+    baseScenario = realChat.context;
+    arenaState.source = realChat.source;
+    sourceNote = `\nThis is based on a REAL decision the user actually raised in conversation with ${realChat.source}. Reconstruct it as a fresh scenario WITHOUT revealing any advice that was given.`;
+    document.getElementById('scenarioTopic').textContent = 'FROM YOUR CHATS';
+  } else {
+    baseScenario = randomContext;
+    arenaState.source = null;
+    sourceNote = '';
+  }
+
+  const prompt = `You are creating a brain-training decision scenario for ${userName}, a Sri Lankan entrepreneur.
+
+THEIR REAL SITUATION:
+- Runs a glove factory in Sri Lanka
+- Has a goat farming partnership (1.7M LKR invested, partner provides labor)
+- Wants to expand factory operations
+- Family business environment
+- Deals with imports, suppliers, workers, cash flow
+${memContext ? '- Additional context: ' + memContext : ''}
+${goalText ? '- Current goals: ' + goalText : ''}
+${recentDecision ? '- Recently dealing with: ' + recentDecision : ''}
+
+BASE SCENARIO TO BUILD ON: ${baseScenario}${sourceNote}${weakNote}
+
+DIFFICULTY: ${arenaState.difficulty.toUpperCase()}
+${diffInstructions[arenaState.difficulty]}
+
+EXPAND this base scenario into a vivid, specific, urgent situation. Add:
+- Specific numbers (amounts in LKR, quantities, timeframes)
+- A real person dynamic (supplier, partner, worker, family member, client)
+- Time pressure
+- One hidden complication they might not immediately notice
+
+Rules:
+- Write in second person ("You just received..." "Your supplier calls...")
+- 3-5 sentences maximum
+- End with: "What do you do?"
+- Feel like it happened TODAY
+- Use Sri Lankan context (LKR, local business culture)
+- NO hints, NO suggested answers
+- LANGUAGE: Use simple, everyday English (the reader is not a native speaker). Avoid hard or fancy words. If you must use a business term (like "equity", "margin", "stake", "leverage"), add a short plain meaning right after it in brackets — e.g. "a 40% stake (ownership share)".
+
+Return ONLY the scenario. Nothing else.`;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        messages: [{ role: 'user', content: prompt }],
+        system: 'You create sharp, realistic business scenarios for decision-making training. Return ONLY the scenario, no commentary.'
+      })
+    });
+    const data = await res.json();
+    const scenario = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+    if (!scenario) throw new Error('empty');
+    arenaState.scenario = scenario;
+    arenaState.conversationHistory = [{ role: 'assistant', content: scenario }];
+    document.getElementById('scenarioText').textContent = scenario;
+    document.getElementById('arenaSubmit').disabled = false;
+    document.getElementById('arenaSubmit').style.opacity = '1';
+  } catch(e) {
+    // Offline fallback: use a hand-written scenario so Arena always works
+    const off = getOfflineScenario(arenaState.difficulty);
+    arenaState.scenario = off.text;
+    arenaState.source = null;
+    arenaState.offline = true;
+    arenaState.conversationHistory = [{ role: 'assistant', content: off.text }];
+    document.getElementById('scenarioTopic').textContent = off.topic;
+    document.getElementById('scenarioText').textContent = off.text;
+    document.getElementById('arenaSubmit').disabled = false;
+    document.getElementById('arenaSubmit').style.opacity = '1';
+  }
+}
+
+async function submitArenaAnswer() {
+  const answer = document.getElementById('arenaInp').value.trim();
+  if (!answer) return;
+
+  document.getElementById('arenaSubmit').disabled = true;
+  document.getElementById('arenaSubmit').style.opacity = '0.5';
+  document.getElementById('arenaSubmit').textContent = 'Thinking...';
+
+  // Add user bubble
+  const msgs = document.getElementById('arenaMessages');
+  const userBub = document.createElement('div');
+  userBub.style.cssText = 'background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px;font-size:14px;color:#fff;line-height:1.6';
+  userBub.innerHTML = '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.1em;font-weight:600">You</div>' + answer.replace(/</g,'&lt;');
+  msgs.appendChild(userBub);
+
+  arenaState.answers.push(answer);
+  arenaState.conversationHistory.push({ role: 'user', content: answer });
+  document.getElementById('arenaInp').value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const systemPrompt = `You are a sharp but friendly thinking-coach in a decision-training "Arena". The user faces a real business decision and must reach their OWN answer. You are here to sharpen their thinking, NEVER to decide for them.
+
+SCENARIO: ${arenaState.scenario}
+DIFFICULTY: ${arenaState.difficulty}
+USER: ${getUserId()} — Sri Lankan entrepreneur, glove factory owner
+
+THE GOLDEN RULE — protect the user's independence:
+- If they ASK A CLARIFYING QUESTION about the situation (what a word means, what could happen, a fact) → answer it simply and clearly. Help them understand.
+- If they ASK YOU TO DECIDE ("what should I do?", "what's the best option?", "tell me the answer") → do NOT answer. Gently hand it back: "That's your call — what does your gut say?" Then ask one small question to help them think.
+- If they GIVE THEIR OWN THINKING → react like a coach: acknowledge what's good, then push on ONE thing they missed with a single sharp question. Do not pile on.
+
+BE SPECIFIC — THIS IS CRITICAL:
+- ALWAYS use the actual names, numbers, and things from THIS scenario. Never speak in general terms.
+- If the scenario is about goats, say "the goats", "your partner", "the 1.7M LKR". If it's about the factory, say "the factory", "your workers", "the order". If it's about a supplier, name the supplier and the amount.
+- BAD (too general): "What could go wrong if you're wrong?"
+- GOOD (specific): "If you give your partner 50% of the goats, what stops him from doing the same thing again with the next herd?"
+- BAD: "Who else does this affect?"
+- GOOD: "Your factory workers haven't been mentioned — if you spend this cash on the goats, can you still pay them next month?"
+- Every question must mention at least one concrete thing from the scenario.
+
+STYLE:
+- Warm, encouraging, short (2-4 sentences). One question at a time, never more.
+- Simple everyday English (reader is not a native speaker). After any hard/business word, add a short plain meaning in brackets — e.g. "your margin (profit after costs)".
+- Never lecture. Never give a list of what to do. The ideas must come from THEM.
+- When they seem to have a real, complete decision, you can say: "Sounds like you've got a clear call. Tap ✓ Done when you're ready to be scored." But never force it.`;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 350,
+        messages: arenaState.conversationHistory,
+        system: systemPrompt
+      })
+    });
+    const data = await res.json();
+    const reply = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim();
+    if (!reply) throw new Error('empty');
+    arenaState.conversationHistory.push({ role: 'assistant', content: reply });
+    addArenaCoachBubble(reply, false);
+  } catch(e) {
+    // Offline coach: detect intent + pull a real keyword from the scenario so it stays specific
+    const t = answer.toLowerCase();
+    const sc = (arenaState.scenario || '').toLowerCase();
+    let thing = 'this decision';
+    if (sc.includes('goat')) thing = 'the goats';
+    else if (sc.includes('partner')) thing = 'your partner';
+    else if (sc.includes('worker') || sc.includes('staff')) thing = 'your workers';
+    else if (sc.includes('supplier')) thing = 'the supplier';
+    else if (sc.includes('client') || sc.includes('hospital')) thing = 'your client';
+    else if (sc.includes('brother') || sc.includes('family')) thing = 'your family';
+    else if (sc.includes('factory') || sc.includes('glove')) thing = 'the factory';
+    else if (sc.includes('tender') || sc.includes('government')) thing = 'the tender';
+    // also try to surface an LKR amount mentioned
+    const amtMatch = (arenaState.scenario || '').match(/[\d,.]+\s?(?:million\s)?LKR/i);
+    const amt = amtMatch ? amtMatch[0] : null;
+
+    const askedToDecide = /(what should i|what do you think i should|tell me the answer|what.s the best|which.*better|just tell me|what would you do)/.test(t);
+    const askedClarify = /\?$|what (is|does|are|happens)|meaning|explain|what if/.test(t);
+    let reply;
+    if (askedToDecide) {
+      reply = `That's your call to make — not mine. 🙂 Thinking about ${thing}: what does your gut say, and what's the one thing making you unsure?`;
+    } else if (askedClarify) {
+      reply = `Good question. I can't reach the AI right now to explain in detail (you're offline), but think about ${thing}: what would you need to know to feel safe deciding? Try your best guess.`;
+    } else {
+      reply = `Good thinking. Now push it one step on ${thing}: what's the worst thing that could go wrong if you're wrong${amt ? ', and could it cost you the ' + amt : ''}? And who else does this affect? When you've got a clear decision, tap ✓ Done.`;
+    }
+    arenaState.conversationHistory.push({ role: 'assistant', content: reply });
+    addArenaCoachBubble(reply, true);
+  }
+
+  document.getElementById('arenaSubmit').disabled = false;
+  document.getElementById('arenaSubmit').style.opacity = '1';
+  document.getElementById('arenaSubmit').textContent = 'Send →';
+}
+
+function addArenaCoachBubble(text, offline) {
+  const msgs = document.getElementById('arenaMessages');
+  const aiBub = document.createElement('div');
+  aiBub.style.cssText = 'background:rgba(218,165,32,0.06);border:1px solid rgba(218,165,32,0.2);border-left:3px solid #DAA520;border-radius:14px;padding:14px;font-size:14px;color:rgba(255,255,255,0.85);line-height:1.7';
+  aiBub.innerHTML = '<div style="font-size:10px;color:#DAA520;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.1em;font-weight:600">🧭 Coach' + (offline ? ' <span style="opacity:0.5">· offline</span>' : '') + '</div>' + text;
+  msgs.appendChild(aiBub);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// User taps Done — score their thinking. Guard against empty/too-short attempts.
+async function finishArena() {
+  // If there's unsent text in the box, count it as a final message first
+  const pending = document.getElementById('arenaInp').value.trim();
+  if (pending) { await submitArenaAnswer(); }
+
+  const realAnswers = (arenaState.answers || []).filter(a => a && a.trim().length > 0);
+  const totalWords = realAnswers.join(' ').split(/\s+/).filter(Boolean).length;
+  if (realAnswers.length === 0 || totalWords < 3) {
+    addArenaCoachBubble("Before I can score you, tell me your decision — even a few words. What would you do here? 🙂", false);
+    return;
+  }
+  await showArenaResult();
+}
+
+async function showArenaResult() {
+  document.getElementById('arenaInputArea').style.display = 'none';
+
+  const scorePrompt = `Evaluate this decision-making challenge session.
+
+SCENARIO: ${arenaState.scenario}
+DIFFICULTY: ${arenaState.difficulty}
+USER'S THINKING (everything they said in the conversation): ${arenaState.answers.join(' | ')}
+
+First, decide privately how an elite operator (a seasoned tycoon-level advisor) would handle this scenario. Then judge the user against that bar.
+
+Score each dimension 0-100:
+- risk: did they consider what could go wrong?
+- stakeholders: did they account for everyone affected?
+- decisiveness: did they actually decide, not stay vague?
+- depth: did they consider 2nd-order effects?
+- practicality: was their answer executable?
+
+Also output:
+- "score": overall 0-100
+- "gap": 0-100, how FAR the user's thinking was below elite-operator level (0 = matched a top advisor, 100 = far below). Be honest and calibrated.
+- "advisor_take": 2-3 sentences on what an elite operator would actually have done here (this is revealed AFTER they answered). If a famous business legend's known style fits this decision well, briefly mention how they'd approach it (e.g. "Buffett would wait for more certainty…", "Musk would take the bigger risk…"). Keep it simple.
+
+Return ONLY valid JSON, no markdown:
+{
+  "score": 75,
+  "gap": 22,
+  "dims": {"risk":70,"stakeholders":60,"decisiveness":85,"depth":55,"practicality":80},
+  "summary": "2-3 sentence overall assessment",
+  "strengths": ["strength 1","strength 2"],
+  "gaps": ["missed point 1","missed point 2"],
+  "key_lesson": "The one thing they must remember",
+  "advisor_take": "What an elite operator would have done"
+}`;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: scorePrompt }],
+        system: 'You evaluate decision-making quality against an elite-operator benchmark. Return ONLY valid JSON, no markdown.'
+      })
+    });
+    const data = await res.json();
+    let text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    text = text.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(text);
+    renderAndSaveArenaResult(result);
+  } catch(e) {
+    // Offline heuristic scorer so you can complete a full challenge with no backend
+    renderAndSaveArenaResult(offlineScoreArena(arenaState.answers));
+  }
+}
+
+// Rough local scorer: rewards length, decision words, risk/stakeholder/number mentions.
+// Not as smart as the AI, but lets you trial the full Arena loop offline.
+function offlineScoreArena(answers) {
+  const all = (answers || []).join(' ').toLowerCase();
+  const words = all.split(/\s+/).filter(Boolean).length;
+  const has = (re) => re.test(all);
+  const score01 = (cond, base) => cond ? base : Math.round(base * 0.45);
+  const dims = {
+    risk: score01(has(/risk|worst|wrong|fail|lose|downside|if .* then|what if/), 78),
+    stakeholders: score01(has(/partner|worker|client|family|supplier|brother|customer|staff|team/), 74),
+    decisiveness: score01(has(/\bi will\b|i'd|i would|decide|choose|go with|my call|definitely|commit/), 80),
+    depth: score01(has(/long.?term|second|knock.?on|later|future|month|year|consequence|ripple/), 70),
+    practicality: score01(has(/first|step|tomorrow|call|email|negotiate|offer|budget|plan|timeline/), 76)
+  };
+  // length bonus/penalty
+  const lenAdj = words < 25 ? -18 : words < 60 ? -6 : words > 140 ? 4 : 0;
+  Object.keys(dims).forEach(k => dims[k] = Math.max(20, Math.min(96, dims[k] + lenAdj)));
+  const score = Math.round(Object.values(dims).reduce((a,b)=>a+b,0)/5);
+  const gap = Math.max(0, Math.min(100, 100 - score));
+  const lowDim = Object.keys(dims).sort((a,b)=>dims[a]-dims[b])[0];
+  return {
+    score, gap, dims,
+    summary: `Offline estimate (no AI connection). Based on your answer's structure, your thinking leaned ${score>=75?'strong':score>=55?'solid':'thin'} — but this is a rough heuristic, not the real advisor scoring.`,
+    strengths: [ dims.decisiveness>=70?'You committed to a decision':'You engaged with the problem', dims.risk>=70?'You weighed what could go wrong':'You gave a direct answer' ],
+    gaps: [ `Weakest area: ${ARENA_DIM_LABELS[lowDim]}`, 'Connect to the AI for precise, calibrated scoring' ],
+    key_lesson: 'Offline mode gives you reps. For true advisor-level grading and the real gap metric, run it online.',
+    advisor_take: null
+  };
+}
+
+function renderAndSaveArenaResult(result) {
+    const gap = Math.max(0, Math.min(100, result.gap ?? Math.max(0, 100 - result.score)));
+    const dims = result.dims || {};
+
+    // Score display
+    document.getElementById('resultScoreNum').textContent = result.score;
+    const scoreColor = result.score >= 75 ? '#34d399' : result.score >= 50 ? '#DAA520' : '#ef4444';
+    document.getElementById('resultScoreNum').style.color = scoreColor;
+
+    // Feedback + advisor reveal + gap line
+    const gapColor = gap <= 15 ? '#34d399' : gap <= 35 ? '#DAA520' : '#ef4444';
+    let fb = (result.summary || '');
+    fb += `<div style="margin-top:14px;padding:12px 14px;background:rgba(201,162,75,0.08);border:1px solid rgba(201,162,75,0.25);border-radius:12px">
+      <div style="font-size:10px;color:#E6C97A;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px">⚖️ Gap to advisor-level</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1;height:8px;background:rgba(255,255,255,0.08);border-radius:100px;overflow:hidden">
+          <div style="height:100%;width:${100-gap}%;background:${gapColor};border-radius:100px"></div>
+        </div>
+        <div style="font-size:13px;font-weight:800;color:${gapColor};min-width:42px;text-align:right">${gap===0?'0':'-'+gap}</div>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:6px;line-height:1.5">Lower is better. When this reaches ~0 consistently, you're deciding at advisor level — on your own.</div>
+    </div>`;
+    if (result.advisor_take) {
+      fb += `<div style="margin-top:10px;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px">
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px">🧠 What an elite operator would do${arenaState.source ? ' (vs '+arenaState.source+')' : ''}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6">${result.advisor_take}</div>
+      </div>`;
+    }
+    if (result.key_lesson) {
+      fb += `<div style="margin-top:10px;font-size:13px;color:rgba(255,255,255,0.8)">💡 <b>Key Lesson:</b> ${result.key_lesson}</div>`;
+    }
+    // Help / Solo status
+    if (arenaState.helpsUsed === 0) {
+      fb += `<div style="margin-top:10px;padding:10px 12px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);border-radius:10px;font-size:12px;color:#34d399;font-weight:600">🏅 Solo — you used no Help. This is what thinking on your own looks like.</div>`;
+    } else {
+      fb += `<div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.4)">🤝 Help used: ${arenaState.helpsUsed}. Try the next one with one less — you're closer than you think.</div>`;
+    }
+    document.getElementById('resultFeedback').innerHTML = fb;
+    document.getElementById('strengthsList').innerHTML = (result.strengths || []).map(s => '✓ ' + s).join('<br>');
+    document.getElementById('gapsList').innerHTML = (result.gaps || []).map(g => '✗ ' + g).join('<br>');
+
+    // ── Persist richer stats ──
+    const stats = getArenaStats();
+    const today = new Date().toDateString();
+    stats.total += 1;
+    stats.scores.push(result.score); if (stats.scores.length > 100) stats.scores.shift();
+    stats.gaps.push(gap); if (stats.gaps.length > 100) stats.gaps.shift();
+    ARENA_DIMS.forEach(d => {
+      stats.dims[d] = stats.dims[d] || [];
+      if (typeof dims[d] === 'number') { stats.dims[d].push(dims[d]); if (stats.dims[d].length > 100) stats.dims[d].shift(); }
+    });
+    stats.history.push({ date: new Date().toISOString(), score: result.score, gap, difficulty: arenaState.difficulty, dims, helpsUsed: arenaState.helpsUsed, topic: arenaState.topic });
+    if (stats.history.length > 100) stats.history.shift();
+    if (stats.lastDate === new Date(Date.now() - 86400000).toDateString()) stats.streak += 1;
+    else if (stats.lastDate !== today) stats.streak = 1;
+    stats.lastDate = today;
+
+    // ── Extra feedback that needs stats (append to feedback box) ──
+    let extra = '';
+    const sameDiff = stats.history.filter(h => h.difficulty === arenaState.difficulty).slice(-3);
+    if (arenaState.difficulty !== 'tycoon' && sameDiff.length === 3 && sameDiff.every(h => h.score >= 80)) {
+      const next = arenaState.difficulty === 'rookie' ? 'Operator' : 'Tycoon';
+      extra += `<div style="margin-top:10px;padding:10px 12px;background:rgba(218,165,32,0.1);border:1px solid rgba(218,165,32,0.3);border-radius:10px;font-size:12px;color:#E6C97A;font-weight:600">🚀 You've mastered this level — ready for ${next}? Pick it next time for a tougher test.</div>`;
+    }
+    const prevScores = stats.scores.slice(0, -1);
+    if (prevScores.length >= 2) {
+      const prevAvg = Math.round(prevScores.reduce((a,b)=>a+b,0)/prevScores.length);
+      const diff = result.score - prevAvg;
+      if (diff > 0) extra += `<div style="margin-top:8px;font-size:12px;color:#34d399">▲ ${diff} above your average (${prevAvg}). You're improving.</div>`;
+      else if (diff < 0) extra += `<div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.45)">${diff} vs your average (${prevAvg}). An off day — the trend is what counts.</div>`;
+    }
+    if (extra) document.getElementById('resultFeedback').innerHTML += extra;
+
+    // ── Decision Journal: save what they decided & why (their 1-month proof) ──
+    saveArenaJournal(result, gap);
+
+    // ── Milestones ──
+    const newBadges = [];
+    const last5gaps = stats.gaps.slice(-5);
+    if (last5gaps.length === 5 && last5gaps.every(g => g <= 12) && !stats.milestones.includes('independent')) {
+      stats.milestones.push('independent');
+      newBadges.push('🎓 Independent Thinker — your last 5 calls matched advisor level');
+    }
+    if (stats.total === 10 && !stats.milestones.includes('committed')) {
+      stats.milestones.push('committed');
+      newBadges.push('🔥 10 Challenges — the habit is forming');
+    }
+    // Solo Thinker: completed with no Help used
+    if (arenaState.helpsUsed === 0) {
+      stats.soloCount = (stats.soloCount || 0) + 1;
+      if (stats.soloCount === 5 && !stats.milestones.includes('solo')) {
+        stats.milestones.push('solo');
+        newBadges.push('🏅 Solo Thinker — 5 challenges with zero Help');
+      }
+    }
+
+    localStorage.setItem('arena_stats', JSON.stringify(stats));
+    syncArenaToCloud(stats);
+    loadArenaStats();
+
+    document.getElementById('arenaResult').style.display = 'block';
+    document.getElementById('arenaResult').scrollIntoView({ behavior: 'smooth' });
+
+    if (newBadges.length) {
+      setTimeout(() => showPDFBanner(newBadges[0], '#C9A24B'), 600);
+    }
+}
+
+// Save the user's decision + reasoning to the journal
+function saveArenaJournal(result, gap) {
+  try {
+    const journal = JSON.parse(localStorage.getItem('arena_journal') || '[]');
+    journal.unshift({
+      date: new Date().toISOString(),
+      scenario: arenaState.scenario,
+      myThinking: (arenaState.answers || []).join('\n\n'),
+      score: result.score,
+      gap: gap,
+      helpsUsed: arenaState.helpsUsed,
+      difficulty: arenaState.difficulty,
+      keyLesson: result.key_lesson || '',
+      advisorTake: result.advisor_take || ''
+    });
+    if (journal.length > 100) journal.length = 100;
+    localStorage.setItem('arena_journal', JSON.stringify(journal));
+  } catch(e) {}
+}
+
+// Cloud sync for Arena (stub-safe: only runs if Supabase ready & table exists)
+async function syncArenaToCloud(stats) {
+  if (!syncEnabled || !sbClient) return;
+  try {
+    const journal = JSON.parse(localStorage.getItem('arena_journal') || '[]');
+    await sbClient.from('arena_stats').upsert({
+      user_id: getUserId(),
+      stats,
+      journal,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
+  } catch(e) { /* table may not exist yet — Arena still works locally */ }
+}
+
+// ── ARENA PROGRESS BOARD ──
+function openArenaProgress() {
+  const s = getArenaStats();
+  const wrap = document.getElementById('arenaProgress');
+  const start = document.getElementById('arenaStart');
+  const chal = document.getElementById('arenaChallenge');
+  if (start) start.style.display = 'none';
+  if (chal) chal.style.display = 'none';
+  wrap.style.display = 'block';
+
+  if (s.total === 0) {
+    wrap.innerHTML = `<div style="text-align:center;padding:60px 20px">
+      <div style="font-size:54px;margin-bottom:14px">📈</div>
+      <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;font-family:var(--font-display)">No data yet</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);max-width:280px;margin:0 auto 22px;line-height:1.6">Complete your first challenge and your progress — score, gap-to-advisor, and per-skill breakdown — will appear here.</div>
+      <button onclick="backToArenaStart()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:100px;padding:12px 24px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;font-size:12px">← Back</button>
+    </div>`;
+    return;
+  }
+
+  const avg = Math.round(s.scores.reduce((a,b)=>a+b,0)/s.scores.length);
+  const avgGap = Math.round(s.gaps.reduce((a,b)=>a+b,0)/Math.max(1,s.gaps.length));
+  const latestGap = s.gaps[s.gaps.length-1] ?? avgGap;
+  const trendUp = s.scores.length >= 2 ? s.scores[s.scores.length-1] - s.scores[0] : 0;
+  const gapTrend = s.gaps.length >= 2 ? s.gaps[0] - s.gaps[s.gaps.length-1] : 0; // positive = improving
+
+  // ── Circular gauge meter (0-100) ──
+  const gauge = (value, label, color, suffix) => {
+    const r = 34, c = 2 * Math.PI * r;
+    const pct = Math.max(0, Math.min(100, value));
+    const dash = (pct/100) * c;
+    return `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:14px 8px;text-align:center">
+      <svg viewBox="0 0 80 80" style="width:78px;height:78px;transform:rotate(-90deg)">
+        <circle cx="40" cy="40" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7"/>
+        <circle cx="40" cy="40" r="${r}" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round"
+          stroke-dasharray="${dash.toFixed(1)} ${c.toFixed(1)}"/>
+      </svg>
+      <div style="margin-top:-54px;margin-bottom:30px;font-size:20px;font-weight:800;color:${color}">${suffix||''}${value}</div>
+      <div style="font-size:9px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em">${label}</div>
+    </div>`;
+  };
+
+  // ── Full line chart with grid, axis, dots, gradient fill ──
+  const lineChart = (arr, color, invert, idSuffix) => {
+    if (!arr.length) return '<div style="font-size:12px;color:rgba(255,255,255,0.3);padding:20px 0;text-align:center">Not enough data yet.</div>';
+    const W=300, H=120, padL=10, padR=10, padT=10, padB=18;
+    const plotW = W-padL-padR, plotH = H-padT-padB;
+    const n = arr.length;
+    const dataMax = invert ? Math.max(...arr, 40) : 100;
+    const dataMin = 0;
+    const range = (dataMax-dataMin)||1;
+    const xFor = i => padL + (n===1 ? plotW/2 : (i/(n-1))*plotW);
+    const yFor = v => { const norm=(v-dataMin)/range; return padT + (invert ? norm : (1-norm))*plotH; };
+    const pts = arr.map((v,i)=>`${xFor(i).toFixed(1)},${yFor(v).toFixed(1)}`);
+    const line = pts.join(' ');
+    const area = `${padL},${padT+plotH} ${line} ${(padL+plotW),padT+plotH}`;
+    // gridlines at 0/25/50/75/100
+    let grid='';
+    [0,25,50,75,100].forEach(g=>{
+      const yy = padT + (invert ? (g/100) : (1-g/100))*plotH;
+      grid += `<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${padL+plotW}" y2="${yy.toFixed(1)}" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>`;
+      grid += `<text x="${padL+plotW+2}" y="${(yy+2).toFixed(1)}" font-size="6" fill="rgba(255,255,255,0.3)">${g}</text>`;
+    });
+    const dots = arr.map((v,i)=>`<circle cx="${xFor(i).toFixed(1)}" cy="${yFor(v).toFixed(1)}" r="2.4" fill="${color}"/>`).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:130px">
+      <defs><linearGradient id="grad${idSuffix}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${color}" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient></defs>
+      ${grid}
+      <polygon points="${area}" fill="url(#grad${idSuffix})"/>
+      <polyline points="${line}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${dots}
+    </svg>`;
+  };
+
+  // Dimension averages
+  const dimRows = ARENA_DIMS.map(d => {
+    const arr = s.dims[d] || [];
+    if (!arr.length) return '';
+    const a = Math.round(arr.reduce((x,y)=>x+y,0)/arr.length);
+    const c = a >= 75 ? '#34d399' : a >= 55 ? '#DAA520' : '#ef4444';
+    return `<div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+        <span style="color:rgba(255,255,255,0.7)">${ARENA_DIM_LABELS[d]}</span>
+        <span style="color:${c};font-weight:700">${a}</span>
+      </div>
+      <div style="height:7px;background:rgba(255,255,255,0.07);border-radius:100px;overflow:hidden">
+        <div style="height:100%;width:${a}%;background:${c};border-radius:100px"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Weakest dimension callout
+  let weakest = null, weakAvg = 101;
+  ARENA_DIMS.forEach(d => {
+    const arr = s.dims[d] || []; if (!arr.length) return;
+    const a = arr.reduce((x,y)=>x+y,0)/arr.length;
+    if (a < weakAvg) { weakAvg = a; weakest = d; }
+  });
+
+  const badges = (s.milestones || []).map(m => {
+    const map = { independent: '🎓 Independent Thinker', committed: '🔥 10 Challenges' };
+    return `<span style="display:inline-block;font-size:11px;padding:6px 12px;background:rgba(201,162,75,0.12);border:1px solid rgba(201,162,75,0.3);border-radius:100px;color:#E6C97A;font-weight:600;margin:0 6px 6px 0">${map[m]||m}</span>`;
+  }).join('') || '<span style="font-size:12px;color:rgba(255,255,255,0.3)">No milestones yet — keep training.</span>';
+
+  wrap.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+      <button onclick="backToArenaStart()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:100px;padding:8px 14px;font-weight:600;cursor:pointer;font-family:inherit;font-size:12px">← Back</button>
+      <div style="font-family:var(--font-display);font-size:22px;font-weight:600;color:#fff">Progress Board</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+      ${gauge(avg, 'Avg Score', '#DAA520', '')}
+      ${gauge(Math.max(0,100-latestGap), 'vs Advisor', latestGap<=15?'#34d399':latestGap<=35?'#DAA520':'#ef4444', '')}
+      ${gauge(s.streak, 'Streak 🔥', '#34d399', '')}
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:18px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <span style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.12em;font-weight:700">Your Score Over Time</span>
+        <span style="font-size:11px;color:${trendUp>=0?'#34d399':'#ef4444'};font-weight:700">${trendUp>=0?'▲ +':'▼ '}${trendUp} since start</span>
+      </div>
+      ${lineChart(s.scores, '#DAA520', false, 'score')}
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:18px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <span style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.12em;font-weight:700">Gap to Advisor — closing</span>
+        <span style="font-size:11px;color:${gapTrend>=0?'#34d399':'#ef4444'};font-weight:700">${gapTrend>=0?'▼ closed '+gapTrend:'▲ widened '+(-gapTrend)}</span>
+      </div>
+      ${lineChart(s.gaps, '#34d399', true, 'gap')}
+      <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:8px;line-height:1.5">This line dropping toward the bottom is the goal: it means you're reaching advisor-level judgment without leaning on the AI.</div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:18px;margin-bottom:14px">
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:14px">Five Skills</div>
+      ${dimRows || '<div style="font-size:12px;color:rgba(255,255,255,0.3)">Not enough data yet.</div>'}
+      ${weakest ? `<div style="margin-top:10px;padding:10px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;font-size:12px;color:rgba(255,255,255,0.7)">🎯 <b>Train this next:</b> ${ARENA_DIM_LABELS[weakest]} is your weakest skill right now.</div>` : ''}
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:18px;margin-bottom:20px">
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:12px">Milestones</div>
+      ${badges}
+    </div>
+
+    <button onclick="backToArenaStart()" style="width:100%;background:linear-gradient(135deg,#E6C97A,#C9A24B,#9A7A2E);border:none;border-radius:100px;color:#1a1505;padding:16px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.06em;text-transform:uppercase">Train Again →</button>
+    <button onclick="resetArenaProgress()" style="width:100%;margin-top:10px;background:transparent;border:1px solid rgba(239,68,68,0.3);border-radius:100px;color:rgba(239,68,68,0.8);padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em">🗑️ Reset All Progress</button>
+  `;
+}
+
+function backToArenaStart() {
+  document.getElementById('arenaProgress').style.display = 'none';
+  document.getElementById('arenaChallenge').style.display = 'none';
+  var j = document.getElementById('arenaJournal'); if (j) j.style.display = 'none';
+  var ar = document.getElementById('arenaResult'); if (ar) ar.style.display = 'none';
+  var ia = document.getElementById('arenaInputArea'); if (ia) ia.style.display = 'block';
+  document.getElementById('arenaStart').style.display = 'block';
+  arenaState.mode = 'practice';
+  arenaState.realDecision = null;
+  loadArenaStats();
+}
+
+// Exit a challenge in progress and return to the Arena menu
+function exitChallenge() {
+  const started = (arenaState.answers && arenaState.answers.length > 0);
+  if (started && !confirm('Leave this challenge? Your answers so far will not be saved or scored.')) return;
+  backToArenaStart();
+}
+
+// Share a clean text summary of the latest result
+function shareArenaResult() {
+  const s = getArenaStats();
+  const score = document.getElementById('resultScoreNum')?.textContent || s.scores[s.scores.length-1] || '';
+  const gap = s.gaps[s.gaps.length-1] ?? '';
+  const solo = arenaState.helpsUsed === 0 ? '\n🏅 Solo — no help used' : '';
+  const txt = `⚔️ ARENA — I trained my decision-making\n\nScore: ${score}/100\nGap to advisor: -${gap} (lower = better)${solo}\nChallenges done: ${s.total} · Streak: ${s.streak}🔥\n\nTraining my mind to decide on my own.`;
+  if (navigator.share) {
+    navigator.share({ title: 'My Arena result', text: txt }).catch(()=>{});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(()=> showPDFBanner('Result copied — paste anywhere to share', '#34d399')).catch(()=>{});
+  }
+}
+
+// Set a daily reminder to train (uses the app's reminder system)
+function setArenaDailyReminder() {
+  const on = localStorage.getItem('arena_daily_reminder') === 'on';
+  const btn = document.getElementById('arenaDailyBtn');
+  if (on) {
+    localStorage.setItem('arena_daily_reminder', 'off');
+    if (btn) btn.innerHTML = '🔔 Remind me daily to train';
+    return;
+  }
+  localStorage.setItem('arena_daily_reminder', 'on');
+  try {
+    const reminders = JSON.parse(localStorage.getItem('pending_reminders') || '[]');
+    if (!reminders.some(r => r.arenaDaily)) {
+      reminders.unshift({
+        id: 'arena_daily_' + Date.now(),
+        text: '⚔️ Train your mind — one Arena challenge today',
+        arenaDaily: true,
+        recurring: 'daily',
+        done: false,
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem('pending_reminders', JSON.stringify(reminders));
+      if (typeof updateReminderBadge === 'function') updateReminderBadge();
+    }
+  } catch(e) {}
+  if (btn) btn.innerHTML = '✅ Daily reminder ON — tap to turn off';
+}
+
+// Train on a REAL decision the user is facing now
+function startRealDecision() {
+  const d = prompt("What real decision are you facing right now?\n\nWrite it in a sentence or two — Arena will turn it into a challenge and train your thinking on it (it won't decide for you).");
+  if (!d || d.trim().length < 10) return;
+  arenaState.mode = 'real';
+  arenaState.realDecision = d.trim();
+  startChallenge();
+}
+
+// ── DECISION JOURNAL (your 1-month proof) ──
+function openArenaJournal() {
+  const journal = JSON.parse(localStorage.getItem('arena_journal') || '[]');
+  const wrap = document.getElementById('arenaJournal');
+  document.getElementById('arenaStart').style.display = 'none';
+  document.getElementById('arenaChallenge').style.display = 'none';
+  document.getElementById('arenaProgress').style.display = 'none';
+  wrap.style.display = 'block';
+
+  let body;
+  if (journal.length === 0) {
+    body = `<div style="text-align:center;padding:50px 20px">
+      <div style="font-size:50px;margin-bottom:14px">📖</div>
+      <div style="font-size:19px;font-weight:800;color:#fff;margin-bottom:8px;font-family:var(--font-display)">Your journal is empty</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);max-width:280px;margin:0 auto;line-height:1.6">Every challenge you finish gets saved here — the situation, what you decided, and why. In a month, read back and watch how your thinking grew.</div>
+    </div>`;
+  } else {
+    const intro = journal.length >= 5
+      ? `<div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);border-radius:14px;padding:14px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.8);line-height:1.6">📈 You have <b>${journal.length}</b> decisions logged. Scroll to your oldest and compare it to today — that difference is you, thinking better.</div>`
+      : `<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:16px;line-height:1.6">Each decision you make is saved here. Keep going — the real story shows after a few weeks.</div>`;
+    body = intro + journal.map(j => {
+      const d = new Date(j.date);
+      const dateStr = d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+      const sc = j.score >= 75 ? '#34d399' : j.score >= 50 ? '#DAA520' : '#ef4444';
+      return `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.06em">${dateStr} · ${(j.difficulty||'').toUpperCase()}${j.helpsUsed===0?' · 🏅 solo':''}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:16px;font-weight:800;color:${sc}">${j.score}</span>
+            <button onclick="deleteJournalEntry('${j.date}')" title="Delete entry" style="background:transparent;border:none;color:rgba(239,68,68,0.7);cursor:pointer;font-size:16px;line-height:1;padding:0 2px">×</button>
+          </div>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:10px">${(j.scenario||'').slice(0,160)}${(j.scenario||'').length>160?'…':''}</div>
+        <div style="font-size:10px;color:#DAA520;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:4px">My thinking</div>
+        <div style="font-size:13px;color:#fff;line-height:1.6;white-space:pre-wrap">${(j.myThinking||'').slice(0,400).replace(/</g,'&lt;')}</div>
+        ${j.keyLesson?`<div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.6)">💡 ${j.keyLesson}</div>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  wrap.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onclick="backToArenaStart()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:100px;padding:8px 14px;font-weight:600;cursor:pointer;font-family:inherit;font-size:12px">← Back</button>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:600;color:#fff">Decision Journal</div>
+      </div>
+      ${journal.length > 0 ? `<button onclick="clearAllJournal()" style="background:transparent;border:none;color:#ff3b30;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Clear All</button>` : ''}
+    </div>
+    ${body}`;
+}
+
+// Delete one journal entry (by its date timestamp)
+function deleteJournalEntry(date) {
+  if (!confirm('Delete this journal entry?')) return;
+  let journal = JSON.parse(localStorage.getItem('arena_journal') || '[]');
+  journal = journal.filter(j => j.date !== date);
+  localStorage.setItem('arena_journal', JSON.stringify(journal));
+  openArenaJournal();
+}
+
+// Clear the whole journal
+function clearAllJournal() {
+  if (!confirm('Delete ALL journal entries? This cannot be undone. (Your scores and progress stats are kept.)')) return;
+  localStorage.setItem('arena_journal', '[]');
+  openArenaJournal();
+}
+
+// Reset all Arena progress (stats + journal)
+function resetArenaProgress() {
+  if (!confirm('Reset ALL Arena progress — your scores, streak, skill data, and journal? This cannot be undone.')) return;
+  localStorage.removeItem('arena_stats');
+  localStorage.setItem('arena_journal', '[]');
+  backToArenaStart();
+}
+
+// Initialize arena difficulty on load
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => setDifficulty('operator'), 200);
+});
+
 
 // ── VOICE INPUT ──
 let recognition = null;
@@ -1911,6 +3271,15 @@ async function pullFromCloud() {
       }));
       localStorage.setItem('board_history', JSON.stringify(formatted));
     }
+    
+    // Pull Arena stats + journal
+    try {
+      const { data: arena } = await sbClient.from('arena_stats').select('*').eq('user_id', user_id).maybeSingle();
+      if (arena) {
+        if (arena.stats) localStorage.setItem('arena_stats', JSON.stringify(arena.stats));
+        if (arena.journal) localStorage.setItem('arena_journal', JSON.stringify(arena.journal));
+      }
+    } catch(e) { /* arena_stats table may not exist yet */ }
     
     console.log('✅ Synced from cloud');
     showSyncBanner('✅ Synced from cloud');
@@ -2117,7 +3486,7 @@ function renderDecisionLog() {
   const log = JSON.parse(localStorage.getItem('decisions_log') || '[]');
   
   if (log.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#6b7280;font-family:\'Crimson Text\',serif;font-style:italic"><div style="font-size:48px;margin-bottom:16px">📜</div><div style="font-size:14px">No decisions saved yet</div><div style="font-size:12px;margin-top:10px;color:#a855f7">Tap + Add to log your first decision</div></div>';
+    list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:rgba(255,255,255,0.5);font-style:italic"><div style="font-size:48px;margin-bottom:16px">📜</div><div style="font-size:14px">No decisions saved yet</div><div style="font-size:12px;margin-top:10px;color:#C9A24B">Tap + Add to log your first decision</div></div>';
     return;
   }
   
@@ -2125,23 +3494,23 @@ function renderDecisionLog() {
     const id = d.id || d.date;
     const date = new Date(d.date).toLocaleDateString() + ' • ' + new Date(d.date).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
     const status = d.status || 'pending';
-    const statusColor = status === 'decided' ? '#34d399' : status === 'outcome' ? '#a855f7' : '#fbbf24';
+    const statusColor = status === 'decided' ? '#34d399' : status === 'outcome' ? '#C9A24B' : '#fbbf24';
     const statusLabel = status === 'decided' ? '✓ DECIDED' : status === 'outcome' ? '📊 OUTCOME LOGGED' : '⏳ PENDING';
     
-    return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(168,85,247,0.2);border-radius:18px;padding:16px;margin-bottom:12px;backdrop-filter:blur(10px)">
+    return `<div style="background:linear-gradient(160deg,#16161A,#0e0e10);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,0.4)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
-        <span style="font-size:10px;color:${statusColor};padding:4px 12px;background:${statusColor}22;border:1px solid ${statusColor}55;border-radius:100px;font-weight:700;letter-spacing:0.08em;font-family:'Inter',sans-serif">${statusLabel}</span>
-        <span style="font-size:11px;color:#7c6db5;font-family:'Inter',sans-serif">${date}${d.tycoon && d.tycoon !== 'Self' ? ' · '+d.tycoon : ''}</span>
+        <span style="font-size:10px;color:${statusColor};padding:4px 12px;background:${statusColor}22;border:1px solid ${statusColor}55;border-radius:100px;font-weight:700;letter-spacing:0.08em">${statusLabel}</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.4)">${date}${d.tycoon && d.tycoon !== 'Self' ? ' · '+d.tycoon : ''}</span>
       </div>
-      <div style="font-size:15px;color:#f5f3ff;margin-bottom:10px;font-weight:500;line-height:1.5;font-family:'Inter',sans-serif">${d.decision}</div>
-      ${d.context ? `<div style="font-size:12px;color:#c4b5fd;padding:8px 12px;background:rgba(168,85,247,0.06);border-left:2px solid #a855f7;border-radius:6px;margin-bottom:8px;font-style:italic">Context: ${d.context}</div>` : ''}
-      ${d.outcome ? `<div style="font-size:13px;color:#c4b5fd;padding:10px 12px;background:rgba(168,85,247,0.08);border-left:2px solid #a855f7;border-radius:6px;margin-bottom:8px;font-family:'Inter',sans-serif"><b style="color:#a855f7">📊 OUTCOME:</b> ${d.outcome}</div>` : ''}
-      ${d.learned ? `<div style="font-size:13px;color:#c4b5fd;padding:10px 12px;background:rgba(52,211,153,0.08);border-left:2px solid #34d399;border-radius:6px;margin-bottom:8px;font-family:'Inter',sans-serif"><b style="color:#34d399">💡 LESSON:</b> ${d.learned}</div>` : ''}
+      <div style="font-size:15px;color:#F4F1EA;margin-bottom:10px;font-weight:500;line-height:1.5">${d.decision}</div>
+      ${d.context ? `<div style="font-size:12px;color:rgba(255,255,255,0.6);padding:8px 12px;background:rgba(201,162,75,0.08);border-left:2px solid #C9A24B;border-radius:6px;margin-bottom:8px;font-style:italic">Context: ${d.context}</div>` : ''}
+      ${d.outcome ? `<div style="font-size:13px;color:rgba(255,255,255,0.75);padding:10px 12px;background:rgba(201,162,75,0.08);border-left:2px solid #C9A24B;border-radius:6px;margin-bottom:8px"><b style="color:#E6C97A">📊 OUTCOME:</b> ${d.outcome}</div>` : ''}
+      ${d.learned ? `<div style="font-size:13px;color:rgba(255,255,255,0.75);padding:10px 12px;background:rgba(52,211,153,0.08);border-left:2px solid #34d399;border-radius:6px;margin-bottom:8px"><b style="color:#34d399">💡 LESSON:</b> ${d.learned}</div>` : ''}
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
-        ${status === 'pending' ? `<button onclick="markDecided(${id})" style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.4);color:#34d399;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600">✓ Decided</button>` : ''}
-        ${status !== 'outcome' ? `<button onclick="logOutcome(${id})" style="background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.4);color:#a855f7;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600">📊 Log Outcome</button>` : ''}
-        <button onclick="addLearning(${id})" style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fbbf24;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600">💡 ${d.learned ? 'Edit' : 'Add'} Lesson</button>
-        <button onclick="deleteDecisionEntry(${id})" style="background:transparent;border:1px solid rgba(239,68,68,0.3);color:#fca5a5;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;margin-left:auto">Delete</button>
+        ${status === 'pending' ? `<button onclick="markDecided(${id})" style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.4);color:#34d399;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600">✓ Decided</button>` : ''}
+        ${status !== 'outcome' ? `<button onclick="logOutcome(${id})" style="background:rgba(201,162,75,0.15);border:1px solid rgba(201,162,75,0.4);color:#E6C97A;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600">📊 Log Outcome</button>` : ''}
+        <button onclick="addLearning(${id})" style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fbbf24;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600">💡 ${d.learned ? 'Edit' : 'Add'} Lesson</button>
+        <button onclick="deleteDecisionEntry(${id})" style="background:transparent;border:1px solid rgba(239,68,68,0.3);color:#fca5a5;padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:500;margin-left:auto">Delete</button>
       </div>
     </div>`;
   }).join('');
@@ -2179,7 +3548,7 @@ function renderGoals() {
     <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(99,102,241,0.4);border-radius:4px;padding:12px;margin-bottom:10px;display:flex;gap:10px;align-items:center">
       <input type="checkbox" ${g.done ? 'checked' : ''} onchange="toggleGoal(${idx})" style="width:18px;height:18px;accent-color:#f3f4f6;cursor:pointer">
       <div style="flex:1;font-size:14px;color:#f3f4f6;font-family:'Crimson Text',serif;${g.done ? 'text-decoration:line-through;opacity:0.6' : ''}">${g.text}</div>
-      <button onclick="deleteGoal(${idx})" style="background:transparent;border:none;color:rgba(99,102,241,0.4);cursor:pointer;font-size:16px">×</button>
+      <button onclick="deleteGoal(${idx})" style="background:transparent;border:none;color:rgba(239,68,68,0.7);cursor:pointer;font-size:16px">×</button>
     </div>`).join('');
 }
 
@@ -2274,7 +3643,7 @@ function generatePDF(entry, decision) {
     function addText(text, size, style, color) {
       doc.setFontSize(size);
       doc.setFont('helvetica', style || 'normal');
-      doc.setTextColor(color || '#f3f4f6');
+      doc.setTextColor(color || '#1a1a1a');
       const lines = doc.splitTextToSize(text || '', contentW);
       checkPage(lines.length * (size * 0.4));
       doc.text(lines, margin, y);
@@ -2283,22 +3652,23 @@ function generatePDF(entry, decision) {
     
     function addDivider() {
       checkPage(8);
-      doc.setDrawColor('rgba(99,102,241,0.3)');
+      doc.setDrawColor('#C9A24B');
       doc.setLineWidth(0.5);
       doc.line(margin, y, pageW - margin, y);
       y += 6;
     }
     
     // Header
-    doc.setFillColor('#f3f4f6');
+    doc.setFillColor('#16161A');
     doc.rect(0, 0, pageW, 30, 'F');
-    doc.setTextColor('#0a0e1a');
+    doc.setTextColor('#E6C97A');
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
     doc.text('Board Room Report', pageW/2, 14, { align: 'center' });
+    doc.setTextColor('#C9A24B');
     doc.setFontSize(10);
     doc.setFont('helvetica', 'italic');
-    doc.text('My Tycoon Advisors • ' + new Date(entry.date || Date.now()).toLocaleString(), pageW/2, 22, { align: 'center' });
+    doc.text('My Tycoon Advisors  •  ' + new Date(entry.date || Date.now()).toLocaleString(), pageW/2, 22, { align: 'center' });
     y = 40;
     
     const r = entry.result || entry;
@@ -2325,19 +3695,19 @@ function generatePDF(entry, decision) {
       const tycoonSummary = aiMsgs.map(m => m.content).join('\n\n').trim();
       
       if (mainQuestion) {
-        addText('THE QUESTION YOU ASKED', 11, 'bold', 'rgba(99,102,241,0.4)');
+        addText('THE QUESTION YOU ASKED', 11, 'bold', '#9A7A2E');
         y += 2;
         // Italic styled question
-        doc.setFillColor('rgba(255,255,255,0.04)');
+        doc.setFillColor('#F7F3E9');
         const qLines = doc.splitTextToSize(mainQuestion, contentW - 8);
         const qH = 8 + qLines.length * 5;
         checkPage(qH + 4);
         doc.rect(margin, y, contentW, qH, 'F');
-        doc.setDrawColor('rgba(99,102,241,0.3)');
+        doc.setDrawColor('#C9A24B');
         doc.setLineWidth(0.3);
         doc.line(margin, y, margin, y + qH);
         doc.line(margin, y, margin + 2, y);
-        doc.setTextColor('#f3f4f6');
+        doc.setTextColor('#1a1a1a');
         doc.setFontSize(11);
         doc.setFont('helvetica', 'italic');
         doc.text(qLines, margin + 4, y + 6);
@@ -2345,7 +3715,7 @@ function generatePDF(entry, decision) {
       }
       
       if (tycoonSummary && entry.tycoon && entry.tycoon !== 'General') {
-        addText((entry.tycoon || 'TYCOON').toUpperCase() + "'S KEY POINTS", 11, 'bold', 'rgba(99,102,241,0.4)');
+        addText((entry.tycoon || 'TYCOON').toUpperCase() + "'S KEY POINTS", 11, 'bold', '#9A7A2E');
         y += 3;
         
         // Extract key sentences as bullet points
@@ -2367,13 +3737,13 @@ function generatePDF(entry, decision) {
           checkPage(bH + 2);
           
           // Cream background with brown left border
-          doc.setFillColor('rgba(255,255,255,0.04)');
+          doc.setFillColor('#F7F3E9');
           doc.rect(margin, y, contentW, bH, 'F');
-          doc.setDrawColor('rgba(99,102,241,0.3)');
+          doc.setDrawColor('#C9A24B');
           doc.setLineWidth(0.5);
           doc.line(margin, y, margin, y + bH);
           
-          doc.setTextColor('#f3f4f6');
+          doc.setTextColor('#1a1a1a');
           doc.setFontSize(11);
           doc.setFont('helvetica', 'normal');
           doc.text(bLines, margin + 4, y + 5);
@@ -2387,61 +3757,65 @@ function generatePDF(entry, decision) {
       
       // Section header for board analysis
       checkPage(15);
-      doc.setFillColor('rgba(99,102,241,0.4)');
+      doc.setFillColor('#16161A');
       doc.rect(margin, y - 2, contentW, 10, 'F');
-      doc.setTextColor('#0a0e1a');
+      doc.setTextColor('#E6C97A');
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
       doc.text('BOARD ROOM ANALYSIS - ALL 12 TYCOONS', margin + 3, y + 4);
       y += 14;
     }
     
-    addText('QUESTION / CONTEXT', 11, 'bold', 'rgba(99,102,241,0.4)');
+    addText('QUESTION / CONTEXT', 11, 'bold', '#9A7A2E');
     y += 2;
-    addText(r.context || 'Business consultation', 11, 'normal', '#f3f4f6');
+    addText(r.context || 'Business consultation', 11, 'normal', '#1a1a1a');
     y += 4;
     addDivider();
     
-    addText('CONSENSUS', 12, 'bold', 'rgba(99,102,241,0.4)');
+    addText('CONSENSUS', 12, 'bold', '#9A7A2E');
     y += 2;
-    addText(r.consensus, 11, 'normal', '#f3f4f6');
+    addText(r.consensus, 11, 'normal', '#1a1a1a');
     y += 4;
     addDivider();
     
-    addText("EACH TYCOON'S TAKE", 12, 'bold', 'rgba(99,102,241,0.4)');
+    addText("EACH TYCOON'S TAKE", 12, 'bold', '#9A7A2E');
     y += 3;
     (r.views || []).forEach(v => {
       checkPage(20);
-      addText(v.name, 11, 'bold', '#f3f4f6');
+      addText(v.name, 11, 'bold', '#1a1a1a');
       addText(v.view, 10, 'normal', '#333333');
       y += 4;
     });
     addDivider();
     
-    addText('KEY DISAGREEMENTS', 12, 'bold', 'rgba(99,102,241,0.4)');
+    addText('KEY DISAGREEMENTS', 12, 'bold', '#9A7A2E');
     y += 2;
-    addText(r.disagreements, 11, 'normal', '#f3f4f6');
+    addText(r.disagreements, 11, 'normal', '#1a1a1a');
     y += 4;
     addDivider();
     
-    addText('UNIQUE INSIGHTS', 12, 'bold', 'rgba(99,102,241,0.4)');
+    addText('UNIQUE INSIGHTS', 12, 'bold', '#9A7A2E');
     y += 2;
-    addText(r.insights, 11, 'normal', '#f3f4f6');
+    addText(r.insights, 11, 'normal', '#1a1a1a');
     y += 6;
     
     if (decision && decision.trim()) {
       checkPage(30);
-      doc.setFillColor('#f3f4f6');
+      doc.setFillColor('#F7F3E9');
       const decLines = doc.splitTextToSize(decision, contentW - 10);
-      const decH = 12 + decLines.length * 4.5;
+      const decH = 14 + decLines.length * 4.5;
       doc.rect(margin, y - 2, contentW, decH, 'F');
-      doc.setTextColor('#0a0e1a');
+      doc.setDrawColor('#C9A24B');
+      doc.setLineWidth(0.6);
+      doc.line(margin, y - 2, margin, y - 2 + decH);
+      doc.setTextColor('#9A7A2E');
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.text('MY DECISION', margin + 5, y + 4);
-      y += 8;
+      y += 9;
       doc.setFontSize(11);
       doc.setFont('helvetica', 'normal');
+      doc.setTextColor('#1a1a1a');
       doc.text(decLines, margin + 5, y);
       y += decLines.length * 4.5 + 8;
     }
@@ -2468,7 +3842,7 @@ function generatePDF(entry, decision) {
 
 function showPDFBanner(text, bg) {
   const banner = document.createElement('div');
-  banner.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:' + (bg||'#f3f4f6') + ';color:#0a0e1a;padding:14px 28px;border:2px solid rgba(99,102,241,0.3);z-index:9999999;font-family:Playfair Display,serif;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-size:14px;box-shadow:3px 3px 0 rgba(184,115,51,0.4)';
+  banner.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:' + (bg||'#16161A') + ';color:#E6C97A;padding:14px 28px;border:1px solid rgba(201,162,75,0.4);border-radius:100px;z-index:9999999;font-family:Plus Jakarta Sans,sans-serif;font-weight:700;letter-spacing:0.04em;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,0.5)';
   banner.innerHTML = text;
   document.body.appendChild(banner);
   return banner;
@@ -2505,11 +3879,38 @@ async function askHomeBoardRoom() {
 
 // ── TYCOON SEARCH ──
 function filterTycoons() {
-  const q = (document.getElementById('searchInp').value || '').toLowerCase().trim();
+  const inp = document.getElementById('searchInp');
+  const q = (inp.value || '').toLowerCase().trim();
+  const grid = document.getElementById('grid');
+  let anyMatch = false;
   document.querySelectorAll('#grid .card').forEach(card => {
+    if (card.id === 'genPromptCard') return; // skip the generate card itself
+    const isAddCard = card.getAttribute('data-add') === '1';
     const text = card.textContent.toLowerCase();
-    card.style.display = text.includes(q) ? '' : 'none';
+    const show = q === '' ? true : text.includes(q);
+    card.style.display = show ? '' : 'none';
+    if (show && !isAddCard) anyMatch = true;
   });
+
+  // manage the "Generate [name]" card
+  let genCard = document.getElementById('genPromptCard');
+  if (q.length >= 2 && !anyMatch) {
+    const rawName = inp.value.trim();
+    if (!genCard) {
+      genCard = document.createElement('div');
+      genCard.id = 'genPromptCard';
+      genCard.className = 'card';
+      genCard.style.borderStyle = 'dashed';
+      grid.insertBefore(genCard, grid.firstChild);
+    }
+    const cat = getCategoryById(currentCategory || 'business');
+    genCard.style.setProperty('--ac', cat.color);
+    genCard.innerHTML = `<span class="card-emoji">✨</span><div class="card-name">Add "${rawName}"</div><div class="card-sub">Create this advisor automatically</div><span class="card-tag">✨ Generate</span>`;
+    genCard.onclick = () => generateAdvisor(rawName);
+    genCard.style.display = '';
+  } else if (genCard) {
+    genCard.remove();
+  }
 }
 
 // ── CHAT HISTORY PERSISTENCE ──
@@ -2579,15 +3980,16 @@ function exportChatPDF() {
     }
     
     // Header
-    doc.setFillColor('#f3f4f6');
+    doc.setFillColor('#16161A');
     doc.rect(0, 0, pageW, 30, 'F');
-    doc.setTextColor('#0a0e1a');
+    doc.setTextColor('#E6C97A');
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.text(current.name, pageW/2, 14, { align: 'center' });
+    doc.setTextColor('#C9A24B');
     doc.setFontSize(10);
     doc.setFont('helvetica', 'italic');
-    doc.text((current.tagline || '') + ' • ' + new Date().toLocaleString(), pageW/2, 22, { align: 'center' });
+    doc.text((current.tagline || '') + '  •  ' + new Date().toLocaleString(), pageW/2, 22, { align: 'center' });
     y = 40;
     
     history.forEach(m => {
@@ -2596,25 +3998,27 @@ function exportChatPDF() {
       checkPage(blockH + 4);
       
       if (m.role === 'user') {
-        doc.setFillColor('#f3f4f6');
+        doc.setFillColor('#EEF0F2');
         doc.rect(margin + 30, y, contentW - 30, blockH, 'F');
-        doc.setTextColor('#0a0e1a');
+        doc.setTextColor('#555555');
         doc.setFontSize(9);
         doc.setFont('helvetica', 'bold');
         doc.text('YOU', margin + 33, y + 5);
+        doc.setTextColor('#1a1a1a');
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
         doc.text(lines, margin + 33, y + 10);
       } else {
-        doc.setFillColor('rgba(255,255,255,0.04)');
+        doc.setFillColor('#F7F3E9');
         doc.rect(margin, y, contentW - 30, blockH, 'F');
-        doc.setDrawColor('rgba(99,102,241,0.3)');
-        doc.rect(margin, y, contentW - 30, blockH);
-        doc.setTextColor('rgba(99,102,241,0.4)');
+        doc.setDrawColor('#C9A24B');
+        doc.setLineWidth(0.5);
+        doc.line(margin, y, margin, y + blockH);
+        doc.setTextColor('#9A7A2E');
         doc.setFontSize(9);
         doc.setFont('helvetica', 'bold');
         doc.text((current.name || 'TYCOON').toUpperCase(), margin + 3, y + 5);
-        doc.setTextColor('#f3f4f6');
+        doc.setTextColor('#1a1a1a');
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
         doc.text(lines, margin + 3, y + 10);
@@ -2676,7 +4080,7 @@ function renderBoardHistory() {
   const history = JSON.parse(localStorage.getItem('board_history') || '[]');
   
   if (history.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">📚</div><div style="font-size:16px;font-weight:600;color:#f3f4f6;margin-bottom:6px">No history yet</div><div style="font-size:13px;color:#9ca3af">Your past board meetings will appear here</div></div>';
+    list.innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">📚</div><div style="font-size:16px;font-weight:600;color:#E6C97A;margin-bottom:6px">No history yet</div><div style="font-size:13px;color:#9ca3af">Your past board meetings will appear here</div></div>';
     return;
   }
 
@@ -2692,7 +4096,7 @@ function renderBoardHistory() {
       <div style="font-size:13px;color:#f3f4f6;line-height:1.5;margin-bottom:10px">${preview}${preview.length > 99 ? '...' : ''}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button onclick="viewHistoryEntry(${idx})" style="background:#f3f4f6;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;padding:7px 12px;cursor:pointer;font-family:inherit">View</button>
-        <button onclick="exportHistoryPDF(${idx})" style="background:#f5f5f7;border:1px solid #d2d2d7;border-radius:8px;color:#f3f4f6;font-size:12px;font-weight:600;padding:7px 12px;cursor:pointer;font-family:inherit">📄 PDF</button>
+        <button onclick="exportHistoryPDF(${idx})" style="background:rgba(201,162,75,0.12);border:1px solid rgba(201,162,75,0.4);border-radius:100px;color:#E6C97A;font-size:12px;font-weight:700;padding:7px 14px;cursor:pointer;font-family:inherit">📄 PDF</button>
         <button onclick="deleteHistoryEntry(${idx})" style="background:transparent;border:1px solid #d2d2d7;border-radius:8px;color:#ff3b30;font-size:12px;font-weight:600;padding:7px 12px;cursor:pointer;font-family:inherit">Delete</button>
       </div>
     </div>`;
@@ -3104,7 +4508,7 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
       </div>
 
       <!-- Export PDF Button -->
-      <button onclick="exportBoardPDF()" style="width:100%;background:rgba(255,255,255,0.06);border:2px solid rgba(99,102,241,0.4);border-radius:4px;color:#f3f4f6;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Playfair Display',serif;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.08em;text-transform:uppercase;box-shadow:2px 2px 0 rgba(43,24,16,0.2)">
+      <button onclick="exportBoardPDF()" style="width:100%;background:rgba(201,162,75,0.12);border:1px solid rgba(201,162,75,0.4);border-radius:100px;color:#E6C97A;padding:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.06em;text-transform:uppercase">
         📄 Export as PDF (Share with Family)
       </button>
 
@@ -3144,7 +4548,7 @@ document.getElementById('sbtn').addEventListener('click', sendMsg);
   <div style="padding:14px 16px;background:rgba(255,255,255,0.06);border-bottom:2px solid rgba(99,102,241,0.4);display:flex;align-items:center;gap:12px">
     <button onclick="closeDecisionLog()" style="background:transparent;border:1px solid rgba(99,102,241,0.3);color:#f3f4f6;border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Playfair Display',serif;font-weight:600;text-transform:uppercase">← Back</button>
     <div style="flex:1;text-align:center;font-size:18px;font-weight:700;color:#f3f4f6;font-family:'Playfair Display',serif">📜 Decision Log</div>
-    <button onclick="addDecisionPrompt()" style="background:linear-gradient(135deg,#6e2cf4,#ec4899);border:none;color:#fff;border-radius:100px;padding:8px 16px;font-size:12px;cursor:pointer;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 4px 14px rgba(168,85,247,0.4)">+ Add</button>
+    <button onclick="addDecisionPrompt()" style="background:linear-gradient(135deg,#E6C97A,#C9A24B,#9A7A2E);border:none;color:#1a1505;border-radius:100px;padding:8px 16px;font-size:12px;cursor:pointer;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 4px 14px rgba(201,162,75,0.4)">+ Add</button>
   </div>
   <div id="decisionLogList" style="flex:1;overflow-y:auto;padding:16px"></div>
 </div>
@@ -3223,13 +4627,146 @@ if ('serviceWorker' in navigator) {
 
 
 <!-- REMINDERS OVERLAY -->
-<div id="remindersOverlay" style="display:none;position:fixed;inset:0;background:#0f0420;z-index:285;flex-direction:column">
-  <div style="padding:14px 16px;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(168,85,247,0.2);display:flex;align-items:center;gap:10px;padding-top:calc(14px + env(safe-area-inset-top))">
-    <button onclick="closeReminders()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(168,85,247,0.2);color:#c4b5fd;border-radius:100px;padding:7px 14px;font-size:11px;cursor:pointer;font-weight:600;letter-spacing:0.04em;text-transform:uppercase">← Back</button>
-    <div style="flex:1;text-align:center;font-size:16px;font-weight:700;color:#f5f3ff">🔔 Smart Reminders</div>
+<div id="remindersOverlay" style="display:none;position:fixed;inset:0;background:#0B0B0D;z-index:285;flex-direction:column">
+  <div style="padding:14px 16px;background:rgba(11,11,13,0.9);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;padding-top:calc(14px + env(safe-area-inset-top))">
+    <button onclick="closeReminders()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:100px;color:#CFC9BC;padding:7px 14px;font-size:11px;cursor:pointer;font-weight:600;letter-spacing:0.04em;text-transform:uppercase">← Back</button>
+    <div style="flex:1;text-align:center;font-size:16px;font-weight:600;color:#F4F1EA;font-family:var(--font-display)">🔔 Smart Reminders</div>
     <div style="width:60px"></div>
   </div>
   <div id="remindersList" style="flex:1;overflow-y:auto;padding:16px"></div>
+</div>
+
+
+<!-- ARENA OVERLAY -->
+<div id="arenaOverlay" style="display:none;position:fixed;inset:0;background:#0D0D0D;z-index:290;flex-direction:column;font-family:'Plus Jakarta Sans',sans-serif">
+  
+  <!-- Arena Header -->
+  <div style="padding:16px;padding-top:calc(16px + env(safe-area-inset-top));display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(218,165,32,0.2);background:rgba(0,0,0,0.5);backdrop-filter:blur(20px)">
+    <button onclick="closeArena()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:100px;padding:7px 14px;font-size:11px;cursor:pointer;font-weight:600;letter-spacing:0.06em;text-transform:uppercase">← Exit</button>
+    <div style="flex:1;text-align:center">
+      <div style="font-size:18px;font-weight:900;color:#DAA520;letter-spacing:0.2em;text-transform:uppercase">⚔️ ARENA</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.15em;text-transform:uppercase;margin-top:2px">Train Your Mind</div>
+    </div>
+    <div id="arenaScore" style="text-align:right">
+      <div style="font-size:18px;font-weight:800;color:#DAA520" id="arenaScoreNum">0</div>
+      <div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em">Score</div>
+    </div>
+  </div>
+
+  <!-- Arena Content -->
+  <div id="arenaContent" style="flex:1;overflow-y:auto;padding:20px 16px 20px;scrollbar-width:none">
+    
+    <!-- Start Screen -->
+    <div id="arenaStart">
+      <div style="text-align:center;padding:30px 0 24px">
+        <div style="font-size:64px;margin-bottom:16px">🥊</div>
+        <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-0.02em;margin-bottom:8px">Ready to think?</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.4);line-height:1.6;max-width:300px;margin:0 auto">A real scenario. Your real thinking. No AI doing it for you.</div>
+      </div>
+      
+      <!-- Difficulty -->
+      <div style="margin-bottom:24px">
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px;text-align:center">Choose difficulty</div>
+        <div style="display:flex;gap:8px">
+          <button onclick="setDifficulty('rookie')" id="diff_rookie" class="diffBtn" style="flex:1;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:#34d399;border-radius:14px;padding:14px 8px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12px;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.2s">🟢<br><span style="font-size:13px">ROOKIE</span><br><span style="font-size:9px;opacity:0.7;font-weight:400;text-transform:none">Clear decisions</span></button>
+          <button onclick="setDifficulty('operator')" id="diff_operator" class="diffBtn" style="flex:1;background:rgba(251,191,36,0.1);border:2px solid #DAA520;color:#DAA520;border-radius:14px;padding:14px 8px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12px;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.2s;box-shadow:0 0 20px rgba(218,165,32,0.2)">🟡<br><span style="font-size:13px">OPERATOR</span><br><span style="font-size:9px;opacity:0.7;font-weight:400;text-transform:none">Hidden traps</span></button>
+          <button onclick="setDifficulty('tycoon')" id="diff_tycoon" class="diffBtn" style="flex:1;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:14px;padding:14px 8px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12px;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.2s">🔴<br><span style="font-size:13px">TYCOON</span><br><span style="font-size:9px;opacity:0.7;font-weight:400;text-transform:none">High stakes</span></button>
+        </div>
+      </div>
+      
+      <!-- Stats -->
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:16px;margin-bottom:24px">
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px">Your Arena Stats</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center">
+          <div><div id="statChallenges" style="font-size:24px;font-weight:800;color:#DAA520">0</div><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px">Challenges</div></div>
+          <div><div id="statStreak" style="font-size:24px;font-weight:800;color:#34d399">0</div><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px">Streak 🔥</div></div>
+          <div><div id="statAvg" style="font-size:24px;font-weight:800;color:#fff">-</div><div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px">Avg Score</div></div>
+        </div>
+      </div>
+      
+      <button onclick="startChallenge()" id="startBtn" style="width:100%;background:linear-gradient(135deg,#DAA520,#B8860B);border:none;border-radius:100px;color:#fff;padding:18px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.08em;text-transform:uppercase;box-shadow:0 8px 30px rgba(218,165,32,0.4);transition:all 0.2s">Start Today's Challenge →</button>
+      <button onclick="startRealDecision()" style="width:100%;margin-top:10px;background:rgba(218,165,32,0.1);border:1px solid rgba(218,165,32,0.3);border-radius:100px;color:#E6C97A;padding:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.04em">🎯 Train on My Real Decision</button>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button onclick="openArenaProgress()" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:100px;color:#fff;padding:14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase">📈 Progress</button>
+        <button onclick="openArenaJournal()" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:100px;color:#fff;padding:14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase">📖 Journal</button>
+      </div>
+      <button onclick="setArenaDailyReminder()" id="arenaDailyBtn" style="width:100%;margin-top:10px;background:transparent;border:1px dashed rgba(255,255,255,0.18);border-radius:100px;color:rgba(255,255,255,0.55);padding:12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em">🔔 Remind me daily to train</button>
+    </div>
+
+    <!-- Progress Board Screen -->
+    <div id="arenaProgress" style="display:none"></div>
+
+    <!-- Journal Screen -->
+    <div id="arenaJournal" style="display:none"></div>
+    
+    <!-- Challenge Screen -->
+    <div id="arenaChallenge" style="display:none">
+      <!-- Back to Arena menu -->
+      <button onclick="exitChallenge()" style="position:sticky;top:0;z-index:6;background:rgba(11,11,13,0.92);border:1px solid rgba(255,255,255,0.14);color:#fff;border-radius:100px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:14px;letter-spacing:0.02em;backdrop-filter:blur(8px)">← Arena Menu</button>
+      <!-- Scenario (stays pinned at top so you never lose the situation) -->
+      <div id="scenarioBox" style="position:sticky;top:0;z-index:5;background:linear-gradient(160deg,#16161A,#0e0e10);border:1px solid rgba(218,165,32,0.3);border-left:3px solid #DAA520;border-radius:18px;padding:18px;margin-bottom:18px;box-shadow:0 8px 24px rgba(0,0,0,0.5)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:10px;color:#E6C97A;font-weight:800;letter-spacing:0.15em;text-transform:uppercase">📋 The Situation</span>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span id="scenarioTopic" style="font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:0.1em;text-transform:uppercase">Business</span>
+            <button onclick="toggleScenario()" id="scenarioToggle" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);border-radius:100px;padding:3px 10px;font-size:10px;cursor:pointer;font-family:inherit;font-weight:600">Hide</button>
+          </div>
+        </div>
+        <span id="scenarioDiff" style="display:inline-block;font-size:9px;color:#DAA520;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 9px;background:rgba(218,165,32,0.1);border:1px solid rgba(218,165,32,0.2);border-radius:100px;margin-bottom:10px">🟡 OPERATOR</span>
+        <div id="scenarioText" style="font-size:15px;color:#fff;line-height:1.65;font-weight:400"></div>
+      </div>
+      
+      <!-- Live chat hint -->
+      <div style="text-align:center;margin-bottom:14px">
+        <span id="roundIndicator" style="font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.12em;text-transform:uppercase">Think it through · ask if unsure</span>
+      </div>
+      
+      <!-- Response area -->
+      <div id="arenaMessages" style="margin-bottom:16px;display:flex;flex-direction:column;gap:12px"></div>
+      
+      <!-- Input -->
+      <div id="arenaInputArea">
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px;text-align:center">👆 Your idea about the situation above — or ask a question</div>
+        <textarea id="arenaInp" rows="3" placeholder="Type your thinking, or ask if something's unclear..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;color:#fff;padding:14px 16px;font-size:14px;outline:none;font-family:'Plus Jakarta Sans',sans-serif;resize:none;line-height:1.5;transition:all 0.2s"></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button onclick="submitArenaAnswer()" id="arenaSubmit" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:100px;color:#fff;padding:14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.06em;text-transform:uppercase">Send →</button>
+          <button onclick="finishArena()" id="arenaDone" style="flex:1;background:linear-gradient(135deg,#DAA520,#B8860B);border:none;border-radius:100px;color:#1a1505;padding:14px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 4px 20px rgba(218,165,32,0.3)">✓ Done · Score Me</button>
+        </div>
+        <button onclick="useArenaHelp()" id="arenaHelpBtn" style="width:100%;margin-top:8px;background:transparent;border:1px dashed rgba(255,255,255,0.18);border-radius:100px;color:rgba(255,255,255,0.6);padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em">🤝 Help (2 left)</button>
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);text-align:center;margin-top:6px;line-height:1.5">Help explains the situation — never the decision. Finish with Help unused for a bonus 🏅</div>
+      </div>
+      
+      <!-- Result (shown after final round) -->
+      <div id="arenaResult" style="display:none">
+        <div style="background:rgba(218,165,32,0.08);border:1px solid rgba(218,165,32,0.25);border-radius:18px;padding:20px;margin-top:8px">
+          <div style="font-size:12px;color:#DAA520;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:14px">🏆 Challenge Complete</div>
+          <div id="resultScore" style="text-align:center;margin-bottom:16px">
+            <div id="resultScoreNum" style="font-size:56px;font-weight:900;color:#DAA520">85</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em">out of 100</div>
+          </div>
+          <div id="resultFeedback" style="font-size:14px;color:rgba(255,255,255,0.75);line-height:1.7"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
+            <div id="resultStrengths" style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:12px;padding:12px">
+              <div style="font-size:10px;color:#34d399;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">✓ Strong</div>
+              <div id="strengthsList" style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6"></div>
+            </div>
+            <div id="resultGaps" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:12px">
+              <div style="font-size:10px;color:#ef4444;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">✗ Missed</div>
+              <div id="gapsList" style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:16px">
+            <button onclick="startChallenge()" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:100px;padding:12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.06em;text-transform:uppercase">🔄 Another</button>
+            <button onclick="backToArenaStart()" style="flex:1;background:linear-gradient(135deg,#DAA520,#B8860B);border:none;border-radius:100px;color:#1a1505;padding:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 4px 16px rgba(218,165,32,0.3)">← Arena Menu</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button onclick="shareArenaResult()" style="flex:1;background:transparent;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);border-radius:100px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em">📤 Share</button>
+            <button onclick="closeArena()" style="flex:1;background:transparent;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);border-radius:100px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.04em">✕ Exit Arena</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>
