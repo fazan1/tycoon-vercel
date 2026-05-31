@@ -1383,7 +1383,7 @@ If "${name}" is not a real or recognizable person, still make a reasonable advis
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 900,
         messages: [{ role: 'user', content: genPrompt }],
         system: 'You build concise, accurate advisor profiles of notable people. Return ONLY valid JSON.'
@@ -1771,7 +1771,7 @@ async function sendMsg() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: getThinkingMode() === 'deep' ? 16000 : 2500,
         ...(getThinkingMode() === 'deep' ? { thinking: { type: 'enabled', budget_tokens: 12000 } } : {}),
         system: buildSystem(),
@@ -1992,7 +1992,7 @@ Rules:
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 500,
         messages: [{ role: 'user', content: prompt }],
         system: 'You extract action items from conversations. Return ONLY valid JSON arrays, no markdown.'
@@ -2276,7 +2276,7 @@ End by handing it back: ask them one simple question (mentioning a real thing fr
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 350,
         messages: [{ role: 'user', content: helpPrompt }],
         system: 'You are a thinking-coach. You clarify the situation but NEVER make the decision for the user.'
@@ -2482,7 +2482,7 @@ Return ONLY the scenario. Nothing else.`;
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 300,
         messages: [{ role: 'user', content: prompt }],
         system: 'You create sharp, realistic business scenarios for decision-making training. Return ONLY the scenario, no commentary.'
@@ -2561,7 +2561,7 @@ STYLE:
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 350,
         messages: arenaState.conversationHistory,
         system: systemPrompt
@@ -2672,7 +2672,7 @@ Return ONLY valid JSON, no markdown:
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 800,
         messages: [{ role: 'user', content: scorePrompt }],
         system: 'You evaluate decision-making quality against an elite-operator benchmark. Return ONLY valid JSON, no markdown.'
@@ -4406,7 +4406,7 @@ async function runBoardRoom() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 4000,
         system: BOARD_SYSTEM + '\n\nIMPORTANT: Respond ONLY with valid JSON. No markdown, no code blocks, no extra text. Start with { and end with }.',
         messages: [{ 
