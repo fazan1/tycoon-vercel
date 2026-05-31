@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -21,7 +20,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: req.body.model || 'claude-sonnet-4-20250514',
+        model: req.body.model || 'claude-sonnet-4-5',
         max_tokens: req.body.max_tokens || 2500,
         system: req.body.system,
         messages: req.body.messages,
@@ -30,9 +29,7 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    if (!response.ok) {
-      return res.status(response.status).json(data);
-    }
+    if (!response.ok) return res.status(response.status).json(data);
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({ error: err.message || 'Unknown error' });
