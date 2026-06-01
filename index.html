@@ -1352,7 +1352,116 @@ async function generateAdvisor(rawName) {
   const cat = getCategoryById(catId);
   const gen = CATEGORY_GEN[catId] || CATEGORY_GEN.business;
 
-  // Loading card
+  // Loading card while we look up who they could be
+  const grid = document.getElementById('grid');
+  const loading = document.createElement('div');
+  loading.className = 'card';
+  loading.id = 'genLoading';
+  loading.style.setProperty('--ac', cat.color);
+  loading.innerHTML = `<span class="card-emoji">🔍</span><div class="card-name">Finding ${name}…</div><div class="card-sub">Looking up who this could be</div><span class="card-tag">PLEASE WAIT</span>`;
+  if (grid) grid.insertBefore(loading, grid.firstChild);
+
+  const findPrompt = `A user typed the name "${name}" while looking for ${gen.role} in the category "${cat.name}" (${gen.focus}).
+
+There may be several different real people with this name. List the ones that best fit THIS category first.
+
+Return ONLY valid JSON (no markdown):
+{
+  "matches": [
+    { "name": "full correct name", "who": "8-12 words on who they are and why they fit this category", "fits": true/false }
+  ]
+}
+
+Rules:
+- Give 1 to 4 real people. Put the BEST fit for "${cat.name}" first.
+- "fits" = true if they genuinely belong in this category (${gen.focus}), false if they're a famous person with this name but from a different field.
+- If you only know ONE real person with this name, return just that one.
+- If you do NOT recognise anyone real with this name, return {"matches": []}.
+- Do NOT invent people. Only real, publicly known people.`;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 500,
+        messages: [{ role: 'user', content: findPrompt }],
+        system: 'You identify which real people match a given name. Return ONLY valid JSON. Never invent people.'
+      })
+    });
+    const data = await res.json();
+    let text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    text = text.replace(/```json|```/g, '').trim();
+    const fb = text.indexOf('{'), lb = text.lastIndexOf('}');
+    if (fb !== -1 && lb !== -1) text = text.slice(fb, lb + 1);
+    let matches = [];
+    try { matches = (JSON.parse(text).matches) || []; } catch(e) { matches = []; }
+
+    const l = document.getElementById('genLoading'); if (l) l.remove();
+
+    if (!matches.length) {
+      // Unknown name — let them build it anyway or add a clue
+      if (confirm(`I don't clearly recognise "${name}" as ${gen.role}.\n\nTap OK to add them anyway (I'll build from what little is known), or Cancel to try a clearer name or add a clue like "${name} ${catId === 'business' ? 'entrepreneur' : catId}".`)) {
+        buildAdvisorProfile(name, '');
+      }
+      return;
+    }
+    if (matches.length === 1) {
+      // Only one — go straight to building
+      buildAdvisorProfile(matches[0].name, matches[0].who || '');
+      return;
+    }
+    // Several — show a pick list
+    showMatchPicker(name, matches);
+  } catch(e) {
+    const l = document.getElementById('genLoading'); if (l) l.remove();
+    alert("Couldn't search that name.\n\nReason: " + (e && e.message ? e.message : 'unknown') + "\n\n(The AI backend must be reachable — same as your chat.)");
+  }
+}
+
+// Show a list of possible people so the user picks the right one
+function showMatchPicker(typedName, matches) {
+  const cat = getCategoryById(currentCategory || 'business');
+  const modal = document.createElement('div');
+  modal.id = 'matchPicker';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(20,16,10,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(8px)';
+  const rows = matches.map((m, i) => {
+    const dim = m.fits === false ? 'opacity:0.6' : '';
+    const flag = m.fits === false ? ' <span style="font-size:10px;color:#b08900">(different field)</span>' : '';
+    return `<button onclick="pickMatch(${i})" style="${dim};display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--border-2);border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-family:inherit">
+      <div style="font-family:var(--font-display);font-size:16px;font-weight:500;color:var(--ink)">${m.name}${flag}</div>
+      <div style="font-size:12px;color:var(--gray-mid);margin-top:3px;line-height:1.4">${m.who || ''}</div>
+    </button>`;
+  }).join('');
+  modal.innerHTML = `
+    <div style="background:var(--bg-2);border:1px solid var(--border-2);border-radius:24px;padding:24px;max-width:420px;width:100%;box-shadow:var(--shadow-lg)">
+      <div style="font-family:var(--font-display);font-size:20px;font-weight:500;color:var(--ink);margin-bottom:4px">Which "${typedName}"?</div>
+      <div style="font-size:12px;color:var(--gray-mid);margin-bottom:18px">There's more than one. Pick the one you meant — best fit for ${cat.name} is first.</div>
+      ${rows}
+      <button onclick="cancelMatchPicker()" style="width:100%;background:transparent;border:none;color:var(--gray-mid);padding:10px;font-size:13px;cursor:pointer;font-family:inherit;margin-top:4px">None of these — cancel</button>
+    </div>`;
+  document.body.appendChild(modal);
+  window._matchList = matches;
+}
+
+function pickMatch(i) {
+  const m = (window._matchList || [])[i];
+  const md = document.getElementById('matchPicker'); if (md) md.remove();
+  if (m) buildAdvisorProfile(m.name, m.who || '');
+}
+function cancelMatchPicker() {
+  const md = document.getElementById('matchPicker'); if (md) md.remove();
+}
+
+// Build the full advisor profile for a CONFIRMED person
+async function buildAdvisorProfile(rawName, whoHint) {
+  const name = (rawName || '').trim();
+  if (!name) return;
+  const catId = currentCategory || 'business';
+  const cat = getCategoryById(catId);
+  const gen = CATEGORY_GEN[catId] || CATEGORY_GEN.business;
+
   const grid = document.getElementById('grid');
   const loading = document.createElement('div');
   loading.className = 'card';
@@ -1361,7 +1470,7 @@ async function generateAdvisor(rawName) {
   loading.innerHTML = `<span class="card-emoji">✨</span><div class="card-name">Creating ${name}…</div><div class="card-sub">Building advisor</div><span class="card-tag">PLEASE WAIT</span>`;
   if (grid) grid.insertBefore(loading, grid.firstChild);
 
-  const genPrompt = `Create an advisor profile for "${name}" as ${gen.role}, for an app where users get advice from notable people.
+  const genPrompt = `Create an advisor profile for "${name}"${whoHint ? ' ('+whoHint+')' : ''} as ${gen.role}, for an app where users get advice from notable people.
 
 Focus on: ${gen.focus}.
 
@@ -1376,7 +1485,8 @@ Return ONLY valid JSON, no markdown, with these fields:
   "persona": "A rich 150-220 word first-person-ready description so an AI can fully BECOME this person. Include: their real background and 3-5 SPECIFIC career-defining events/decisions (with rough years, projects, or numbers if known), their core philosophy and signature way of thinking, how they speak, and the kind of advice they give. Be concrete and factual — name real things they did, not vague traits."
 }
 
-If "${name}" is not a real or recognizable person, still make a reasonable advisor but keep the persona and summary honest about what's known.`;
+This person is specifically: ${whoHint || 'as known publicly'}. Stay true to THAT person, not someone else with the same name.
+If you are not sure of real facts, keep the persona honest rather than inventing details.`;
 
   try {
     const res = await fetch('/api/chat', {
@@ -1391,7 +1501,6 @@ If "${name}" is not a real or recognizable person, still make a reasonable advis
     });
     const data = await res.json();
     let text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-    // Robust: pull the JSON object even if the AI added text around it
     text = text.replace(/```json|```/g, '').trim();
     const firstBrace = text.indexOf('{');
     const lastBrace = text.lastIndexOf('}');
