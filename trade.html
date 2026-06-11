@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#F7F3EC"/>
+<title>Lanka Trade Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F3EC;--surface:#FFFFFF;--surface-2:#F3EEE5;--surface-3:#ECE6DA;
+  --gold:#C9A24B;--gold-dark:#9A7A2E;--gold-grad:linear-gradient(135deg,#D4A93F 0%,#C9A24B 45%,#9A7A2E 100%);
+  --ink:#2B2620;--ink-soft:#5C564C;--gray-mid:#8A8275;
+  --border:rgba(43,38,32,0.10);--border-2:rgba(43,38,32,0.16);
+  --shadow:0 6px 24px rgba(43,38,32,0.08);
+  --font-display:'Fraunces',Georgia,serif;--font-body:'Inter',-apple-system,sans-serif;
+}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--font-body);min-height:100%}
+body{padding:18px 14px 60px;max-width:760px;margin:0 auto}
+h1{font-family:var(--font-display);font-weight:600;font-size:26px;letter-spacing:-.5px}
+.sub{color:var(--gray-mid);font-size:13px;margin-top:3px;margin-bottom:18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+input,select{width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:12px;color:var(--ink);padding:13px 14px;font-size:15px;font-family:inherit;outline:none}
+input:focus,select:focus{border-color:var(--gold)}
+.row{display:flex;gap:10px;margin-bottom:12px}
+.row>div{flex:1}
+button{font-family:inherit;cursor:pointer;border:none}
+.btn{background:var(--gold-grad);color:#fff;font-weight:600;font-size:15px;padding:14px;border-radius:12px;width:100%;box-shadow:var(--shadow)}
+.btn:active{transform:translateY(1px)}
+.btn2{background:var(--surface);color:var(--gold-dark);border:1px solid var(--gold);font-weight:600;font-size:14px;padding:12px;border-radius:12px;width:100%;margin-top:8px}
+.count{font-size:13px;color:var(--gray-mid);margin:14px 2px 8px}
+.biz{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 14px;margin-bottom:9px}
+.biz .nm{font-weight:600;font-size:15px;color:var(--ink)}
+.biz .meta{font-size:12.5px;color:var(--gray-mid);margin-top:3px;line-height:1.5}
+.tag{display:inline-block;background:var(--surface-3);color:var(--gold-dark);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:6px}
+.ph{display:inline-block;margin-top:7px;font-size:13px;font-weight:600;color:var(--gold-dark);text-decoration:none}
+.ph:active{opacity:.6}
+.find{font-size:12px;color:var(--gray-mid);text-decoration:underline;margin-top:6px;display:inline-block}
+.empty{text-align:center;color:var(--gray-mid);padding:30px 10px;font-size:14px}
+.loading{text-align:center;color:var(--gold-dark);padding:18px;font-size:14px}
+.sec{font-family:var(--font-display);font-size:16px;font-weight:600;margin:20px 2px 8px;color:var(--ink)}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid var(--gold-soft,#e6d9b5);border-top-color:var(--gold);border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<h1>Lanka Trade Finder</h1>
+<div class="sub">Type a product + area → find businesses that buy or sell it, with contacts.</div>
+
+<div class="card">
+  <label>Product</label>
+  <input id="product" placeholder="e.g. white cotton gloves, welding rod, safety shoes" value="white cotton gloves"/>
+  <div style="height:12px"></div>
+  <div class="row">
+    <div>
+      <label>District</label>
+      <select id="district">
+        <option value="">All districts</option>
+      </select>
+    </div>
+    <div>
+      <label>Town / area (optional)</label>
+      <input id="area" placeholder="e.g. Old Moor Street, Nugegoda"/>
+    </div>
+  </div>
+  <button class="btn" onclick="runSearch()">🔍 Find buyers &amp; sellers</button>
+  <button class="btn2" onclick="deepSearch()">🌐 Deep search the web (live)</button>
+</div>
+
+<div id="results"></div>
+
+<script>
+const SB_URL="https://fceomyvmaqgwjdhgxgfh.supabase.co";
+const SB_KEY="sb_publishable_a7JCWcdEW5ch1ljq25veg_x0cOXCSj";
+let sb=null, CATALOG=[];
+try{ sb=supabase.createClient(SB_URL,SB_KEY); }catch(e){ console.warn("supabase init",e); }
+
+const CATLABEL={gloves:"Gloves",safety:"Safety / PPE",hardware:"Hardware",welding:"Welding",
+steel:"Steel / metal",tools:"Tools & machinery",industrial:"Industrial",
+construction:"Construction firm",food:"Food factory","glove-maker":"Glove maker"};
+
+function catsForProduct(p){p=p.toLowerCase();
+ if(/glove/.test(p))return ["gloves","safety","glove-maker","construction","food","industrial"];
+ if(/weld|electrode|\brod/.test(p))return ["welding","tools","steel","construction","industrial"];
+ if(/safety|ppe|helmet|shoe|boot|mask|goggle|coverall|vest/.test(p))return ["safety","gloves","construction","food","industrial"];
+ if(/steel|stainless|metal/.test(p))return ["steel","hardware","welding","construction","industrial"];
+ if(/bolt|nut|screw|fasten|hardware|tool|abrasive/.test(p))return ["hardware","tools","steel","construction","industrial"];
+ return null;}
+
+async function loadCatalog(){
+  if(!sb){ return; }
+  try{
+    const {data,error}=await sb.from('businesses').select('name,type,cat,addr,phone,district').limit(5000);
+    if(error){ console.warn(error); return; }
+    CATALOG=data||[];
+    // build district dropdown
+    const ds=[...new Set(CATALOG.map(c=>c.district).filter(Boolean))].sort();
+    const sel=document.getElementById('district');
+    ds.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);});
+  }catch(e){ console.warn(e); }
+}
+
+function cardFor(d){
+  const phones=(d.phone||"").trim();
+  const phHtml = phones
+    ? phones.split(/,\s*/).map(p=>`<a class="ph" href="tel:${p.replace(/\s/g,'')}">📞 ${p}</a>`).join(" &nbsp; ")
+    : `<a class="find" target="_blank" href="https://www.google.com/search?q=${encodeURIComponent((d.name||'')+' '+(d.district||'')+' Sri Lanka contact')}">Find contact ↗</a>`;
+  return `<div class="biz"><div class="nm">${d.name||''}</div>
+    <div class="meta">${d.addr||''}${d.district?' · '+d.district:''}</div>
+    <span class="tag">${CATLABEL[d.cat]||d.type||d.cat||''}</span><br>${phHtml}</div>`;
+}
+
+function offlineMatches(product,district,area){
+  const cats=catsForProduct(product);
+  const toks=product.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>3);
+  return CATALOG.filter(d=>{
+    const txt=((d.name||'')+' '+(d.type||'')+' '+(d.cat||'')).toLowerCase();
+    const ok=(cats&&cats.includes(d.cat))||toks.some(t=>txt.includes(t))||(!cats&&!toks.length);
+    if(!ok)return false;
+    if(area)return ((d.addr||'')+' '+(d.district||'')).toLowerCase().includes(area.toLowerCase());
+    if(district)return d.district===district;
+    return true;
+  });
+}
+
+function product(){return document.getElementById('product').value.trim();}
+
+function runSearch(){
+  const p=product(), dist=document.getElementById('district').value, area=document.getElementById('area').value.trim();
+  const root=document.getElementById('results');
+  if(!CATALOG.length){ root.innerHTML='<div class="empty">Catalog still loading… check your connection and try again.</div>'; return; }
+  const m=offlineMatches(p,dist,area);
+  const where = area?('"'+area+'"'):(dist||'all areas');
+  let html=`<div class="sec">📒 From your directory — ${m.length} match${m.length===1?'':'es'} (${where})</div>`;
+  html += m.length ? m.map(cardFor).join('') : '<div class="empty">No matches in your directory for that product/area. Try the web deep search below.</div>';
+  root.innerHTML=html;
+}
+
+async function deepSearch(){
+  const p=product(), dist=document.getElementById('district').value, area=document.getElementById('area').value.trim();
+  const root=document.getElementById('results');
+  const where = area || dist || 'Sri Lanka';
+  // show offline first
+  runSearch();
+  const live=document.createElement('div');
+  live.innerHTML=`<div class="sec">🌐 Live web results</div><div class="loading"><span class="spin"></span>Searching the web for ${p} buyers & sellers in ${where}…</div>`;
+  root.appendChild(live);
+
+  const prompt=`You are a B2B lead researcher for Sri Lanka. Find real businesses that BUY or SELL "${p}" in or near ${where}, Sri Lanka.
+Search Rainbow Pages, Yellow Pages, Wedabima, Google, Facebook business pages, BOI/EDB.
+Include BOTH:
+- USERS/BUYERS (factories, workshops, contractors, shops that would use/buy it)
+- SELLERS (distributors, importers, hardware/safety shops that resell it)
+Return ONLY a JSON array, no prose. Each item: {"name","type","addr","phone","role"} where role is one of Uses, Retails, Distributes, Imports. Only include entries with a real, verifiable name. 12-20 results. If no phone is known, use "".`;
+
+  try{
+    const res=await fetch('/api/chat',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:3000,
+        messages:[{role:'user',content:prompt}],
+        tools:[{type:"web_search_20250305",name:"web_search"}]})
+    });
+    const data=await res.json();
+    let text="";
+    if(Array.isArray(data.content)) text=data.content.map(b=>b.text||"").join("\n");
+    else text=data.content||data.completion||data.text||"";
+    let arr=[];
+    const m=text.match(/\[[\s\S]*\]/);
+    if(m){ try{ arr=JSON.parse(m[0]); }catch(e){} }
+    if(arr.length){
+      live.innerHTML=`<div class="sec">🌐 Live web results — ${arr.length} found</div>`+
+        arr.map(d=>cardFor({name:d.name,type:(d.role?d.role+' · ':'')+(d.type||''),cat:'',addr:d.addr,phone:d.phone,district:''})).join('');
+    }else{
+      live.innerHTML=`<div class="sec">🌐 Live web results</div><div class="empty">No clean web results this time. Your directory matches above are still valid.</div>`;
+    }
+  }catch(e){
+    live.innerHTML=`<div class="sec">🌐 Live web results</div><div class="empty">Live search unavailable right now (offline directory above still works).</div>`;
+  }
+}
+
+loadCatalog().then(()=>{ /* ready */ });
+</script>
+</body>
+</html>
